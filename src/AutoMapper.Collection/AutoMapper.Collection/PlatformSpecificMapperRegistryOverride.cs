@@ -2,11 +2,11 @@
 {
     using System.Linq;
 
-    public class PlatformSpecificMapperRegistryOverride : IPlatformSpecificMapperRegistry
+    public class CollectionProfile : Profile
     {
         private readonly object _mapperLock = new object();
 
-        public void Initialize()
+        protected override void Configure()
         {
             InsertBefore<ReadOnlyCollectionMapper>(new ExpressionOfTypeToExpressionOfDifferentTypeMapper());
             InsertBefore<ReadOnlyCollectionMapper>(new ObjectToEquivalencyExpressionByEquivalencyExistingMapper());
