@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="CustomExpressionVisitor.cs" />
     <Compile Include="EquivilentExpression.cs" />
     <Compile Include="EquivilentExpressions.cs" />
