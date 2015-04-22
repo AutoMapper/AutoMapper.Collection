@@ -39,9 +39,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mappers\ExpressionOfTypeToExpressionOfDifferentTypeMapper.cs" />
+    <Compile Include="CollectionProfile.cs" />
     <Compile Include="Mappers\ObjectToEquivalencyExpressionByEquivalencyExistingMapper.cs" />
-    <Compile Include="PlatformSpecificMapperRegistryOverride.cs" />
     <Compile Include="Equivilency Expression\CustomExpressionVisitor.cs" />
     <Compile Include="Equivilency Expression\EquivilentExpression.cs" />
     <Compile Include="Equivilency Expression\EquivilentExpressions.cs" />
