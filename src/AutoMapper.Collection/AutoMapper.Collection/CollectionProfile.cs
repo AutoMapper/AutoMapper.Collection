@@ -8,7 +8,6 @@
 
         protected override void Configure()
         {
-            InsertBefore<ReadOnlyCollectionMapper>(new ExpressionOfTypeToExpressionOfDifferentTypeMapper());
             InsertBefore<ReadOnlyCollectionMapper>(new ObjectToEquivalencyExpressionByEquivalencyExistingMapper());
             InsertBefore<ReadOnlyCollectionMapper>(new EquivlentExpressionAddRemoveCollectionMapper());
         }
