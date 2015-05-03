@@ -51,6 +51,9 @@ Translate equality between dto and EF object to an expression of just the EF usi
 	dbContext.SubmitChanges();
 Persist doesn't call submit changes automatically
 
-How to run
+How to get it
 --------------------------------
-Clone and build the solution for now.
+On Nuget
+
+	PM> Install-Package AutoMapper.Collection
+	PM> Install-Package AutoMapper.Collection.EntityFramework
