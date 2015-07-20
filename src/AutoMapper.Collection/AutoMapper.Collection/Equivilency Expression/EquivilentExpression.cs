@@ -2,6 +2,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper.Impl;
+using AutoMapper.Internal;
 
 namespace AutoMapper.EquivilencyExpression
 {
