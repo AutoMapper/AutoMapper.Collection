@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Linq;
 using AutoMapper.EquivilencyExpression;
 using AutoMapper.Internal;
@@ -7,47 +9,76 @@ namespace AutoMapper.Mappers
 {
     public class EquivlentExpressionAddRemoveCollectionMapper : IObjectMapper
     {
+        private readonly ConcurrentDictionary<Type, MethodCacheItem> _methodCache = new ConcurrentDictionary<Type, MethodCacheItem>();
+
         public object Map(ResolutionContext context, IMappingEngineRunner mapper)
         {
-            var sourceElementType = TypeHelper.GetElementType(context.SourceValue.GetType());
-            var destinationElementType = TypeHelper.GetElementType(context.DestinationValue.GetType());
+            if (context.IsSourceValueNull && mapper.ShouldMapSourceCollectionAsNull(context))
+            {
+                return null;
+            }
+
+            var sourceEnumerable = ((IEnumerable)context.SourceValue ?? new object[0])
+                .Cast<object>()
+                .ToList();
+
+            var sourceElementType = TypeHelper.GetElementType(context.SourceType);
+            var destinationElementType = TypeHelper.GetElementType(context.DestinationType);
             var equivilencyExpression = GetEquivilentExpression(context);
 
-            var sourceEnumerable = context.SourceValue as IEnumerable;
-            var destEnumerable = (IEnumerable)context.DestinationValue;
+            var destEnumerable = (IEnumerable)(context.DestinationValue as IEnumerable ?? ObjectCreator.CreateList(destinationElementType));
 
             var destItems = destEnumerable.Cast<object>().ToList();
-            var sourceItems = sourceEnumerable.Cast<object>().ToList();
-            var compareSourceToDestination = sourceItems.ToDictionary(s => s, s => destItems.FirstOrDefault(d => equivilencyExpression.IsEquivlent(s, d)));
+            var compareSourceToDestination = sourceEnumerable.ToDictionary(s => s, s => destItems.FirstOrDefault(d => equivilencyExpression.IsEquivlent(s, d)));
 
             var actualDestType = destEnumerable.GetType();
+            var methodItem = _methodCache.GetOrAdd(actualDestType, t =>
+            {
+                var addMethod = actualDestType.GetMethod("Add");
+                var removeMethod = actualDestType.GetMethod("Remove");
+                return new MethodCacheItem
+                {
+                    Add = (e, o) => addMethod.Invoke(e, new[] {o}),
+                    Remove = (e, o) => removeMethod.Invoke(e, new[] {o})
+                };
+            });
 
-            var addMethod = actualDestType.GetMethod("Add");
             foreach (var keypair in compareSourceToDestination)
             {
                 if (keypair.Value == null)
-                    addMethod.Invoke(destEnumerable, new[] { Mapper.Map(keypair.Key, sourceElementType, destinationElementType) });
+                {
+                    methodItem.Add(destEnumerable, Mapper.Map(keypair.Key, sourceElementType, destinationElementType));
+                }
                 else
+                {
                     Mapper.Map(keypair.Key, keypair.Value, sourceElementType, destinationElementType);
+                }
             }
 
-            var removeMethod = actualDestType.GetMethod("Remove");
             foreach (var removedItem in destItems.Except(compareSourceToDestination.Values))
-                removeMethod.Invoke(destEnumerable, new[] { removedItem });
+            {
+                methodItem.Remove(destEnumerable, removedItem);
+            }
 
             return destEnumerable;
         }
 
         public bool IsMatch(ResolutionContext context)
         {
-            return context.SourceValue != null && context.SourceValue.GetType().IsEnumerableType()
-                && context.DestinationValue != null && context.DestinationValue.GetType().IsCollectionType()
-                && GetEquivilentExpression(context) != null;
+            return context.SourceType.IsEnumerableType()
+                   && context.DestinationType.IsCollectionType()
+                   && GetEquivilentExpression(context) != null;
         }
 
         private static IEquivilentExpression GetEquivilentExpression(ResolutionContext context)
         {
             return EquivilentExpressions.GetEquivilentExpression(TypeHelper.GetElementType(context.SourceType), TypeHelper.GetElementType(context.DestinationType));
+        }
+
+        private class MethodCacheItem
+        {
+            public Action<IEnumerable, object> Add { get; set; }
+            public Action<IEnumerable, object> Remove { get; set; }
         }
     }
 }
