@@ -3,11 +3,42 @@ using System.Linq;
 using AutoMapper;
 using Microsoft.Data.Entity;
 using Xunit;
+using AutoMapper.EquivilencyExpression;
+using AutoMapper.Mappers;
 
 namespace AutoMapperTest.EF7
 {
     public abstract class CollectionTestBase
     {
+        protected CollectionTestBase()
+        {
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<ProductDto, Product>()
+                    .ForMember(p => p.Fields, m => m.MapFrom(p => p.FieldData))
+                    ;
+                cfg.CreateMap<Product, ProductDto>()
+                    .ForMember(p => p.FieldData, m => m.MapFrom(p => p.Fields))
+                    ;
+
+                cfg.CreateMap<ProductDto.FieldDataDto, Product.FieldData>()
+                    .EqualityComparision((a, b) => a.Id == b.Id)
+                    ;
+                cfg.CreateMap<Product.FieldData, ProductDto.FieldDataDto>()
+                    .EqualityComparision((a, b) => a.Id == b.Id)
+                    ;
+            });
+        }
+
+        protected void InsertBefore<TObjectMapper>(IObjectMapper mapper)
+            where TObjectMapper : IObjectMapper
+        {
+            var targetMapper = MapperRegistry.Mappers.FirstOrDefault(om => om is TObjectMapper);
+            var index = targetMapper == null ? 0 : MapperRegistry.Mappers.IndexOf(targetMapper);
+            MapperRegistry.Mappers.Insert(index, mapper);
+        }
+
+
         [Fact]
         public void TestChildCollectionMapping()
         {

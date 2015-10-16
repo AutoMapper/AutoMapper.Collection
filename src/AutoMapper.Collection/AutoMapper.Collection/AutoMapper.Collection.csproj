@@ -44,7 +44,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CollectionProfileNew.cs" />
     <Compile Include="CollectionProfile.cs" />
+    <Compile Include="Mappers\EquivlentExpressionAddRemoveCollectionMapperNew.cs" />
     <Compile Include="Mappers\ObjectToEquivalencyExpressionByEquivalencyExistingMapper.cs" />
     <Compile Include="Equivilency Expression\CustomExpressionVisitor.cs" />
     <Compile Include="Equivilency Expression\EquivilentExpression.cs" />

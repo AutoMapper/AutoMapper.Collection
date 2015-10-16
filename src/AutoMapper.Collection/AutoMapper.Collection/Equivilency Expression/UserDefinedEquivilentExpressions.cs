@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -6,7 +7,7 @@ namespace AutoMapper.EquivilencyExpression
 {
     internal class UserDefinedEquivilentExpressions : IGenerateEquivilentExpressions
     {
-        private readonly IDictionary<Type, IDictionary<Type, IEquivilentExpression>> _equivilentExpressionDictionary = new Dictionary<Type, IDictionary<Type, IEquivilentExpression>>();
+        private readonly ConcurrentDictionary<Type, ConcurrentDictionary<Type, IEquivilentExpression>> _equivilentExpressionDictionary = new ConcurrentDictionary<Type, ConcurrentDictionary<Type, IEquivilentExpression>>();
 
         public bool CanGenerateEquivilentExpression(Type sourceType, Type destinationType)
         {
@@ -42,9 +43,11 @@ namespace AutoMapper.EquivilencyExpression
 
         private IDictionary<Type, IEquivilentExpression> GetOrGenerateDefinitionDictionary<TDestination>()
         {
-            if (!_equivilentExpressionDictionary.ContainsKey(typeof(TDestination)))
-                _equivilentExpressionDictionary.Add(typeof(TDestination), new Dictionary<Type, IEquivilentExpression>());
-            return _equivilentExpressionDictionary[typeof(TDestination)];
+            return _equivilentExpressionDictionary.GetOrAdd(typeof (TDestination), t => new ConcurrentDictionary<Type, IEquivilentExpression>());
+
+            //if (!_equivilentExpressionDictionary.ContainsKey(typeof(TDestination)))
+            //    _equivilentExpressionDictionary.Add(typeof(TDestination), new Dictionary<Type, IEquivilentExpression>());
+            //return _equivilentExpressionDictionary[typeof(TDestination)];
         }
 
         private void GetOrGenerateSourceDictionary<TSource>(IDictionary<Type, IEquivilentExpression> destinationDictionary)

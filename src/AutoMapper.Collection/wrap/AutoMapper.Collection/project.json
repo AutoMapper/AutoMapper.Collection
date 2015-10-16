@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0-*",
+  "frameworks": {
+    "net451": {
+      "wrappedProject": "../../AutoMapper.Collection/AutoMapper.Collection.csproj",
+      "bin": {
+        "assembly": "../../AutoMapper.Collection/obj/{configuration}/AutoMapper.Collection.dll",
+        "pdb": "../../AutoMapper.Collection/obj/{configuration}/AutoMapper.Collection.pdb"
+      },
+      "dependencies": {
+        "AutoMapper": "4.0.0-alpha1"
+      }
+    }
+  }
+}
