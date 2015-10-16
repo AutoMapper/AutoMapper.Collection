@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection", "AutoMapper.Collection\AutoMapper.Collection.csproj", "{37AD667A-8080-476C-88FD-20310AC7CAF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{19AAEE83-5EEC-4EAA-9CF7-16F8ED58B50E}"
@@ -17,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		update.bat = update.bat
 	EndProjectSection
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapperTest.EF7", "AutoMapperTest.EF7\AutoMapperTest.EF7.xproj", "{641C35AF-D311-4DAB-9370-0D83D38FF325}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +35,10 @@ Global
 		{A7F99BDD-5251-46FA-90F8-184741AE9D02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7F99BDD-5251-46FA-90F8-184741AE9D02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7F99BDD-5251-46FA-90F8-184741AE9D02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{641C35AF-D311-4DAB-9370-0D83D38FF325}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{641C35AF-D311-4DAB-9370-0D83D38FF325}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{641C35AF-D311-4DAB-9370-0D83D38FF325}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{641C35AF-D311-4DAB-9370-0D83D38FF325}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
