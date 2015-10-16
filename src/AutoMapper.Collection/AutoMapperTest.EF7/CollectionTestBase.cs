@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using AutoMapper.EntityFramework;
 using Microsoft.Data.Entity;
 using Xunit;
 using AutoMapper.EquivilencyExpression;
@@ -12,6 +13,7 @@ namespace AutoMapperTest.EF7
     {
         protected CollectionTestBase()
         {
+            EquivilentExpressions.GenerateEquality.Add(new GenerateEntityFrameworkPrimaryKeyEquivilentExpressions<TestDbContext>());
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<ProductDto, Product>()
@@ -21,12 +23,8 @@ namespace AutoMapperTest.EF7
                     .ForMember(p => p.FieldData, m => m.MapFrom(p => p.Fields))
                     ;
 
-                cfg.CreateMap<ProductDto.FieldDataDto, Product.FieldData>()
-                    .EqualityComparision((a, b) => a.Id == b.Id)
-                    ;
-                cfg.CreateMap<Product.FieldData, ProductDto.FieldDataDto>()
-                    .EqualityComparision((a, b) => a.Id == b.Id)
-                    ;
+                cfg.CreateMap<ProductDto.FieldDataDto, Product.FieldData>();
+                cfg.CreateMap<Product.FieldData, ProductDto.FieldDataDto>();
             });
         }
 

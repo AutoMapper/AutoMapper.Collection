@@ -6,6 +6,10 @@ namespace AutoMapperTest.EF7
 {
     public class TestDbContext : DbContext
     {
+        public TestDbContext()
+        {
+            
+        }
         public TestDbContext(DbContextOptions<TestDbContext> options):base(options)
         {
         }
