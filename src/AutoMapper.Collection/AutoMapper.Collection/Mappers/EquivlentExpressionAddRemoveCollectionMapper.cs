@@ -10,26 +10,23 @@ namespace AutoMapper.Mappers
     public class EquivlentExpressionAddRemoveCollectionMapper : IObjectMapper
     {
         private readonly ConcurrentDictionary<Type, MethodCacheItem> _methodCache = new ConcurrentDictionary<Type, MethodCacheItem>();
+        private readonly CollectionMapper _collectionMapper = new CollectionMapper();
 
         public object Map(ResolutionContext context, IMappingEngineRunner mapper)
         {
-            if (context.IsSourceValueNull && mapper.ShouldMapSourceCollectionAsNull(context))
-            {
-                return null;
-            }
-
-            var sourceEnumerable = ((IEnumerable)context.SourceValue ?? new object[0])
-                .Cast<object>()
-                .ToList();
+            if (context.IsSourceValueNull || context.DestinationValue == null)
+                return _collectionMapper.Map(context, mapper);
 
             var sourceElementType = TypeHelper.GetElementType(context.SourceType);
             var destinationElementType = TypeHelper.GetElementType(context.DestinationType);
             var equivilencyExpression = GetEquivilentExpression(context);
 
-            var destEnumerable = (IEnumerable)(context.DestinationValue as IEnumerable ?? ObjectCreator.CreateList(destinationElementType));
+            var destEnumerable = context.DestinationValue as IEnumerable;
+            var sourceEnumerable = context.SourceValue as IEnumerable;
 
             var destItems = destEnumerable.Cast<object>().ToList();
-            var compareSourceToDestination = sourceEnumerable.ToDictionary(s => s, s => destItems.FirstOrDefault(d => equivilencyExpression.IsEquivlent(s, d)));
+            var sourceItems = sourceEnumerable.Cast<object>().ToList();
+            var compareSourceToDestination = sourceItems.ToDictionary(s => s, s => destItems.FirstOrDefault(d => equivilencyExpression.IsEquivlent(s, d)));
 
             var actualDestType = destEnumerable.GetType();
             var methodItem = _methodCache.GetOrAdd(actualDestType, t =>
