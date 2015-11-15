@@ -1,4 +1,8 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.Entity;
+using AutoMapper.QueryableExtensions.Impl;
 
 namespace AutoMapper.EntityFramework
 {
@@ -14,6 +18,22 @@ namespace AutoMapper.EntityFramework
             where TSource : class
         {
             return new Persistance<TSource>(source, Mapper.Engine);
+        }
+
+        /// <summary>
+        /// Non Generic call for For
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="destType"></param>
+        /// <returns></returns>
+        public static IEnumerable For<TSource>(this IQueryDataSourceInjection<TSource> source, Type destType)
+        {
+            var forMethod = source.GetType().GetMethod("For").MakeGenericMethod(destType);
+            var listType = typeof(List<>).MakeGenericType(destType);
+            var forResult = forMethod.Invoke(source, new object[] { null });
+            var enumeratedResult = Activator.CreateInstance(listType, forResult);
+            return enumeratedResult as IEnumerable;
         }
     }
 }
