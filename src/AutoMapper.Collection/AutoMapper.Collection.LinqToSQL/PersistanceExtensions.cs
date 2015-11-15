@@ -15,8 +15,6 @@ namespace AutoMapper.Collection.LinqToSQL
             return new Persistance<TSource>(source, Mapper.Engine);
         }
 
-        private static readonly MethodInfo ForMethodInfo = typeof(IQueryDataSourceInjection<>).GetMethod("For");
-
         public static IEnumerable For<TSource>(this IQueryDataSourceInjection<TSource> source, Type destType)
         {
             var forMethod = source.GetType().GetMethod("For").MakeGenericMethod(destType);
