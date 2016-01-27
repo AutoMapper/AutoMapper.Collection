@@ -9,10 +9,10 @@ namespace AutoMapper.Collection.LinqToSQL
 {
     public static class PersistanceExtensions
     {
-        public static IPersistance Persist<TSource>(this Table<TSource> source)
+        public static IPersistance Persist<TSource>(this Table<TSource> source, IMapper mapper)
             where TSource : class
         {
-            return new Persistance<TSource>(source, Mapper.Engine);
+            return new Persistance<TSource>(source, mapper);
         }
 
         public static IEnumerable For<TSource>(this IQueryDataSourceInjection<TSource> source, Type destType)
