@@ -1,4 +1,5 @@
-﻿using AutoMapper.EquivilencyExpression;
+﻿using System;
+using AutoMapper.EquivilencyExpression;
 
 namespace AutoMapper.Collection.LinqToSQL
 {
@@ -16,6 +17,7 @@ namespace AutoMapper.Collection.LinqToSQL
         /// <summary>
         /// Generate EquivilencyExpressions based on LinqToSQL's primary key
         /// Uses static API's Mapper for finding TypeMap between classes
+        [Obsolete("Use version that passes instance of IMapper")]
         /// </summary>
         public GetLinqToSQLPrimaryKeyExpression()
            : base(new GetLinqToSQLPrimaryKeyProperties(null))

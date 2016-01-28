@@ -1,4 +1,5 @@
-﻿using System.Data.Entity.Infrastructure;
+﻿using System;
+using System.Data.Entity.Infrastructure;
 using AutoMapper.EquivilencyExpression;
 
 namespace AutoMapper.EntityFramework
@@ -23,6 +24,7 @@ namespace AutoMapper.EntityFramework
         /// Generate EquivilencyExpressions based on EnityFramework's primary key
         /// Uses static API's Mapper for finding TypeMap between classes
         /// </summary>
+        [Obsolete("Use version that passes instance of IMapper")]
         public GenerateEntityFrameworkPrimaryKeyEquivilentExpressions()
            : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(null))
         {
