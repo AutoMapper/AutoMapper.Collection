@@ -68,6 +68,7 @@
     <ProjectReference Include="..\AutoMapper.Collection\AutoMapper.Collection.csproj">
       <Project>{37ad667a-8080-476c-88fd-20310ac7caf3}</Project>
       <Name>AutoMapper.Collection</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
