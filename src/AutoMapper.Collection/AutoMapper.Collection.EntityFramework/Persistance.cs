@@ -20,7 +20,9 @@ namespace AutoMapper.EntityFramework
         public void InsertOrUpdate<TFrom>(TFrom from)
             where TFrom : class
         {
-            var equivExpr = _mapper.Map<TFrom,Expression<Func<TTo, bool>>>(from);
+            var equivExpr = _mapper == null
+                ? Mapper.Map<TFrom, Expression<Func<TTo, bool>>>(from)
+                : _mapper.Map<TFrom, Expression<Func<TTo, bool>>>(from);
             if (equivExpr == null)
                 return;
 
@@ -31,13 +33,18 @@ namespace AutoMapper.EntityFramework
                 to = _sourceSet.Create<TTo>();
                 _sourceSet.Add(to);
             }
-            _mapper.Map(from,to);
+            if (_mapper == null)
+                Mapper.Map(from, to);
+            else
+                _mapper.Map(from,to);
         }
 
         public void Remove<TFrom>(TFrom from)
             where TFrom : class
         {
-            var equivExpr = _mapper.Map<TFrom, Expression<Func<TTo, bool>>>(from);
+            var equivExpr = _mapper == null
+                ? Mapper.Map<TFrom, Expression<Func<TTo, bool>>>(from)
+                : _mapper.Map<TFrom, Expression<Func<TTo, bool>>>(from);
             if (equivExpr == null)
                 return;
             var to = _sourceSet.FirstOrDefault(equivExpr);
