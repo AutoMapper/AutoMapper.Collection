@@ -12,14 +12,14 @@ namespace AutoMapper.Mappers
         private readonly ConcurrentDictionary<Type, MethodCacheItem> _methodCache = new ConcurrentDictionary<Type, MethodCacheItem>();
         private readonly CollectionMapper _collectionMapper = new CollectionMapper();
 
-        public object Map(ResolutionContext context, IMappingEngineRunner mapper)
+        public object Map(ResolutionContext context)
         {
             if (context.IsSourceValueNull || context.DestinationValue == null)
-                return _collectionMapper.Map(context, mapper);
+                return _collectionMapper.Map(context);
 
             var sourceElementType = TypeHelper.GetElementType(context.SourceType);
             var destinationElementType = TypeHelper.GetElementType(context.DestinationType);
-            var equivilencyExpression = GetEquivilentExpression(context);
+            var equivilencyExpression = GetEquivilentExpression(new TypePair(context.SourceType, context.DestinationType));
 
             var destEnumerable = context.DestinationValue as IEnumerable;
             var sourceEnumerable = context.SourceValue as IEnumerable;
@@ -44,11 +44,11 @@ namespace AutoMapper.Mappers
             {
                 if (keypair.Value == null)
                 {
-                    methodItem.Add(destEnumerable, Mapper.Map(keypair.Key, sourceElementType, destinationElementType));
+                    methodItem.Add(destEnumerable, context.Engine.Mapper.Map(keypair.Key, sourceElementType, destinationElementType));
                 }
                 else
                 {
-                    Mapper.Map(keypair.Key, keypair.Value, sourceElementType, destinationElementType);
+                    context.Engine.Mapper.Map(keypair.Key, keypair.Value, sourceElementType, destinationElementType);
                 }
             }
 
@@ -60,16 +60,16 @@ namespace AutoMapper.Mappers
             return destEnumerable;
         }
 
-        public bool IsMatch(ResolutionContext context)
+        public bool IsMatch(TypePair typePair)
         {
-            return context.SourceType.IsEnumerableType()
-                   && context.DestinationType.IsCollectionType()
-                   && GetEquivilentExpression(context) != null;
+            return typePair.SourceType.IsEnumerableType()
+                   && typePair.DestinationType.IsCollectionType()
+                   && GetEquivilentExpression(typePair) != null;
         }
 
-        private static IEquivilentExpression GetEquivilentExpression(ResolutionContext context)
+        private static IEquivilentExpression GetEquivilentExpression(TypePair typePair)
         {
-            return EquivilentExpressions.GetEquivilentExpression(TypeHelper.GetElementType(context.SourceType), TypeHelper.GetElementType(context.DestinationType));
+            return EquivilentExpressions.GetEquivilentExpression(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType));
         }
 
         private class MethodCacheItem
