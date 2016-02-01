@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -7,7 +7,7 @@ namespace AutoMapper.EquivilencyExpression
 {
     public static class ExpressionExtentions
     {
-        private static readonly IDictionary<Type, Type> _singleParameterTypeDictionary = new Dictionary<Type, Type>();
+        private static readonly ConcurrentDictionary<Type, Type> _singleParameterTypeDictionary = new ConcurrentDictionary<Type, Type>();
 
         public static Type GetSinglePredicateExpressionArgumentType(this Type type)
         {
@@ -33,7 +33,7 @@ namespace AutoMapper.EquivilencyExpression
 
         private static Type CacheAndReturnType(Type type, Type objType)
         {
-            _singleParameterTypeDictionary.Add(type, objType);
+            _singleParameterTypeDictionary.AddOrUpdate(type, objType, (t,t2) => objType);
             return objType;
         }
     }
