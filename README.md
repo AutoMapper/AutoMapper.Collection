@@ -45,9 +45,9 @@ Automapper.Collections.EntityFramework does that as well through extension metho
 
 Translate equality between dto and EF object to an expression of just the EF using the dto's values as constants.
 
-	dbContext.Orders.Persist<OrderDTO>().InsertOrUpdate(newOrderDto);
-	dbContext.Orders.Persist<OrderDTO>().InsertOrUpdate(existingOrderDto);
-	dbContext.Orders.Persist<OrderDTO>().Remove(deletedOrderDto);
+	dbContext.Orders.Persist().InsertOrUpdate<OrderDTO>(newOrderDto);
+	dbContext.Orders.Persist().InsertOrUpdate<OrderDTO>(existingOrderDto);
+	dbContext.Orders.Persist().Remove<OrderDTO>(deletedOrderDto);
 	dbContext.SubmitChanges();
 Persist doesn't call submit changes automatically
 
