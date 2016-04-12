@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -6,7 +7,7 @@ namespace AutoMapper.EquivilencyExpression
 {
     internal class UserDefinedEquivilentExpressions : IGenerateEquivilentExpressions
     {
-        private readonly IDictionary<Type, IDictionary<Type, IEquivilentExpression>> _equivilentExpressionDictionary = new Dictionary<Type, IDictionary<Type, IEquivilentExpression>>();
+        private readonly ConcurrentDictionary<Type, ConcurrentDictionary<Type, IEquivilentExpression>> _equivilentExpressionDictionary = new ConcurrentDictionary<Type, ConcurrentDictionary<Type, IEquivilentExpression>>();
 
         public bool CanGenerateEquivilentExpression(Type sourceType, Type destinationType)
         {
@@ -20,9 +21,12 @@ namespace AutoMapper.EquivilencyExpression
 
         private IEquivilentExpression GetEquivlelentExpression(Type srcType, Type destType)
         {
-            if (_equivilentExpressionDictionary.ContainsKey(destType))
-                if (_equivilentExpressionDictionary[destType].ContainsKey(srcType))
-                    return _equivilentExpressionDictionary[destType][srcType];
+            ConcurrentDictionary<Type, IEquivilentExpression> destMap;
+            IEquivilentExpression srcExpression;
+            if (_equivilentExpressionDictionary.TryGetValue(destType, out destMap) && destMap.TryGetValue(srcType, out srcExpression))
+            {
+                return srcExpression;
+            }
             return null;
         }
 
@@ -30,27 +34,8 @@ namespace AutoMapper.EquivilencyExpression
             where TSource : class
             where TDestination : class
         {
-            var destinationDictionary = GetOrGenerateDefinitionDictionary<TDestination>();
-            SetEquivlientExpressionForSource<TSource>(destinationDictionary, new EquivilentExpression<TSource, TDestination>(equivilentExpression));
-        }
-
-        private void SetEquivlientExpressionForSource<TSource>(IDictionary<Type, IEquivilentExpression> destinationDictionary, IEquivilentExpression equivilentExpression)
-        {
-            GetOrGenerateSourceDictionary<TSource>(destinationDictionary);
-            destinationDictionary[typeof(TSource)] = equivilentExpression;
-        }
-
-        private IDictionary<Type, IEquivilentExpression> GetOrGenerateDefinitionDictionary<TDestination>()
-        {
-            if (!_equivilentExpressionDictionary.ContainsKey(typeof(TDestination)))
-                _equivilentExpressionDictionary.Add(typeof(TDestination), new Dictionary<Type, IEquivilentExpression>());
-            return _equivilentExpressionDictionary[typeof(TDestination)];
-        }
-
-        private void GetOrGenerateSourceDictionary<TSource>(IDictionary<Type, IEquivilentExpression> destinationDictionary)
-        {
-            if (!destinationDictionary.ContainsKey(typeof(TSource)))
-                destinationDictionary.Add(typeof(TSource), null);
+            var destinationDictionary = _equivilentExpressionDictionary.GetOrAdd(typeof(TDestination), t => new ConcurrentDictionary<Type, IEquivilentExpression>());
+            destinationDictionary.AddOrUpdate(typeof(TSource), new EquivilentExpression<TSource, TDestination>(equivilentExpression), (type, old) => new EquivilentExpression<TSource, TDestination>(equivilentExpression));
         }
     }
 }
