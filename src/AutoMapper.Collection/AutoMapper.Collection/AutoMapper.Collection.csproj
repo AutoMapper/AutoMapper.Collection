@@ -62,7 +62,6 @@
     <Compile Include="Equivilency Expression\UserDefinedEquivilentExpressions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Equivilency Expression\packages.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
