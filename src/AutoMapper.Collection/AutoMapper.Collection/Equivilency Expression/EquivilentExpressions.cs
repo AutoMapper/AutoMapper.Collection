@@ -13,17 +13,12 @@ namespace AutoMapper.EquivilencyExpression
         /// <summary>
         /// Equality List for Generating Equality Comparisons between two types
         /// </summary>
-        public static ICollection<IGenerateEquivilentExpressions> GenerateEquality
-        {
-            get { return GenerateEquivilentExpressions; }
-        }
+        public static ICollection<IGenerateEquivilentExpressions> GenerateEquality => GenerateEquivilentExpressions;
 
         internal static IEquivilentExpression GetEquivilentExpression(Type sourceType, Type destinationType)
         {
             var generate = GenerateEquality.FirstOrDefault(g => g.CanGenerateEquivilentExpression(sourceType, destinationType));
-            if (generate == null)
-                return null;
-            return generate.GeneratEquivilentExpression(sourceType, destinationType);
+            return generate?.GeneratEquivilentExpression(sourceType, destinationType);
         }
 
         /// <summary>

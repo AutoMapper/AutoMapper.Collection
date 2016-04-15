@@ -1,8 +1,6 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using AutoMapper.Impl;
-using AutoMapper.Internal;
 
 namespace AutoMapper.EquivilencyExpression
 {
@@ -48,7 +46,7 @@ namespace AutoMapper.EquivilencyExpression
             return GetSourceOnlyExpresison(source as TSource);
         }
 
-        internal Expression GetSourceOnlyExpresison<TSource>(TSource source)
+        internal Expression GetSourceOnlyExpresison(TSource source)
         {
             var expression = new ParametersToConstantVisitor<TSource>(source).Visit(_equivilentExpression) as LambdaExpression;
             return Expression.Lambda(expression.Body, _equivilentExpression.Parameters[1]);
