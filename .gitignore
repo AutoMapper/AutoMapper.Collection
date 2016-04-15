@@ -190,3 +190,4 @@ ModelManifest.xml
 *.dll
 src/AutoMapper.Collection/packages/AutoMapper.3.3.1/lib/wpa81/AutoMapper.xml
 src/AutoMapper.Collection/packages/
+/src/AutoMapper.Collection/AutoMapper.Collection.sln.GhostDoc.xml

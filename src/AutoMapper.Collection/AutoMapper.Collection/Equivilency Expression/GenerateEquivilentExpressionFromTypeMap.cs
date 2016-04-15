@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -5,12 +6,11 @@ namespace AutoMapper.EquivilencyExpression
 {
     internal class GenerateEquivilentExpressionFromTypeMap
     {
-        private static readonly IDictionary<TypeMap, GenerateEquivilentExpressionFromTypeMap> _equivilentExpressionses = new Dictionary<TypeMap, GenerateEquivilentExpressionFromTypeMap>();
+        private static readonly ConcurrentDictionary<TypeMap, GenerateEquivilentExpressionFromTypeMap> _equivilentExpressionses = new ConcurrentDictionary<TypeMap, GenerateEquivilentExpressionFromTypeMap>();
         internal static Expression GetExpression(TypeMap typeMap, object value)
         {
-            if (!_equivilentExpressionses.ContainsKey(typeMap))
-                _equivilentExpressionses.Add(typeMap, new GenerateEquivilentExpressionFromTypeMap(typeMap));
-            return _equivilentExpressionses[typeMap].CreateEquivilentExpression(value);
+            return _equivilentExpressionses.GetOrAdd(typeMap, t => new GenerateEquivilentExpressionFromTypeMap(t))
+                .CreateEquivilentExpression(value);
         }
 
         private readonly TypeMap _typeMap;
