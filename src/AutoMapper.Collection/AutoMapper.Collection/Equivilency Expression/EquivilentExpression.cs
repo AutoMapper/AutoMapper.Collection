@@ -1,6 +1,7 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using AutoMapper.Execution;
 
 namespace AutoMapper.EquivilencyExpression
 {
@@ -12,61 +13,33 @@ namespace AutoMapper.EquivilencyExpression
         {
             BadValue = new EquivilentExpression();
         }
-
-        public bool IsEquivlent(object source, object destination)
-        {
-            throw new NotImplementedException();
-        }
     }
 
-    internal class EquivilentExpression<TSource,TDestination> : IEquivilentExpression , IToSingleSourceEquivalentExpression
+    internal class EquivilentExpression<TSource,TDestination> : IEquivilentExpression<TSource, TDestination>
         where TSource : class 
         where TDestination : class
     {
         private readonly Expression<Func<TSource, TDestination, bool>> _equivilentExpression;
+        private readonly Func<TSource, TDestination, bool> _equivilentFunc; 
 
         public EquivilentExpression(Expression<Func<TSource,TDestination,bool>> equivilentExpression)
         {
             _equivilentExpression = equivilentExpression;
+            _equivilentFunc = _equivilentExpression.Compile();
         }
 
-        public bool IsEquivlent(object source, object destination)
+        public bool IsEquivlent(TSource source, TDestination destination)
         {
-            if(!(source is TSource))
-                throw new EquivilentExpressionNotOfTypeException(source.GetType(), typeof(TSource));
-            if (!(destination is TDestination))
-                throw new EquivilentExpressionNotOfTypeException(destination.GetType(), typeof(TDestination));
-            return _equivilentExpression.Compile()(source as TSource, destination as TDestination);
+            return _equivilentFunc(source, destination);
         }
 
-        public Expression ToSingleSourceExpression(object source)
+        public Expression<Func<TDestination, bool>> ToSingleSourceExpression(TSource source)
         {
             if (source == null)
                 throw new Exception("Invalid somehow");
-            return GetSourceOnlyExpresison(source as TSource);
-        }
 
-        internal Expression GetSourceOnlyExpresison(TSource source)
-        {
             var expression = new ParametersToConstantVisitor<TSource>(source).Visit(_equivilentExpression) as LambdaExpression;
-            return Expression.Lambda(expression.Body, _equivilentExpression.Parameters[1]);
-        }
-
-        private class EquivilentExpressionNotOfTypeException : Exception
-        {
-            private readonly Type _objectType;
-            private readonly Type _expectedType;
-
-            public EquivilentExpressionNotOfTypeException(Type objectType, Type expectedType)
-            {
-                _objectType = objectType;
-                _expectedType = expectedType;
-            }
-
-            public override string Message
-            {
-                get { return string.Format("{0} does not equal or inherit from {1}", _objectType.Name, _expectedType.Name); }
-            }
+            return Expression.Lambda<Func<TDestination, bool>>(expression.Body, _equivilentExpression.Parameters[1]);
         }
     }
 
