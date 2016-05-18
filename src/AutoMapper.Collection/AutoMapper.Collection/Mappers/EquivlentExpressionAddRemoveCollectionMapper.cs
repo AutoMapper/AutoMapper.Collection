@@ -19,6 +19,9 @@ namespace AutoMapper.Mappers
             var equivilencyExpression = GetEquivilentExpression(new TypePair(typeof(TSource), typeof(TDestination))) as IEquivilentExpression<TSourceItem,TDestinationItem>;
             var compareSourceToDestination = source.ToDictionary(s => s, s => destination.FirstOrDefault(d => equivilencyExpression.IsEquivlent(s, d)));
 
+            foreach (var removedItem in destination.Except(compareSourceToDestination.Values).ToList())
+                destination.Remove(removedItem);
+
             foreach (var keypair in compareSourceToDestination)
             {
                 if (keypair.Value == null)
@@ -27,8 +30,6 @@ namespace AutoMapper.Mappers
                     context.Mapper.Map(keypair.Key, keypair.Value);
             }
 
-            foreach (var removedItem in destination.Except(compareSourceToDestination.Values).ToList())
-                destination.Remove(removedItem);
             return destination;
         }
 
