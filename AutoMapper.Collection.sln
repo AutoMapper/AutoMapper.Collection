@@ -13,11 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapper.Collection", "AutoMapper.Collection\AutoMapper.Collection.xproj", "{37AD667A-8080-476C-88FD-20310AC7CAF3}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapper.Collection", "src\AutoMapper.Collection\AutoMapper.Collection.xproj", "{37AD667A-8080-476C-88FD-20310AC7CAF3}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapper.Collection.EntityFramework", "AutoMapper.Collection.EntityFramework\AutoMapper.Collection.EntityFramework.xproj", "{E0FD41FD-AF5B-4BEC-970F-8412E7B6C914}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapper.Collection.EntityFramework", "src\AutoMapper.Collection.EntityFramework\AutoMapper.Collection.EntityFramework.xproj", "{E0FD41FD-AF5B-4BEC-970F-8412E7B6C914}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapper.Collection.LinqToSQL", "AutoMapper.Collection.LinqToSQL\AutoMapper.Collection.LinqToSQL.xproj", "{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapper.Collection.LinqToSQL", "src\AutoMapper.Collection.LinqToSQL\AutoMapper.Collection.LinqToSQL.xproj", "{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
