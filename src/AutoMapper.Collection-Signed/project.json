@@ -1,0 +1,42 @@
+{
+  "version": "1.2.2-*",
+  "authors": [ "Tyler Carlson" ],
+  "description": "Collection updating support for AutoMapper.",
+  "packOptions": {
+    "owners": [ "Tyler Carlson" ],
+    "licenseUrl": "https://raw.githubusercontent.com/TylerCarlson1/Automapper.Collection/master/LICENSE",
+    "projectUrl": "https://github.com/TylerCarlson1/Automapper.Collection",
+    "requireLicenseAcceptance": false
+  },
+
+  "buildOptions": {
+    "publicSign": true,
+    "keyFile": "../Key.snk",
+    "compile": {
+      "include": [ "../AutoMapper.Collection/**/*.cs" ],
+      "exclude": [ "../AutoMapper.Collection/**/obj/*", "../AutoMapper.Collection/**/bin/*" ]
+    }
+  },
+
+  "dependencies": {
+    "AutoMapper" :  "4.2.1" 
+  },
+
+  "frameworks": {
+    "net45": {
+    },
+    "netstandard1.1": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1-rc2-24027",
+        "NETStandard.Library": "1.5.0-rc2-24027",
+        "System.Linq.Expressions": "4.0.11-rc2-24027",
+        "System.Linq.Queryable": "4.0.1-rc2-24027",
+        "System.Dynamic.Runtime": "4.0.11-rc2-24027"
+      },
+      "imports": [
+        "portable-net45+win8+dnxcore50",
+        "portable-net45+win8"
+      ]
+    }
+  }
+}
