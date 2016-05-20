@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using AutoMapper.EquivilencyExpression;
 using AutoMapper.Internal;
+using System.Reflection;
 
 namespace AutoMapper.Mappers
 {
@@ -31,8 +32,8 @@ namespace AutoMapper.Mappers
             var actualDestType = destEnumerable.GetType();
             var methodItem = _methodCache.GetOrAdd(actualDestType, t =>
             {
-                var addMethod = actualDestType.GetMethod("Add");
-                var removeMethod = actualDestType.GetMethod("Remove");
+                var addMethod = actualDestType.GetTypeInfo().GetDeclaredMethod("Add");
+                var removeMethod = actualDestType.GetTypeInfo().GetDeclaredMethod("Remove");
                 return new MethodCacheItem
                 {
                     Add = (e, o) => addMethod.Invoke(e, new[] {o}),
