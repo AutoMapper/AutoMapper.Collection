@@ -1,11 +1,11 @@
 {
   "version": "1.2.2-*",
   "authors": [ "Tyler Carlson" ],
-  "description": "Collection updating support for LinqToSQL.",
+  "description": "Collection updating support for LinqToSQL with AutoMapper.",
   "packOptions": {
     "owners": [ "Tyler Carlson" ],
-    "licenseUrl": "",
-    "projectUrl": "",
+    "licenseUrl": "https://raw.githubusercontent.com/TylerCarlson1/Automapper.Collection/master/LICENSE",
+    "projectUrl": "https://github.com/TylerCarlson1/Automapper.Collection",
     "requireLicenseAcceptance": false
   },
 

@@ -4,8 +4,8 @@
   "description": "Collection updating support for AutoMapper.",
   "packOptions": {
     "owners": [ "Tyler Carlson" ],
-    "licenseUrl": "",
-    "projectUrl": "",
+    "licenseUrl": "https://raw.githubusercontent.com/TylerCarlson1/Automapper.Collection/master/LICENSE",
+    "projectUrl": "https://github.com/TylerCarlson1/Automapper.Collection",
     "requireLicenseAcceptance": false
   },
 
