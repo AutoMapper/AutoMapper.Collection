@@ -1,5 +1,5 @@
 {
-  "version": "1.2.2-*",
+  "version": "1.2.3-*",
   "authors": [ "Tyler Carlson" ],
   "description": "Collection Updating support for Entity Framework with AutoMapper.",
   "packOptions": {
@@ -10,7 +10,7 @@
   },
 
   "dependencies": {
-    "AutoMapper.Collection": "1.2.2-*",
+    "AutoMapper.Collection": "1.2.3-*",
     "EntityFramework": "6.1.3"
   },
 
