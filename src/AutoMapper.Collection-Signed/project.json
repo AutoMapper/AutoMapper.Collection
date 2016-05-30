@@ -10,7 +10,6 @@
   },
 
   "buildOptions": {
-    "publicSign": true,
     "keyFile": "../Key.snk",
     "compile": {
       "include": [ "../AutoMapper.Collection/**/*.cs" ],
