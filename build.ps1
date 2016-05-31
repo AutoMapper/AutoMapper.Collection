@@ -1,4 +1,4 @@
-$version_suffix="$env:version_suffix"
+$version_suffix="$env:DOTNET_BUILD_VERSION"
 
 if ((get-command dotnet.exe -ErrorAction SilentlyContinue) -eq $null) {
     Write-Error "You need to have dotnet installed and added to your path, download from http://dot.net"
