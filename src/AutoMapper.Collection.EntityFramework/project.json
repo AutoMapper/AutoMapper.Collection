@@ -1,0 +1,21 @@
+{
+  "version": "1.2.3-*",
+  "authors": [ "Tyler Carlson" ],
+  "description": "Collection Updating support for Entity Framework with AutoMapper.",
+  "packOptions": {
+    "owners": [ "Tyler Carlson" ],
+    "licenseUrl": "https://raw.githubusercontent.com/TylerCarlson1/Automapper.Collection/master/LICENSE",
+    "projectUrl": "https://github.com/TylerCarlson1/Automapper.Collection",
+    "requireLicenseAcceptance": false
+  },
+
+  "dependencies": {
+    "AutoMapper.Collection": "1.2.3-*",
+    "EntityFramework": "6.1.3"
+  },
+
+  "frameworks": {
+    "net45": {
+    }
+  }
+}

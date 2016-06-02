@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace AutoMapper.EquivilencyExpression
 {
@@ -13,20 +14,20 @@ namespace AutoMapper.EquivilencyExpression
         {
             return _singleParameterTypeDictionary.GetOrAdd(type, t =>
             {
-                var isExpression = typeof (Expression).IsAssignableFrom(t);
+                var isExpression = typeof (Expression).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo());
                 if (!isExpression)
                     return null;
 
-                var expressionOf = t.GetGenericArguments().First();
+                var expressionOf = t.GetTypeInfo().GenericTypeArguments.First();
                 var isFunction = expressionOf.GetGenericTypeDefinition() == typeof (Func<,>);
                 if (!isFunction)
                     return null;
 
-                var isPredicate = expressionOf.GetGenericArguments()[1] == typeof (bool);
+                var isPredicate = expressionOf.GetTypeInfo().GenericTypeArguments[1] == typeof (bool);
                 if (!isPredicate)
                     return null;
 
-                var objType = expressionOf.GetGenericArguments().First();
+                var objType = expressionOf.GetTypeInfo().GenericTypeArguments.First();
                 return CacheAndReturnType(type, objType);
             });
         }

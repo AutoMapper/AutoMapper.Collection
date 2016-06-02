@@ -1,0 +1,24 @@
+{
+  "version": "1.2.3-*",
+  "authors": [ "Tyler Carlson" ],
+  "description": "Collection updating support for LinqToSQL with AutoMapper.",
+  "packOptions": {
+    "owners": [ "Tyler Carlson" ],
+    "licenseUrl": "https://raw.githubusercontent.com/TylerCarlson1/Automapper.Collection/master/LICENSE",
+    "projectUrl": "https://github.com/TylerCarlson1/Automapper.Collection",
+    "requireLicenseAcceptance": false
+  },
+
+  "dependencies": {
+    "AutoMapper.Collection": "1.2.3-*"
+  },
+
+  "frameworks": {
+    "net45": {
+      "frameworkAssemblies": {
+        "System.Data":  "4.0.0.0",
+        "System.Data.Linq":  "4.0.0.0" 
+      }
+    }
+  }
+}
