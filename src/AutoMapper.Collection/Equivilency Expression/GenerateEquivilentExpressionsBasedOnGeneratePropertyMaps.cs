@@ -36,7 +36,7 @@ namespace AutoMapper.EquivilencyExpression
                         var keyProperties = _generatePropertyMaps.GeneratePropertyMaps(sourceType, destinationType);
                         return keyProperties.Any() ? new GenerateEquivilentExpressionOnPropertyMaps(keyProperties) : GenerateEquivilentExpressions.BadValue;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         return GenerateEquivilentExpressions.BadValue;
                     }

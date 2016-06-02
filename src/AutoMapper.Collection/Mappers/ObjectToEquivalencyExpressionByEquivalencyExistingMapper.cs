@@ -14,7 +14,7 @@ namespace AutoMapper.Mappers
             return toSourceExpression.ToSingleSourceExpression(source);
         }
 
-        private static readonly MethodInfo MapMethodInfo = typeof(ObjectToEquivalencyExpressionByEquivalencyExistingMapper).GetMethods(BindingFlags.Static | BindingFlags.Public).First();
+        private static readonly MethodInfo MapMethodInfo = typeof(ObjectToEquivalencyExpressionByEquivalencyExistingMapper).GetRuntimeMethods().First(_ => _.IsStatic);
 
         public object Map(ResolutionContext context)
         {

@@ -33,7 +33,7 @@ namespace AutoMapper.Mappers
             return destination;
         }
 
-        private static readonly MethodInfo MapMethodInfo = typeof(EquivlentExpressionAddRemoveCollectionMapper).GetMethods(BindingFlags.Static | BindingFlags.Public).First();
+        private static readonly MethodInfo MapMethodInfo = typeof(EquivlentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().First(_ => _.IsStatic);
 
         public object Map(ResolutionContext context)
         {

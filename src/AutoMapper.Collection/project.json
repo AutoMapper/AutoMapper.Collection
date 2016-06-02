@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0-*",
+  "authors": [ "Tyler Carlson" ],
+  "description": "Collection updating support for AutoMapper.",
+  "packOptions": {
+    "owners": [ "Tyler Carlson" ],
+    "licenseUrl": "https://raw.githubusercontent.com/TylerCarlson1/Automapper.Collection/master/LICENSE",
+    "projectUrl": "https://github.com/TylerCarlson1/Automapper.Collection",
+    "requireLicenseAcceptance": false
+  },
+
+  "dependencies": {
+    "AutoMapper" :  "5.0.0-beta-1" 
+  },
+
+  "frameworks": {
+    "net45": {
+    },
+    "netstandard1.1": {
+      "dependencies": {
+        "NETStandard.Library": "1.5.0-rc2-24027",
+        "System.Linq.Expressions": "4.0.11-rc2-24027"
+      },
+      "imports": [
+        "portable-net45+win8+dnxcore50",
+        "portable-net45+win8"
+      ]
+    }
+  }
+}
