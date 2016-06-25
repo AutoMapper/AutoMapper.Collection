@@ -6,7 +6,7 @@ using AutoMapper.EquivilencyExpression;
 
 namespace AutoMapper.Mappers
 {
-    public class ObjectToEquivalencyExpressionByEquivalencyExistingMapper : IObjectMapExpression
+    public class ObjectToEquivalencyExpressionByEquivalencyExistingMapper : IObjectMapper
     {
         public static Expression<Func<TDestination, bool>> Map<TSource, TDestination>(TSource source)
         {
@@ -15,13 +15,7 @@ namespace AutoMapper.Mappers
         }
 
         private static readonly MethodInfo MapMethodInfo = typeof(ObjectToEquivalencyExpressionByEquivalencyExistingMapper).GetRuntimeMethods().First(_ => _.IsStatic);
-
-        public object Map(ResolutionContext context)
-        {
-            var destExpressArgType = context.DestinationType.GetSinglePredicateExpressionArgumentType();
-            return MapMethodInfo.MakeGenericMethod(context.SourceType, destExpressArgType).Invoke(null, new[] { context.SourceValue});
-        }
-
+        
         public bool IsMatch(TypePair typePair)
         {
             var destExpressArgType = typePair.DestinationType.GetSinglePredicateExpressionArgumentType();
@@ -31,7 +25,8 @@ namespace AutoMapper.Mappers
             return expression != null;
         }
 
-        public Expression MapExpression(Expression sourceExpression, Expression destExpression, Expression contextExpression)
+        public Expression MapExpression(TypeMapRegistry typeMapRegistry, IConfigurationProvider configurationProvider,
+            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
             var destExpressArgType = destExpression.Type.GetSinglePredicateExpressionArgumentType();
             return Expression.Call(null, MapMethodInfo.MakeGenericMethod(sourceExpression.Type, destExpressArgType), sourceExpression);

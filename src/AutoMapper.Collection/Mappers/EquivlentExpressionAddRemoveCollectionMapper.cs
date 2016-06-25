@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -7,14 +8,15 @@ using AutoMapper.EquivilencyExpression;
 
 namespace AutoMapper.Mappers
 {
-    public class EquivlentExpressionAddRemoveCollectionMapper : IObjectMapExpression
+    public class EquivlentExpressionAddRemoveCollectionMapper : IObjectMapper
     {
-        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context)
+        private readonly CollectionMapper CollectionMapper = new CollectionMapper();
+        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context, Func<TDestination> ifNullFunc)
             where TSource : IEnumerable<TSourceItem>
             where TDestination : class, ICollection<TDestinationItem>
         {
             if (source == null || destination == null)
-                return CollectionMapper.Map<TSource, TSourceItem, TDestination, TDestinationItem>(source, destination, context);
+                return ifNullFunc();
 
             var equivilencyExpression = GetEquivilentExpression(new TypePair(typeof(TSource), typeof(TDestination))) as IEquivilentExpression<TSourceItem,TDestinationItem>;
             var compareSourceToDestination = source.ToDictionary(s => s, s => destination.FirstOrDefault(d => equivilencyExpression.IsEquivlent(s, d)));
@@ -34,13 +36,7 @@ namespace AutoMapper.Mappers
         }
 
         private static readonly MethodInfo MapMethodInfo = typeof(EquivlentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().First(_ => _.IsStatic);
-
-        public object Map(ResolutionContext context)
-        {
-            return
-                MapMethodInfo.MakeGenericMethod(context.SourceType, TypeHelper.GetElementType(context.SourceType), context.DestinationType, TypeHelper.GetElementType(context.DestinationType))
-                    .Invoke(null, new[] { context.SourceValue, context.DestinationValue, context });
-        }
+        
 
         public bool IsMatch(TypePair typePair)
         {
@@ -49,11 +45,14 @@ namespace AutoMapper.Mappers
                    && GetEquivilentExpression(typePair) != null;
         }
 
-        public Expression MapExpression(Expression sourceExpression, Expression destExpression, Expression contextExpression)
+        public Expression MapExpression(TypeMapRegistry typeMapRegistry, IConfigurationProvider configurationProvider,
+            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
+            var collectionExpression = CollectionMapper.MapExpression(typeMapRegistry, configurationProvider, propertyMap, sourceExpression, destExpression, contextExpression);
+            var collectionFunc = Expression.Lambda(collectionExpression).Compile();
             return Expression.Call(null,
                 MapMethodInfo.MakeGenericMethod(sourceExpression.Type, TypeHelper.GetElementType(sourceExpression.Type), destExpression.Type, TypeHelper.GetElementType(destExpression.Type)),
-                    sourceExpression, destExpression, contextExpression);
+                    sourceExpression, destExpression, contextExpression, Expression.Constant(collectionFunc));
         }
 
         private static IEquivilentExpression GetEquivilentExpression(TypePair typePair)
