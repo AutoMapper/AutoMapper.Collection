@@ -18,9 +18,8 @@ namespace AutoMapper.Collection.LinqToSQL
         /// Generate EquivilencyExpressions based on LinqToSQL's primary key
         /// Uses static API's Mapper for finding TypeMap between classes
         /// </summary>
-        [Obsolete("Use version that passes instance of IMapper")]
         public GetLinqToSQLPrimaryKeyExpression()
-           : base(new GetLinqToSQLPrimaryKeyProperties(Mapper.Instance.ConfigurationProvider))
+           : base(new GetLinqToSQLPrimaryKeyProperties(Mapper.Configuration))
         {
         }
     }

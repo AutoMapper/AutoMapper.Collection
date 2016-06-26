@@ -19,5 +19,14 @@ namespace AutoMapper.EntityFramework
             : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(configurationProvider))
         {
         }
+
+        /// <summary>
+        /// Generate EquivilencyExpressions based on EnityFramework's primary key
+        /// Uses static API's Mapper for finding TypeMap between classes
+        /// </summary>
+        public GenerateEntityFrameworkPrimaryKeyEquivilentExpressions()
+            : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(Mapper.Configuration))
+        {
+        }
     }
 }
