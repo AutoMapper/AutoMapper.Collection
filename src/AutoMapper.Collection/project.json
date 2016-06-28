@@ -10,15 +10,17 @@
   },
 
   "dependencies": {
-    "AutoMapper": "5.0.0-beta-01111"
+    "AutoMapper": "5.0.0"
   },
 
   "frameworks": {
     "net45": {
+      "dependencies": {
+      }
     },
     "netstandard1.1": {
       "dependencies": {
-        "System.Linq.Expressions": "4.0.11-rc2-24027"
+        "System.Threading": "4.0.11"
       },
       "imports": [
         "portable-net45+win8+dnxcore50",
@@ -27,7 +29,7 @@
     },
     "netstandard1.3": {
       "dependencies": {
-        "System.Linq.Expressions": "4.0.11-rc2-24027"
+        "System.Threading": "4.0.11"
       }
     }
   }

@@ -15,8 +15,8 @@ namespace AutoMapper.EntityFramework
         /// Generate EquivilencyExpressions based on EnityFramework's primary key
         /// </summary>
         /// <param name="mapper">IMapper used to find TypeMap between classes</param>
-        public GenerateEntityFrameworkPrimaryKeyEquivilentExpressions(IConfigurationProvider configurationProvider)
-            : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(configurationProvider))
+        public GenerateEntityFrameworkPrimaryKeyEquivilentExpressions(IMapper mapper)
+            : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(mapper.ConfigurationProvider))
         {
         }
 
