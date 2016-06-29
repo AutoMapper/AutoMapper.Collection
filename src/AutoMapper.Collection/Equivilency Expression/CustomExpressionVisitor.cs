@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using AutoMapper.Execution;
 
 namespace AutoMapper.EquivilencyExpression
 {
@@ -29,11 +30,8 @@ namespace AutoMapper.EquivilencyExpression
                 var matchPM = _propertyMaps.FirstOrDefault(pm => pm.DestinationProperty.MemberInfo == node.Member);
                 if (matchPM == null)
                     throw new Exception("No matching PropertyMap");
-                var sourceValueResolvers = matchPM.GetSourceValueResolvers();
-                if (!sourceValueResolvers.All(r => r is IMemberGetter))
-                    throw new Exception("Not all member getters");
-
-                var memberGetters = sourceValueResolvers.OfType<IMemberGetter>();
+                var memberGetters = matchPM.SourceMembers;
+                
                 var memberExpression = Expression.Property(Visit(node.Expression), memberGetters.First().MemberInfo as PropertyInfo);
 
                 foreach (var memberGetter in memberGetters.Skip(1))

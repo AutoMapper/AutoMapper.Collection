@@ -9,18 +9,18 @@ namespace AutoMapper.Collection.LinqToSQL
 {
     public class GetLinqToSQLPrimaryKeyProperties : IGeneratePropertyMaps
     {
-        private readonly IMapper _mapper;
-
-        public GetLinqToSQLPrimaryKeyProperties(IMapper mapper)
+        private readonly IConfigurationProvider _configurationProvider;
+        
+        public GetLinqToSQLPrimaryKeyProperties(IConfigurationProvider configurationProvider)
         {
-            _mapper = mapper;
+            if (configurationProvider == null)
+                throw new ArgumentNullException(nameof(configurationProvider));
+            _configurationProvider = configurationProvider;
         }
 
         public IEnumerable<PropertyMap> GeneratePropertyMaps(Type srcType, Type destType)
         {
-            var typeMap = _mapper == null
-                ? (Mapper.Configuration as IConfigurationProvider).ResolveTypeMap(srcType, destType)
-                : _mapper.ConfigurationProvider.ResolveTypeMap(srcType, destType);
+            var typeMap = _configurationProvider.ResolveTypeMap(srcType, destType);
             var propertyMaps = typeMap.GetPropertyMaps();
 
             var primaryKeyPropertyMatches = destType.GetProperties().Where(IsPrimaryKey).Select(m => propertyMaps.FirstOrDefault(p => p.DestinationProperty.Name == m.Name)).ToList();

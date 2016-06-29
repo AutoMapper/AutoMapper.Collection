@@ -1,14 +1,15 @@
+using System;
 using System.Linq.Expressions;
 
 namespace AutoMapper.EquivilencyExpression
 {
     public interface IEquivilentExpression
     {
-        bool IsEquivlent(object source, object destination);
+        
     }
-
-    public interface IToSingleSourceEquivalentExpression
+    public interface IEquivilentExpression<TSource, TDestination> : IEquivilentExpression
     {
-        Expression ToSingleSourceExpression(object destination);
+        bool IsEquivlent(TSource source, TDestination destination);
+        Expression<Func<TDestination, bool>> ToSingleSourceExpression(TSource destination);
     }
 }

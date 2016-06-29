@@ -10,7 +10,7 @@ namespace AutoMapper.Collection.LinqToSQL
         /// </summary>
         /// <param name="mapper">IMapper used to find TypeMap between classes</param>
         public GetLinqToSQLPrimaryKeyExpression(IMapper mapper)
-            : base(new GetLinqToSQLPrimaryKeyProperties(mapper))
+            : base(new GetLinqToSQLPrimaryKeyProperties(mapper.ConfigurationProvider))
         {
         }
 
@@ -18,9 +18,8 @@ namespace AutoMapper.Collection.LinqToSQL
         /// Generate EquivilencyExpressions based on LinqToSQL's primary key
         /// Uses static API's Mapper for finding TypeMap between classes
         /// </summary>
-        [Obsolete("Use version that passes instance of IMapper")]
         public GetLinqToSQLPrimaryKeyExpression()
-           : base(new GetLinqToSQLPrimaryKeyProperties(null))
+           : base(new GetLinqToSQLPrimaryKeyProperties(Mapper.Configuration))
         {
         }
     }

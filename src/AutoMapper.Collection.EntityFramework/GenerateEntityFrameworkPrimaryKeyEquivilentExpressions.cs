@@ -16,7 +16,7 @@ namespace AutoMapper.EntityFramework
         /// </summary>
         /// <param name="mapper">IMapper used to find TypeMap between classes</param>
         public GenerateEntityFrameworkPrimaryKeyEquivilentExpressions(IMapper mapper)
-            : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(mapper))
+            : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(mapper.ConfigurationProvider))
         {
         }
 
@@ -24,9 +24,8 @@ namespace AutoMapper.EntityFramework
         /// Generate EquivilencyExpressions based on EnityFramework's primary key
         /// Uses static API's Mapper for finding TypeMap between classes
         /// </summary>
-        [Obsolete("Use version that passes instance of IMapper")]
         public GenerateEntityFrameworkPrimaryKeyEquivilentExpressions()
-           : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(null))
+            : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(Mapper.Configuration))
         {
         }
     }

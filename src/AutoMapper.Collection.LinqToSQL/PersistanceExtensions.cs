@@ -15,11 +15,10 @@ namespace AutoMapper.Collection.LinqToSQL
         /// <typeparam name="TSource">Source table type to be updated</typeparam>
         /// <param name="source">Table to be updated</param>
         /// <returns>Persistance object to Update or Remove data</returns>
-        [Obsolete("Use version that passes instance of IMapper")]
         public static IPersistance Persist<TSource>(this Table<TSource> source)
             where TSource : class
         {
-            return new Persistance<TSource>(source, null);
+            return new Persistance<TSource>(source, Mapper.Instance);
         }
 
         /// <summary>
