@@ -1,5 +1,5 @@
 
-AutoMapper.Collections
+AutoMapper.Collection
 ================================
 Adds ability to map collections to existing collections without re-creating the collection object.
 
@@ -34,14 +34,14 @@ This automates the process by just specifying what is equal to each other.
 
 Can it just figure out the ID equivalency for me in EF?
 -------------------------------
-Automapper.Collections.EntityFramework can do that for you.
+Automapper.Collection.EntityFramework can do that for you.
 	
 	EquivilentExpressions.GenerateEquality.Add(new GenerateEntityFrameworkPrimaryKeyEquivilentExpressions<TDataContext>());
 User defined equality expressions will overwrite primary key expressions.
 
 What about comparing to a single existing Entity for updating?
 --------------------------------
-Automapper.Collections.EntityFramework does that as well through extension method from of DbSet<TEntity>.
+Automapper.Collection.EntityFramework does that as well through extension method from of DbSet<TEntity>.
 
 Translate equality between dto and EF object to an expression of just the EF using the dto's values as constants.
 
