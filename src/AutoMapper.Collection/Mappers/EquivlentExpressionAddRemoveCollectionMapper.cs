@@ -11,12 +11,12 @@ namespace AutoMapper.Mappers
     public class EquivlentExpressionAddRemoveCollectionMapper : IObjectMapper
     {
         private readonly CollectionMapper CollectionMapper = new CollectionMapper();
-        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context, Func<TDestination> ifNullFunc)
+        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context)
             where TSource : IEnumerable<TSourceItem>
             where TDestination : class, ICollection<TDestinationItem>
         {
             if (source == null || destination == null)
-                return ifNullFunc();
+                return destination;
 
             var equivilencyExpression = GetEquivilentExpression(new TypePair(typeof(TSource), typeof(TDestination))) as IEquivilentExpression<TSourceItem,TDestinationItem>;
             var compareSourceToDestination = source.ToDictionary(s => s, s => destination.FirstOrDefault(d => equivilencyExpression.IsEquivlent(s, d)));
@@ -48,16 +48,14 @@ namespace AutoMapper.Mappers
         public Expression MapExpression(TypeMapRegistry typeMapRegistry, IConfigurationProvider configurationProvider,
             PropertyMap propertyMap, Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
-            var collectionExpression = CollectionMapper.MapExpression(typeMapRegistry, configurationProvider, propertyMap, sourceExpression, destExpression, contextExpression);
-            var collectionFunc = Expression.Lambda(collectionExpression).Compile();
             return Expression.Call(null,
-                MapMethodInfo.MakeGenericMethod(sourceExpression.Type, TypeHelper.GetElementType(sourceExpression.Type), destExpression.Type, TypeHelper.GetElementType(destExpression.Type)),
-                    sourceExpression, destExpression, contextExpression, Expression.Constant(collectionFunc));
+                MapMethodInfo.MakeGenericMethod(sourceExpression.Type, Collection.TypeHelper.GetElementType(sourceExpression.Type), destExpression.Type, Collection.TypeHelper.GetElementType(destExpression.Type)),
+                    sourceExpression, destExpression, contextExpression);
         }
 
         private static IEquivilentExpression GetEquivilentExpression(TypePair typePair)
         {
-            return EquivilentExpressions.GetEquivilentExpression(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType));
+            return EquivilentExpressions.GetEquivilentExpression(Collection.TypeHelper.GetElementType(typePair.SourceType), Collection.TypeHelper.GetElementType(typePair.DestinationType));
         }
     }
 }

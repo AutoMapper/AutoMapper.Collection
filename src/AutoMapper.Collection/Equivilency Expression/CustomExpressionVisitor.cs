@@ -27,15 +27,15 @@ namespace AutoMapper.EquivilencyExpression
         {
             if (node.Member is PropertyInfo)
             {
-                var matchPM = _propertyMaps.FirstOrDefault(pm => pm.DestinationProperty.MemberInfo == node.Member);
+                var matchPM = _propertyMaps.FirstOrDefault(pm => pm.DestinationProperty == node.Member);
                 if (matchPM == null)
                     throw new Exception("No matching PropertyMap");
                 var memberGetters = matchPM.SourceMembers;
                 
-                var memberExpression = Expression.Property(Visit(node.Expression), memberGetters.First().MemberInfo as PropertyInfo);
+                var memberExpression = Expression.Property(Visit(node.Expression), memberGetters.First() as PropertyInfo);
 
                 foreach (var memberGetter in memberGetters.Skip(1))
-                    memberExpression = Expression.Property(memberExpression, memberGetter.MemberInfo as PropertyInfo);
+                    memberExpression = Expression.Property(memberExpression, memberGetter as PropertyInfo);
                 return memberExpression;
             }
             return base.VisitMember(node);
