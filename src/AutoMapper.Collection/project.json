@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0-*",
+  "version": "2.0.1-*",
   "authors": [ "Tyler Carlson" ],
   "description": "Collection updating support for AutoMapper.",
   "packOptions": {
@@ -10,7 +10,7 @@
   },
 
   "dependencies": {
-    "AutoMapper": "5.0.0"
+    "AutoMapper": "5.0.2",
   },
 
   "frameworks": {

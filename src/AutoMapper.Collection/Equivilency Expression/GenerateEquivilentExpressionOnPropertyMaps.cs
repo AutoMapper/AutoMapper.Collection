@@ -44,7 +44,7 @@ namespace AutoMapper.EquivilencyExpression
         private BinaryExpression SourceEqualsDestinationExpression(PropertyMap propertyMap, Expression srcExpr, Expression destExpr)
         {
             var srcPropExpr = Expression.Property(srcExpr, propertyMap.SourceMember as PropertyInfo);
-            var destPropExpr = Expression.Property(destExpr, propertyMap.DestinationProperty.MemberInfo as PropertyInfo);
+            var destPropExpr = Expression.Property(destExpr, propertyMap.DestinationProperty as PropertyInfo);
             return Expression.Equal(srcPropExpr, destPropExpr);
         }
     }
