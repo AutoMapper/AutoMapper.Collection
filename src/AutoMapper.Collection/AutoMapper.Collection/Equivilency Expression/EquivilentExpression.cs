@@ -24,10 +24,12 @@ namespace AutoMapper.EquivilencyExpression
         where TDestination : class
     {
         private readonly Expression<Func<TSource, TDestination, bool>> _equivilentExpression;
+        private readonly Func<TSource, TDestination, bool> _equivilentExpressionFunc;
 
         public EquivilentExpression(Expression<Func<TSource,TDestination,bool>> equivilentExpression)
         {
             _equivilentExpression = equivilentExpression;
+            _equivilentExpressionFunc = equivilentExpression.Compile();
         }
 
         public bool IsEquivlent(object source, object destination)
@@ -36,7 +38,7 @@ namespace AutoMapper.EquivilencyExpression
                 throw new EquivilentExpressionNotOfTypeException(source.GetType(), typeof(TSource));
             if (!(destination is TDestination))
                 throw new EquivilentExpressionNotOfTypeException(destination.GetType(), typeof(TDestination));
-            return _equivilentExpression.Compile()(source as TSource, destination as TDestination);
+            return _equivilentExpressionFunc(source as TSource, destination as TDestination);
         }
 
         public Expression ToSingleSourceExpression(object source)
