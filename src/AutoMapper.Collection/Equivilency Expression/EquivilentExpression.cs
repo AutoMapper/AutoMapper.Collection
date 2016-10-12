@@ -1,7 +1,7 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using AutoMapper.Execution;
+using AutoMapper.Collection;
 
 namespace AutoMapper.EquivilencyExpression
 {
@@ -61,7 +61,7 @@ namespace AutoMapper.EquivilencyExpression
         {
             if (node.Member is PropertyInfo && node.Member.DeclaringType.GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo()))
             {
-                var memberExpression = Expression.Constant(node.Member.ToMemberGetter().GetValue(_value));
+                var memberExpression = Expression.Constant(node.Member.GetMemberValue(_value));
                 return memberExpression;
             }
             return base.VisitMember(node);

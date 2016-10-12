@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using AutoMapper.Execution;
 
 namespace AutoMapper.EquivilencyExpression
 {
@@ -17,7 +18,7 @@ namespace AutoMapper.EquivilencyExpression
 
         public bool CanGenerateEquivilentExpression(Type sourceType, Type destinationType)
         {
-            return _propertyMaps.Any(p => p.SourceMember.DeclaringType == sourceType && p.DestinationProperty.MemberType == destinationType);
+            return _propertyMaps.Any(p => p.SourceMember.DeclaringType == sourceType && p.DestinationProperty.GetMemberType() == destinationType);
         }
 
         public IEquivilentExpression GeneratEquivilentExpression(Type sourceType, Type destinationType)
