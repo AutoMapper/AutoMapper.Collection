@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper.Collection;
 using AutoMapper.EquivilencyExpression;
+using static System.Linq.Expressions.Expression;
 
 namespace AutoMapper.Mappers
 {
@@ -35,7 +36,6 @@ namespace AutoMapper.Mappers
         }
 
         private static readonly MethodInfo MapMethodInfo = typeof(EquivlentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().First(_ => _.IsStatic);
-        
 
         public bool IsMatch(TypePair typePair)
         {
@@ -47,14 +47,18 @@ namespace AutoMapper.Mappers
         public Expression MapExpression(TypeMapRegistry typeMapRegistry, IConfigurationProvider configurationProvider,
             PropertyMap propertyMap, Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
-            return Expression.Call(null,
-                MapMethodInfo.MakeGenericMethod(sourceExpression.Type, Collection.TypeHelper.GetElementType(sourceExpression.Type), destExpression.Type, Collection.TypeHelper.GetElementType(destExpression.Type)),
+            var notNull = NotEqual(destExpression, Constant(null));
+            var map = Call(null,
+                MapMethodInfo.MakeGenericMethod(sourceExpression.Type, TypeHelper.GetElementType(sourceExpression.Type), destExpression.Type, TypeHelper.GetElementType(destExpression.Type)),
                     sourceExpression, destExpression, contextExpression);
+            var collectionMap = CollectionMapper.MapExpression(typeMapRegistry, configurationProvider, propertyMap, sourceExpression, destExpression, contextExpression);
+
+            return Condition(notNull, map, collectionMap);
         }
 
         private static IEquivilentExpression GetEquivilentExpression(TypePair typePair)
         {
-            return EquivilentExpressions.GetEquivilentExpression(Collection.TypeHelper.GetElementType(typePair.SourceType), Collection.TypeHelper.GetElementType(typePair.DestinationType));
+            return EquivilentExpressions.GetEquivilentExpression(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType));
         }
     }
 }
