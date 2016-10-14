@@ -16,6 +16,7 @@
   "frameworks": {
     "net45": {
       "dependencies": {
+        "Fixie": "1.0.2"
       }
     },
     "netstandard1.1": {
