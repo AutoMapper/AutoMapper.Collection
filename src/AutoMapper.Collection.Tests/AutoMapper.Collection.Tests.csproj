@@ -7,7 +7,7 @@
     <ProjectGuid>{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AutoMapper.Collection.Tests</RootNamespace>
+    <RootNamespace>AutoMapper.Collection</RootNamespace>
     <AssemblyName>AutoMapper.Collection.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -58,8 +58,6 @@
   <ItemGroup>
     <Compile Include="MapCollectionWithEquality.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Thing.cs" />
-    <Compile Include="ThingDto.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
