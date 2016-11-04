@@ -20,9 +20,13 @@ namespace AutoMapper.EntityFramework
         public void InsertOrUpdate<TFrom>(TFrom from)
             where TFrom : class
         {
+            InsertOrUpdate(typeof(TFrom), from);
+        }
+        public void InsertOrUpdate(Type type, object from)
+        {
             var equivExpr = _mapper == null
-                ? Mapper.Map<TFrom, Expression<Func<TTo, bool>>>(from)
-                : _mapper.Map<TFrom, Expression<Func<TTo, bool>>>(from);
+                ? Mapper.Map(from, type, typeof(Expression<Func<TTo, bool>>)) as Expression<Func<TTo, bool>>
+                : _mapper.Map(from, type, typeof(Expression<Func<TTo, bool>>)) as Expression<Func<TTo, bool>>;
             if (equivExpr == null)
                 return;
 

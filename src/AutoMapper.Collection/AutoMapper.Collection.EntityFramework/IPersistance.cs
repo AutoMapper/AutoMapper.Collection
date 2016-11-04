@@ -1,4 +1,6 @@
-﻿namespace AutoMapper.EntityFramework
+﻿using System;
+
+namespace AutoMapper.EntityFramework
 {
     public interface IPersistance
     {
@@ -9,6 +11,8 @@
         /// <typeparam name="TFrom">Source Type mapping from</typeparam>
         /// <param name="from">Object to update to <see cref="T:System.Data.Entity.DbSet`1"/></param>
         void InsertOrUpdate<TFrom>(TFrom from) where TFrom : class;
+
+        void InsertOrUpdate(Type type, object from);
         /// <summary>
         /// Remove from <see cref="T:System.Data.Entity.DbSet`1"/> with <paramref name="from"/>
         /// </summary>
