@@ -22,7 +22,16 @@ namespace AutoMapper.Mappers
             var compareSourceToDestination = source.ToDictionary(s => s, s => destination.FirstOrDefault(d => equivilencyExpression.IsEquivlent(s, d)));
 
             foreach (var removedItem in destination.Except(compareSourceToDestination.Values).ToList())
-                destination.Remove(removedItem);
+            {
+                if (equivilencyExpression.IsSoftDelete())
+                {
+                    equivilencyExpression.SetSoftDeleteValue(removedItem, true);
+                }
+                else
+                {
+                    destination.Remove(removedItem);
+                }
+            }
 
             foreach (var keypair in compareSourceToDestination)
             {

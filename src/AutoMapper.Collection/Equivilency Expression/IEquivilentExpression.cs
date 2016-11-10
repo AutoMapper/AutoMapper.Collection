@@ -11,5 +11,7 @@ namespace AutoMapper.EquivilencyExpression
     {
         bool IsEquivlent(TSource source, TDestination destination);
         Expression<Func<TDestination, bool>> ToSingleSourceExpression(TSource destination);
+        bool IsSoftDelete();
+        void SetSoftDeleteValue(TDestination detination, bool value);
     }
 }

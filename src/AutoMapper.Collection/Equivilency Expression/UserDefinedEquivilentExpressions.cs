@@ -37,5 +37,13 @@ namespace AutoMapper.EquivilencyExpression
             var destinationDictionary = _equivilentExpressionDictionary.GetOrAdd(typeof(TDestination), t => new ConcurrentDictionary<Type, IEquivilentExpression>());
             destinationDictionary.AddOrUpdate(typeof(TSource), new EquivilentExpression<TSource, TDestination>(equivilentExpression), (type, old) => new EquivilentExpression<TSource, TDestination>(equivilentExpression));
         }
+
+        internal void AddEquivilencyExpression<TSource, TDestination>(Expression<Func<TSource, TDestination, bool>> equivilentExpression, Action<TDestination, bool> softDeleteAction)
+            where TSource : class
+            where TDestination : class
+        {
+            var destinationDictionary = _equivilentExpressionDictionary.GetOrAdd(typeof(TDestination), t => new ConcurrentDictionary<Type, IEquivilentExpression>());
+            destinationDictionary.AddOrUpdate(typeof(TSource), new EquivilentExpression<TSource, TDestination>(equivilentExpression, softDeleteAction), (type, old) => new EquivilentExpression<TSource, TDestination>(equivilentExpression, softDeleteAction));
+        }
     }
 }

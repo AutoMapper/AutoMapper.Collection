@@ -20,17 +20,29 @@ namespace AutoMapper.EquivilencyExpression
         where TDestination : class
     {
         private readonly Expression<Func<TSource, TDestination, bool>> _equivilentExpression;
-        private readonly Func<TSource, TDestination, bool> _equivilentFunc; 
+        private readonly Func<TSource, TDestination, bool> _equivilentFunc;
+        private readonly Action<TDestination, bool> _softDeleteAction;
 
-        public EquivilentExpression(Expression<Func<TSource,TDestination,bool>> equivilentExpression)
+        public EquivilentExpression(Expression<Func<TSource,TDestination,bool>> equivilentExpression, Action<TDestination, bool> softDeleteAction = null)
         {
             _equivilentExpression = equivilentExpression;
             _equivilentFunc = _equivilentExpression.Compile();
+            _softDeleteAction = softDeleteAction;
         }
 
         public bool IsEquivlent(TSource source, TDestination destination)
         {
             return _equivilentFunc(source, destination);
+        }
+
+        public bool IsSoftDelete()
+        {
+            return _softDeleteAction != null;
+        }
+
+        public void SetSoftDeleteValue(TDestination detination, bool value)
+        {
+            _softDeleteAction(detination, value);
         }
 
         public Expression<Func<TDestination, bool>> ToSingleSourceExpression(TSource source)

@@ -15,6 +15,7 @@ namespace AutoMapper.Collection
             {
                 x.AddProfile<CollectionProfile>();
                 x.CreateMap<ThingDto, Thing>().EqualityComparision((dto, entity) => dto.ID == entity.ID);
+                x.CreateMap<AnotherThingDto, AnotherThing>().EqualityComparision((dto, entity) => dto.ID == entity.ID, (entity,isdeleted) => entity.IsDeleted = true);
             });
         }
 
@@ -63,6 +64,26 @@ namespace AutoMapper.Collection
             Mapper.Map<List<Thing>>(dtos).Should().HaveSameCount(dtos);
         }
 
+        public void Should_Update_IsDeleted_From_Removed_Item()
+        {
+            var dtos = new List<AnotherThingDto>
+            {
+                new AnotherThingDto { ID = 1, Title = "test0" },
+                new AnotherThingDto { ID = 2, Title = "test2" }
+            };
+
+            var items = new List<AnotherThing>
+            {
+                new AnotherThing { ID = 1, Title = "test1", IsDeleted = false },
+                new AnotherThing { ID = 3, Title = "test3", IsDeleted = false },
+            };
+
+            Mapper.Map(dtos, items).Should().HaveElementAt(0, items.First()).And.HaveCount(3);
+            items[0].IsDeleted.Should().BeFalse();
+            items[1].IsDeleted.Should().BeTrue();
+            items[2].IsDeleted.Should().BeFalse();
+        }
+
         public class Thing
         {
             public int ID { get; set; }
@@ -71,6 +92,20 @@ namespace AutoMapper.Collection
         }
 
         public class ThingDto
+        {
+            public int ID { get; set; }
+            public string Title { get; set; }
+        }
+
+        public class AnotherThing
+        {
+            public int ID { get; set; }
+            public string Title { get; set; }
+            public bool IsDeleted { get; set; }
+            public override string ToString() { return Title; }
+        }
+
+        public class AnotherThingDto
         {
             public int ID { get; set; }
             public string Title { get; set; }
