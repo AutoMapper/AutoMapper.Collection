@@ -15,7 +15,7 @@ namespace AutoMapper.Collection
             {
                 x.AddProfile<CollectionProfile>();
                 x.CreateMap<ThingDto, Thing>().EqualityComparision((dto, entity) => dto.ID == entity.ID);
-                x.CreateMap<AnotherThingDto, AnotherThing>().EqualityComparision((dto, entity) => dto.ID == entity.ID, (entity,isdeleted) => entity.IsDeleted = true);
+                x.CreateMap<AnotherThingDto, AnotherThing>().EqualityComparision((dto, entity) => dto.ID == entity.ID, entity => entity.IsDeleted = true);
             });
         }
 

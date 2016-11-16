@@ -7,11 +7,17 @@ namespace AutoMapper.EquivilencyExpression
     {
         
     }
+
+    public interface IEquivilentSoftDeleteExpression { }
+
     public interface IEquivilentExpression<TSource, TDestination> : IEquivilentExpression
     {
         bool IsEquivlent(TSource source, TDestination destination);
         Expression<Func<TDestination, bool>> ToSingleSourceExpression(TSource destination);
-        bool IsSoftDelete();
-        void SetSoftDeleteValue(TDestination detination, bool value);
+    }
+
+    public interface IEquivilentSoftDeleteExpression<TSource, TDestination> : IEquivilentExpression<TSource, TDestination>, IEquivilentSoftDeleteExpression
+    {
+        void SetSoftDeleteValue(TDestination detination);
     }
 }

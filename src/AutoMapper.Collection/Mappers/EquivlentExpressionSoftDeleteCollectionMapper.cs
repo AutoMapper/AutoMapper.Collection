@@ -8,9 +8,10 @@ using static System.Linq.Expressions.Expression;
 
 namespace AutoMapper.Mappers
 {
-    public class EquivlentExpressionAddRemoveCollectionMapper : IObjectMapper
+    public class EquivlentExpressionSoftDeleteCollectionMapper : IObjectMapper
     {
         private readonly CollectionMapper CollectionMapper = new CollectionMapper();
+
         public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context)
             where TSource : IEnumerable<TSourceItem>
             where TDestination : class, ICollection<TDestinationItem>
@@ -18,11 +19,11 @@ namespace AutoMapper.Mappers
             if (source == null || destination == null)
                 return destination;
 
-            var equivilencyExpression = GetEquivilentExpression(new TypePair(typeof(TSource), typeof(TDestination))) as IEquivilentExpression<TSourceItem,TDestinationItem>;
+            var equivilencyExpression = GetEquivilentExpression(new TypePair(typeof(TSource), typeof(TDestination))) as IEquivilentSoftDeleteExpression<TSourceItem,TDestinationItem>;
             var compareSourceToDestination = source.ToDictionary(s => s, s => destination.FirstOrDefault(d => equivilencyExpression.IsEquivlent(s, d)));
 
             foreach (var removedItem in destination.Except(compareSourceToDestination.Values).ToList())
-                destination.Remove(removedItem);
+                equivilencyExpression.SetSoftDeleteValue(removedItem);
 
             foreach (var keypair in compareSourceToDestination)
             {
@@ -35,13 +36,13 @@ namespace AutoMapper.Mappers
             return destination;
         }
 
-        private static readonly MethodInfo MapMethodInfo = typeof(EquivlentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().First(_ => _.IsStatic);
+        private static readonly MethodInfo MapMethodInfo = typeof(EquivlentExpressionSoftDeleteCollectionMapper).GetRuntimeMethods().First(_ => _.Name.Equals(nameof(Map)) && _.IsStatic);
 
         public bool IsMatch(TypePair typePair)
         {
             return typePair.SourceType.IsEnumerableType()
                    && typePair.DestinationType.IsCollectionType()
-                   && GetEquivilentExpression(typePair) != null;
+                   && GetEquivilentExpression(typePair) is IEquivilentSoftDeleteExpression;
         }
 
         public Expression MapExpression(TypeMapRegistry typeMapRegistry, IConfigurationProvider configurationProvider,
