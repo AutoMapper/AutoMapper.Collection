@@ -7,9 +7,13 @@ Will Add/Update/Delete items from a preexisting collection object based on user 
 
 How to add to AutoMapper?
 --------------------------------
-Add CollectionProfile to AutoMapper.
+Add Collection Mappers to Mappers list
 
-	Mapper.AddProfile<CollectionProfile>();
+	Mapper.Initialize(cfg =>
+            {
+                cfg.Mappers.AddCollectionMappers();
+				// Configuration code
+            });
 Will add new IObjectMapper objects into the master mapping list.
 
 Adding equivalency between two classes
