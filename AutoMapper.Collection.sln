@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.Net45", "src\AutoMapper.Collection.Net45\AutoMapper.Collection.Net45.csproj", "{19F40E9C-A4E2-4B89-A115-C6DC953E5BF5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.EntityFramework.Net45", "src\AutoMapper.Collection.EntityFramework.Net45\AutoMapper.Collection.EntityFramework.Net45.csproj", "{D1CC7DD3-9E10-4FB3-8485-C1500E98DBB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.EntityFramework.Tests", "src\AutoMapper.Collection.EntityFramework.Tests\AutoMapper.Collection.EntityFramework.Tests.csproj", "{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +59,14 @@ Global
 		{19F40E9C-A4E2-4B89-A115-C6DC953E5BF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19F40E9C-A4E2-4B89-A115-C6DC953E5BF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19F40E9C-A4E2-4B89-A115-C6DC953E5BF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1CC7DD3-9E10-4FB3-8485-C1500E98DBB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1CC7DD3-9E10-4FB3-8485-C1500E98DBB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1CC7DD3-9E10-4FB3-8485-C1500E98DBB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1CC7DD3-9E10-4FB3-8485-C1500E98DBB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

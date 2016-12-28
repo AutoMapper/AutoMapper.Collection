@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Entity.Infrastructure;
+﻿using System.Data.Entity.Infrastructure;
 using AutoMapper.EquivilencyExpression;
 
 namespace AutoMapper.EntityFramework
@@ -14,9 +13,9 @@ namespace AutoMapper.EntityFramework
         /// <summary>
         /// Generate EquivilencyExpressions based on EnityFramework's primary key
         /// </summary>
-        /// <param name="mapper">IMapper used to find TypeMap between classes</param>
-        public GenerateEntityFrameworkPrimaryKeyEquivilentExpressions(IMapper mapper)
-            : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(mapper.ConfigurationProvider))
+        /// <param name="mapper">IConfigurationProvider used to find TypeMap between classes</param>
+        public GenerateEntityFrameworkPrimaryKeyEquivilentExpressions(IConfigurationProvider configurationProvider)
+            : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(configurationProvider))
         {
         }
 

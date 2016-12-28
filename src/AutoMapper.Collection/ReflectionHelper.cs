@@ -19,5 +19,16 @@ namespace AutoMapper.Collection
         private static ArgumentOutOfRangeException Expected(MemberInfo propertyOrField)
             => new ArgumentOutOfRangeException("propertyOrField",
                 "Expected a property or field, not " + propertyOrField);
+
+        public static Type GetMemberType(this MemberInfo memberInfo)
+        {
+            if (memberInfo is MethodInfo)
+                return ((MethodInfo)memberInfo).ReturnType;
+            if (memberInfo is PropertyInfo)
+                return ((PropertyInfo)memberInfo).PropertyType;
+            if (memberInfo is FieldInfo)
+                return ((FieldInfo)memberInfo).FieldType;
+            return null;
+        }
     }
 }

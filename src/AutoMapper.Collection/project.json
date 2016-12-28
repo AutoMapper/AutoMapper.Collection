@@ -10,7 +10,7 @@
   },
 
   "dependencies": {
-    "AutoMapper": "5.1.1"
+    "AutoMapper": "5.2.0"
   },
 
   "frameworks": {

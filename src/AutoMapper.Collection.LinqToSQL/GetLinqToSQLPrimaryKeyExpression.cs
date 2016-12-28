@@ -8,9 +8,9 @@ namespace AutoMapper.Collection.LinqToSQL
         /// <summary>
         /// Generate EquivilencyExpressions based on LinqToSQL's primary key
         /// </summary>
-        /// <param name="mapper">IMapper used to find TypeMap between classes</param>
-        public GetLinqToSQLPrimaryKeyExpression(IMapper mapper)
-            : base(new GetLinqToSQLPrimaryKeyProperties(mapper.ConfigurationProvider))
+        /// <param name="mapper">IConfigurationProvider used to find TypeMap between classes</param>
+        public GetLinqToSQLPrimaryKeyExpression(IConfigurationProvider configurationProvider)
+            : base(new GetLinqToSQLPrimaryKeyProperties(configurationProvider))
         {
         }
 
