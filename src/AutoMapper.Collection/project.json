@@ -1,5 +1,5 @@
 {
-  "version": "2.1.1-*",
+  "version": "3.0.0-*",
   "authors": [ "Tyler Carlson" ],
   "description": "Collection updating support for AutoMapper.",
   "packOptions": {

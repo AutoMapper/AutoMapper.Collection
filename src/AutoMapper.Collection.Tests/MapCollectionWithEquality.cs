@@ -47,7 +47,7 @@ namespace AutoMapper.Collection
                 new Thing { ID = 3, Title = "test3" },
             };
 
-            Mapper.Map(dtos, items).Should().HaveElementAt(0, items.First());
+            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         public void Should_Work_With_Null_Destination()
