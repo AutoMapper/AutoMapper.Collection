@@ -44,50 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AutoMapper.Collection\CollectionMapperExtensions.cs">
-      <Link>CollectionMapperExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\Equivilency Expression\CustomExpressionVisitor.cs">
-      <Link>Equivilency Expression\CustomExpressionVisitor.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\Equivilency Expression\EquivilentExpression.cs">
-      <Link>Equivilency Expression\EquivilentExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\Equivilency Expression\EquivilentExpressions.cs">
-      <Link>Equivilency Expression\EquivilentExpressions.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\Equivilency Expression\ExpressionExtentions.cs">
-      <Link>Equivilency Expression\ExpressionExtentions.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\Equivilency Expression\GenerateEquivilentExpressionFromTypeMap.cs">
-      <Link>Equivilency Expression\GenerateEquivilentExpressionFromTypeMap.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\Equivilency Expression\GenerateEquivilentExpressionOnPropertyMaps.cs">
-      <Link>Equivilency Expression\GenerateEquivilentExpressionOnPropertyMaps.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\Equivilency Expression\IEquivilentExpression.cs">
-      <Link>Equivilency Expression\IEquivilentExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\Equivilency Expression\IGeneratePropertyMaps.cs">
-      <Link>Equivilency Expression\IGeneratePropertyMaps.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\Mappers\EquivlentExpressionAddRemoveCollectionMapper.cs">
-      <Link>Mappers\EquivlentExpressionAddRemoveCollectionMapper.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\Mappers\ObjectToEquivalencyExpressionByEquivalencyExistingMapper.cs">
-      <Link>Mappers\ObjectToEquivalencyExpressionByEquivalencyExistingMapper.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\PrimitiveExtensions.cs">
-      <Link>PrimitiveExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\ReflectionHelper.cs">
-      <Link>ReflectionHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\TypeExtensions.cs">
-      <Link>TypeExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\AutoMapper.Collection\TypeHelper.cs">
-      <Link>TypeHelper.cs</Link>
+    <Compile Include="..\AutoMapper.Collection\**\*.cs" Exclude="..\AutoMapper.Collection\obj\debug\netstandard1.1\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\debug\netstandard1.3\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\debug\net45\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\debug\portable45-net45+win8+wpa81\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\netstandard1.1\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\netstandard1.3\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\net45\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\portable45-net45+win8+wpa81\dotnet-compile.assemblyinfo.cs">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

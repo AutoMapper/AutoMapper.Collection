@@ -13,20 +13,10 @@ namespace AutoMapper.Collection.EntityFramework.Tests
         {
             Mapper.Initialize(x =>
             {
-                x.Mappers.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>();
+                x.AddCollectionMappers();
+                x.CreateMap<ThingDto, Thing>().ReverseMap();
                 x.SetGeneratePropertyMaps<GenerateEntityFrameworkPrimaryKeyPropertyMaps<DB>>();
             });
-        }
-
-        public class DB : DbContext
-        {
-            static DB()
-            {
-                Database.SetInitializer<DB>(null);
-            }
-
-            public DbSet<Thing> Things { get; set; }
         }
 
         public void Should_Keep_Existing_List()
@@ -60,7 +50,8 @@ namespace AutoMapper.Collection.EntityFramework.Tests
                 new Thing { ID = 3, Title = "test3" },
             };
 
-            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            var cache = items.ToList();
+            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, cache.First());
         }
 
         public void Should_Work_With_Null_Destination()
@@ -72,6 +63,23 @@ namespace AutoMapper.Collection.EntityFramework.Tests
             };
 
             Mapper.Map<List<Thing>>(dtos).Should().HaveSameCount(dtos);
+        }
+        
+        //public void Should_Persist_To_Update()
+        //{
+        //    var db = new DB();
+        //    db.Things.Persist().InsertOrUpdate(new ThingDto {Title = "Test"});
+        //    db.Things.First().Title.Should().Be("Test");
+        //}
+
+        public class DB : DbContext
+        {
+            static DB()
+            {
+                Database.SetInitializer<DB>(null);
+            }
+
+            public DbSet<Thing> Things { get; set; }
         }
 
         public class Thing

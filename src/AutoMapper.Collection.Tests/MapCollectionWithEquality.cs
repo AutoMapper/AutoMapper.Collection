@@ -11,7 +11,7 @@ namespace AutoMapper.Collection
         {
             Mapper.Initialize(x =>
             {
-                x.Mappers.AddCollectionMappers();
+                x.AddCollectionMappers();
                 x.CreateMap<ThingDto, Thing>().EqualityComparision((dto, entity) => dto.ID == entity.ID);
             });
         }

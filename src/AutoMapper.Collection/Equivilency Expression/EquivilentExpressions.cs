@@ -1,21 +1,55 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using AutoMapper.Mappers;
 
 namespace AutoMapper.EquivilencyExpression
 {
     public static class EquivilentExpressions
     {
-        private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<Type, IEquivilentExpression>> _equivilentExpressionDictionary = new ConcurrentDictionary<Type, ConcurrentDictionary<Type, IEquivilentExpression>>();
-        
+        private static readonly ConcurrentDictionary<TypePair, IEquivilentExpression> _equivilentExpressionDictionary = new ConcurrentDictionary<TypePair, IEquivilentExpression>();
+        private static readonly IList<IGeneratePropertyMaps> GeneratePropertyMaps = new List<IGeneratePropertyMaps>();
+
+        private static IConfigurationProvider ConfigurationProvider { get; set; }
+
+        public static void AddCollectionMappers(this IMapperConfigurationExpression cfg)
+        {
+            cfg.Advanced.BeforeSeal = c => ConfigurationProvider = c;
+            cfg.Mappers.InsertBefore<ReadOnlyCollectionMapper>(
+                new ObjectToEquivalencyExpressionByEquivalencyExistingMapper(),
+                new EquivlentExpressionAddRemoveCollectionMapper());
+        }
+
+        private static void InsertBefore<TObjectMapper>(this IList<IObjectMapper> mappers, params IObjectMapper[] adds)
+            where TObjectMapper : IObjectMapper
+        {
+            var targetMapper = mappers.FirstOrDefault(om => om is TObjectMapper);
+            var index = targetMapper == null ? 0 : mappers.IndexOf(targetMapper);
+            foreach (var mapper in adds.Reverse())
+                mappers.Insert(index, mapper);
+        }
+
+        public static Type GetMemberType(this MemberInfo memberInfo)
+        {
+            if (memberInfo is MethodInfo)
+                return ((MethodInfo)memberInfo).ReturnType;
+            if (memberInfo is PropertyInfo)
+                return ((PropertyInfo)memberInfo).PropertyType;
+            if (memberInfo is FieldInfo)
+                return ((FieldInfo)memberInfo).FieldType;
+            return null;
+        }
+
         internal static IEquivilentExpression GetEquivilentExpression(Type sourceType, Type destinationType)
         {
-            ConcurrentDictionary<Type, IEquivilentExpression> destMap;
-            IEquivilentExpression srcExpression;
-            if (_equivilentExpressionDictionary.TryGetValue(destinationType, out destMap) && destMap.TryGetValue(sourceType, out srcExpression))
-                return srcExpression;
-            return null;
+            var typePair = new TypePair(sourceType, destinationType);
+            var typeMap = ConfigurationProvider.ResolveTypeMap(typePair);
+            return _equivilentExpressionDictionary.GetOrAdd(typePair,
+                tp =>
+                    GeneratePropertyMaps.Select(_ =>_.GeneratePropertyMaps(typeMap).CreateEquivilentExpression()).FirstOrDefault(_ => _ != null));
         }
 
         /// <summary>
@@ -30,8 +64,10 @@ namespace AutoMapper.EquivilencyExpression
             where TSource : class 
             where TDestination : class
         {
-            var destinationDictionary = _equivilentExpressionDictionary.GetOrAdd(typeof(TDestination), t => new ConcurrentDictionary<Type, IEquivilentExpression>());
-            destinationDictionary.AddOrUpdate(typeof(TSource), new EquivilentExpression<TSource, TDestination>(equivilentExpression), (type, old) => new EquivilentExpression<TSource, TDestination>(equivilentExpression));
+            var typePair = new TypePair(typeof(TSource), typeof(TDestination));
+            _equivilentExpressionDictionary.AddOrUpdate(typePair,
+                new EquivilentExpression<TSource, TDestination>(equivilentExpression),
+                (type, old) => new EquivilentExpression<TSource, TDestination>(equivilentExpression));
             return mappingExpression;
         }
 
@@ -43,16 +79,35 @@ namespace AutoMapper.EquivilencyExpression
 
         public static void SetGeneratePropertyMaps(this IMapperConfigurationExpression cfg, IGeneratePropertyMaps generatePropertyMaps)
         {
-            cfg.ForAllMaps((tm, expression) =>
-            {
-                var pms = generatePropertyMaps.GeneratePropertyMaps(tm);
-                if (pms.Any())
-                {
-                    var equiv = new GenerateEquivilentExpressionOnPropertyMaps(pms).GeneratEquivilentExpression(tm.SourceType, tm.DestinationType);
-                    var destinationDictionary = _equivilentExpressionDictionary.GetOrAdd(tm.DestinationType, t => new ConcurrentDictionary<Type, IEquivilentExpression>());
-                    destinationDictionary.AddOrUpdate(tm.SourceType, equiv, (type, old) => equiv);
-                }
-            });
+            GeneratePropertyMaps.Add(generatePropertyMaps);
+        }
+        
+        private static IEquivilentExpression CreateEquivilentExpression(this IEnumerable<PropertyMap> propertyMaps)
+        {
+            if (!propertyMaps.Any())
+                return null;
+            var typeMap = propertyMaps.First().TypeMap;
+            var srcType = typeMap.SourceType;
+            var destType = typeMap.DestinationType;
+            var srcExpr = Expression.Parameter(srcType, "src");
+            var destExpr = Expression.Parameter(destType, "dest");
+
+            var equalExpr = propertyMaps.Select(pm => SourceEqualsDestinationExpression(pm, srcExpr, destExpr)).ToList();
+            if (!equalExpr.Any())
+                return EquivilentExpression.BadValue;
+            var finalExpression = equalExpr.Skip(1).Aggregate(equalExpr.First(), Expression.And);
+
+            var expr = Expression.Lambda(finalExpression, srcExpr, destExpr);
+            var genericExpressionType = typeof(EquivilentExpression<,>).MakeGenericType(srcType, destType);
+            var equivilientExpression = Activator.CreateInstance(genericExpressionType, expr) as IEquivilentExpression;
+            return equivilientExpression;
+        }
+
+        private static BinaryExpression SourceEqualsDestinationExpression(PropertyMap propertyMap, Expression srcExpr, Expression destExpr)
+        {
+            var srcPropExpr = Expression.Property(srcExpr, propertyMap.SourceMember as PropertyInfo);
+            var destPropExpr = Expression.Property(destExpr, propertyMap.DestinationProperty as PropertyInfo);
+            return Expression.Equal(srcPropExpr, destPropExpr);
         }
     }
 }

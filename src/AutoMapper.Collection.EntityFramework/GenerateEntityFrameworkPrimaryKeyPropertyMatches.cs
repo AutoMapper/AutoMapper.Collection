@@ -18,13 +18,20 @@ namespace AutoMapper.EntityFramework
         public IEnumerable<PropertyMap> GeneratePropertyMaps(TypeMap typeMap)
         {
             var propertyMaps = typeMap.GetPropertyMaps();
-            var createObjectSetMethod = _createObjectSetMethodInfo.MakeGenericMethod(typeMap.DestinationType);
-            dynamic objectSet = createObjectSetMethod.Invoke(_context.ObjectContext, null);
+            try
+            {
+                var createObjectSetMethod = _createObjectSetMethodInfo.MakeGenericMethod(typeMap.DestinationType);
+                dynamic objectSet = createObjectSetMethod.Invoke(_context.ObjectContext, null);
 
-            IEnumerable<EdmMember> keyMembers = objectSet.EntitySet.ElementType.KeyMembers;
-            var primaryKeyPropertyMatches = keyMembers.Select(m => propertyMaps.FirstOrDefault(p => p.DestinationProperty.Name == m.Name));
+                IEnumerable<EdmMember> keyMembers = objectSet.EntitySet.ElementType.KeyMembers;
+                var primaryKeyPropertyMatches = keyMembers.Select(m => propertyMaps.FirstOrDefault(p => p.DestinationProperty.Name == m.Name));
 
-            return primaryKeyPropertyMatches;
+                return primaryKeyPropertyMatches;
+            }
+            catch (Exception ex)
+            {
+                return Enumerable.Empty<PropertyMap>();
+            }
         }
     }
 }
