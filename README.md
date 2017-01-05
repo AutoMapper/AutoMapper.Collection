@@ -1,3 +1,4 @@
+<img src="https://s3.amazonaws.com/automapper/logo.png" alt="AutoMapper"> 
 
 AutoMapper.Collection
 ================================
