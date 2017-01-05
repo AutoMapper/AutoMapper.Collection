@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using AutoMapper.EntityFramework;
@@ -64,11 +65,35 @@ namespace AutoMapper.Collection.EntityFramework.Tests
 
             Mapper.Map<List<Thing>>(dtos).Should().HaveSameCount(dtos);
         }
-        
+
+        public void Should_Be_Instanced_Based()
+        {
+            Mapper.Initialize(x =>
+            {
+                x.AddCollectionMappers();
+                x.CreateMap<ThingDto, Thing>().ReverseMap();
+            });
+
+            var dtos = new List<ThingDto>
+            {
+                new ThingDto { ID = 1, Title = "test0" },
+                new ThingDto { ID = 2, Title = "test2" }
+            };
+
+            var items = new List<Thing>
+            {
+                new Thing { ID = 1, Title = "test1" },
+                new Thing { ID = 3, Title = "test3" },
+            };
+
+            var cache = items.ToList();
+            Mapper.Map(dtos, items.ToList()).Should().NotContain(cache.First());
+        }
+
         //public void Should_Persist_To_Update()
         //{
         //    var db = new DB();
-        //    db.Things.Persist().InsertOrUpdate(new ThingDto {Title = "Test"});
+        //    db.Things.Persist().InsertOrUpdate(new ThingDto { Title = "Test" });
         //    db.Things.First().Title.Should().Be("Test");
         //}
 
