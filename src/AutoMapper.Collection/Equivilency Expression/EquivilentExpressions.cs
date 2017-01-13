@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using AutoMapper.Collection;
 using AutoMapper.Mappers;
 
 namespace AutoMapper.EquivilencyExpression
@@ -93,7 +94,7 @@ namespace AutoMapper.EquivilencyExpression
         
         private static IEquivilentExpression CreateEquivilentExpression(this IEnumerable<PropertyMap> propertyMaps)
         {
-            if (!propertyMaps.Any())
+            if (!propertyMaps.Any() || propertyMaps.All(pm => pm.DestinationProperty == pm.SourceMember.GetMemberType()))
                 return null;
             var typeMap = propertyMaps.First().TypeMap;
             var srcType = typeMap.SourceType;
