@@ -11,6 +11,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{578F2483-CF08-409D-A316-31BCB7C5D9D0}"
 	ProjectSection(SolutionItems) = preProject
 		global.json = global.json
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapper.Collection", "src\AutoMapper.Collection\AutoMapper.Collection.xproj", "{37AD667A-8080-476C-88FD-20310AC7CAF3}"
