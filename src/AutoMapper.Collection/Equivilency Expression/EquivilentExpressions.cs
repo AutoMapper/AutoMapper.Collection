@@ -36,7 +36,7 @@ namespace AutoMapper.EquivilencyExpression
             var index = targetMapper == null ? 0 : mappers.IndexOf(targetMapper);
             foreach (var mapper in adds.Reverse())
                 mappers.Insert(index, mapper);
-            cfg.Advanced.BeforeSeal = c =>
+            cfg.Advanced.BeforeSeal(c =>
             {
                 foreach (var configurationObjectMapper in adds)
                     configurationObjectMapper.ConfigurationProvider = c;
@@ -46,7 +46,7 @@ namespace AutoMapper.EquivilencyExpression
 
                 GeneratePropertyMapsDictionary.Add(c, _generatePropertyMapsCache);
                 _generatePropertyMapsCache = new List<IGeneratePropertyMaps>();
-            };
+            });
         }
 
         internal static IEquivilentExpression GetEquivilentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
@@ -94,7 +94,7 @@ namespace AutoMapper.EquivilencyExpression
         
         private static IEquivilentExpression CreateEquivilentExpression(this IEnumerable<PropertyMap> propertyMaps)
         {
-            if (!propertyMaps.Any() || propertyMaps.All(pm => pm.DestinationProperty == pm.SourceMember.GetMemberType()))
+            if (!propertyMaps.Any() || propertyMaps.Any(pm => pm.DestinationProperty.GetMemberType() != pm.SourceMember.GetMemberType()))
                 return null;
             var typeMap = propertyMaps.First().TypeMap;
             var srcType = typeMap.SourceType;
