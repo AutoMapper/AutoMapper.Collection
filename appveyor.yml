@@ -11,7 +11,7 @@ build_script:
 - cmd: .\build.cmd
 test: off
 artifacts:
-- path: src\*.nupkg
+- path: src\AutoMapper.Collection\bin\Release\*.nupkg
   name: NuGet
 deploy:
 - provider: NuGet

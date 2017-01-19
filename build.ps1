@@ -35,11 +35,11 @@ task compile -depends clean {
 
     exec { msbuild /t:Clean /t:Build /p:Configuration=$config /v:q /p:NoWarn=1591 /nologo $base_dir\AutoMapper.Collection.sln }
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config }
+	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --version-suffix $version}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config }
+	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --version-suffix $version}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config }
+	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --version-suffix $version}
 }
 
 task test {

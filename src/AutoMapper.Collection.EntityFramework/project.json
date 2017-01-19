@@ -1,5 +1,5 @@
 {
-  "version": "3.0.0-*",
+  "version": "3.0.0-alpha-*",
   "authors": [ "Tyler Carlson" ],
   "description": "Collection Updating support for Entity Framework with AutoMapper.",
   "packOptions": {
