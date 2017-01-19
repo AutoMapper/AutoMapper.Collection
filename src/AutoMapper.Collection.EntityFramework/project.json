@@ -9,8 +9,9 @@
     "requireLicenseAcceptance": false
   },
 
+
   "dependencies": {
-    "AutoMapper.Collection": "2.0.0-*",
+    "AutoMapper.Collection": "3.0.0",
     "EntityFramework": "6.1.3"
   },
 

@@ -35,7 +35,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Fixie, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Fixie.1.0.2\lib\net45\Fixie.dll</HintPath>
+      <HintPath>..\..\packages\Fixie.1.0.2\lib\net45\Fixie.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentAssertions, Version=4.15.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">

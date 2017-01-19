@@ -39,7 +39,7 @@ task compile -depends clean {
 
 	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config }
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config }
+	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --version-suffix $version }
 }
 
 task test {

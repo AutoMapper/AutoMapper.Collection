@@ -28,7 +28,7 @@ namespace AutoMapper.EntityFramework
 
                 return primaryKeyPropertyMatches;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Enumerable.Empty<PropertyMap>();
             }
