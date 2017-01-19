@@ -15,7 +15,7 @@ namespace AutoMapper.Collection
             var collectionTestValue = 0;
             var collectionMapper = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<CollectionProfile>();
+                cfg.AddCollectionMappers();
                 cfg.CreateMap<ThingDto, Thing>().EqualityComparision((dto, entity) => dto.ID == entity.ID).AfterMap((_, __, ctx) => collectionTestValue = (int)ctx.Options.Items["Test"]);
             }).CreateMapper();
 

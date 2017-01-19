@@ -12,27 +12,26 @@ namespace AutoMapper.EntityFramework
     public class GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext> : IGeneratePropertyMaps
         where TDatabaseContext : IObjectContextAdapter, new()
     {
-        private readonly IConfigurationProvider _configurationProvider;
-
         private readonly TDatabaseContext _context = new TDatabaseContext();
         private readonly MethodInfo _createObjectSetMethodInfo = typeof(ObjectContext).GetMethod("CreateObjectSet", Type.EmptyTypes);
-
-        public GenerateEntityFrameworkPrimaryKeyPropertyMaps(IConfigurationProvider configurationProvider)
+        
+        public IEnumerable<PropertyMap> GeneratePropertyMaps(TypeMap typeMap)
         {
-            _configurationProvider = configurationProvider;
-        }
-
-        public IEnumerable<PropertyMap> GeneratePropertyMaps(Type srcType, Type destType)
-        {
-            var typeMap = _configurationProvider.ResolveTypeMap(srcType, destType);
             var propertyMaps = typeMap.GetPropertyMaps();
-            var createObjectSetMethod = _createObjectSetMethodInfo.MakeGenericMethod(destType);
-            dynamic objectSet = createObjectSetMethod.Invoke(_context.ObjectContext, null);
+            try
+            {
+                var createObjectSetMethod = _createObjectSetMethodInfo.MakeGenericMethod(typeMap.DestinationType);
+                dynamic objectSet = createObjectSetMethod.Invoke(_context.ObjectContext, null);
 
-            IEnumerable<EdmMember> keyMembers = objectSet.EntitySet.ElementType.KeyMembers;
-            var primaryKeyPropertyMatches = keyMembers.Select(m => propertyMaps.FirstOrDefault(p => p.DestinationProperty.Name == m.Name));
+                IEnumerable<EdmMember> keyMembers = objectSet.EntitySet.ElementType.KeyMembers;
+                var primaryKeyPropertyMatches = keyMembers.Select(m => propertyMaps.FirstOrDefault(p => p.DestinationProperty.Name == m.Name));
 
-            return primaryKeyPropertyMatches;
+                return primaryKeyPropertyMatches;
+            }
+            catch (Exception)
+            {
+                return Enumerable.Empty<PropertyMap>();
+            }
         }
     }
 }

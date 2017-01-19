@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0-*",
+  "version": "3.0.0-alpha-*",
   "authors": [ "Tyler Carlson" ],
   "description": "Collection updating support for LinqToSQL with AutoMapper.",
   "packOptions": {
@@ -10,7 +10,7 @@
   },
 
   "dependencies": {
-    "AutoMapper.Collection": "2.0.0-*"
+    "AutoMapper.Collection": "3.0.0"
   },
 
   "frameworks": {
