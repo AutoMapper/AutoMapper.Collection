@@ -29,12 +29,20 @@ namespace AutoMapper.Mappers
             foreach (var keypair in compareSourceToDestination)
             {
                 if (keypair.Value == null)
-                    destination.Add(context.Mapper.Map<TDestinationItem>(keypair.Key));
+                    destination.Add(context.Mapper.Map<TDestinationItem>(keypair.Key, opts => CopyOptions(context.Options, opts)));
                 else
-                    context.Mapper.Map(keypair.Key, keypair.Value);
+                    context.Mapper.Map(keypair.Key, keypair.Value, opts => CopyOptions(context.Options, opts));
             }
 
             return destination;
+        }
+
+        private static void CopyOptions(IMappingOperationOptions source, IMappingOperationOptions dest)
+        {
+            foreach (var item in source.Items)
+            {
+                dest.Items[item.Key] = item.Value;
+            }
         }
 
         private static readonly MethodInfo MapMethodInfo = typeof(EquivlentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().First(_ => _.IsStatic);
