@@ -5,13 +5,14 @@ properties {
 	$build_dir = "$base_dir\build"
 	$source_dir = "$base_dir\src"
 	$result_dir = "$build_dir\results"
+	$artifacts_dir = "$base_dir\artifacts"
 	$global:config = "debug"
 }
 
 
 task default -depends local
 task local -depends init, compile, test
-task ci -depends clean, release, local, benchmark
+task ci -depends clean, release, local
 
 task clean {
 	rd "$source_dir\artifacts" -recurse -force  -ErrorAction SilentlyContinue | out-null
@@ -35,11 +36,11 @@ task compile -depends clean {
 
     exec { msbuild /t:Clean /t:Build /p:Configuration=$config /v:q /p:NoWarn=1591 /nologo $base_dir\AutoMapper.Collection.sln }
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --version-suffix $version}
+	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --output $artifacts_dir --version-suffix $version}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --version-suffix $version}
+	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --output $artifacts_dir --version-suffix $version}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --version-suffix $version}
+	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --output $artifacts_dir --version-suffix $version}
 }
 
 task test {

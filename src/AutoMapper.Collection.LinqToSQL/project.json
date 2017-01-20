@@ -10,7 +10,7 @@
   },
 
   "dependencies": {
-    "AutoMapper.Collection": "3.0.0"
+    "AutoMapper.Collection": "3.0.0-alpha-*"
   },
 
   "frameworks": {

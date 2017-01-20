@@ -11,7 +11,7 @@
 
 
   "dependencies": {
-    "AutoMapper.Collection": "3.0.0",
+    "AutoMapper.Collection": "3.0.0-alpha-*",
     "EntityFramework": "6.1.3"
   },
 
