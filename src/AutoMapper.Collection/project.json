@@ -1,12 +1,15 @@
 {
   "version": "3.0.0-alpha-*",
   "authors": [ "Tyler Carlson" ],
-  "description": "Collection updating support for AutoMapper.",
+  "description": "Collection Add/Remove/Update support for AutoMapper. AutoMapper.Collection adds EqualityComparision Expressions for TypeMaps to determine if Source and Destination type are equivalent to each other when mapping collections.",
   "packOptions": {
+    "copyright": "Copyright Tyler Carlson",
     "owners": [ "Tyler Carlson" ],
-    "licenseUrl": "https://raw.githubusercontent.com/TylerCarlson1/Automapper.Collection/master/LICENSE",
-    "projectUrl": "https://github.com/TylerCarlson1/Automapper.Collection",
-    "requireLicenseAcceptance": false
+    "licenseUrl": "https://github.com/AutoMapper/AutoMapper.Collection/blob/master/LICENSE.txt",
+    "projectUrl": "https://github.com/AutoMapper/Automapper.Collection",
+    "iconUrl": "https://s3.amazonaws.com/automapper/icon.png",
+    "requireLicenseAcceptance": false,
+    "summary": "Collection Add/Remove/Update support for AutoMapper."
   },
 
   "dependencies": {
