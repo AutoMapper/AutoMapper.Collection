@@ -1,4 +1,4 @@
-﻿using AutoMapper.EquivilencyExpression;
+﻿using AutoMapper.EquivalencyExpression;
 using AutoMapper.Mappers;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +16,7 @@ namespace AutoMapper.Collection
             var collectionMapper = new MapperConfiguration(cfg =>
             {
                 cfg.AddCollectionMappers();
-                cfg.CreateMap<ThingDto, Thing>().EqualityComparision((dto, entity) => dto.ID == entity.ID).AfterMap((_, __, ctx) => collectionTestValue = (int)ctx.Options.Items["Test"]);
+                cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID).AfterMap((_, __, ctx) => collectionTestValue = (int)ctx.Options.Items["Test"]);
             }).CreateMapper();
 
             var normalTestValue = 0;

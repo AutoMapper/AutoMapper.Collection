@@ -5,13 +5,13 @@ using System.Linq.Expressions;
 
 namespace AutoMapper.Collection.LinqToSQL
 {
-    public class Persistance<TTo> : IPersistance
+    public class Persistence<TTo> : IPersistence
         where TTo : class
     {
         private readonly Table<TTo> _sourceSet;
         private readonly IMapper _mapper;
 
-        public Persistance(Table<TTo> sourceSet, IMapper mapper)
+        public Persistence(Table<TTo> sourceSet, IMapper mapper)
         {
             _mapper = mapper;
             _sourceSet = sourceSet;

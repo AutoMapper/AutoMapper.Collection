@@ -18,9 +18,9 @@ Will add new IObjectMapper objects into the master mapping list.
 
 Adding equivalency between two classes
 --------------------------------
-Adding equivalence to objects is done with EqualityComparision extended from the IMappingExpression class.
+Adding equivalence to objects is done with EqualityComparison extended from the IMappingExpression class.
 
-	cfg.CreateMap<OrderItemDTO, OrderItem>().EqualityComparision((odto, o) => odto.ID == o.ID);
+	cfg.CreateMap<OrderItemDTO, OrderItem>().EqualityComparison((odto, o) => odto.ID == o.ID);
 Mapping OrderDTO back to Order will compare Order items list based on if their ID's match
 
 	Mapper.Map<OrderDTO[],Order[]>(orderDtos, orders);

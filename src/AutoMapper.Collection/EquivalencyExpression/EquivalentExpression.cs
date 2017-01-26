@@ -3,34 +3,34 @@ using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper.Collection;
 
-namespace AutoMapper.EquivilencyExpression
+namespace AutoMapper.EquivalencyExpression
 {
-    internal class EquivilentExpression : IEquivilentExpression
+    internal class EquivalentExpression : IEquivalentExpression
     {
-        internal static IEquivilentExpression BadValue { get; private set; }
+        internal static IEquivalentExpression BadValue { get; private set; }
 
-        static EquivilentExpression()
+        static EquivalentExpression()
         {
-            BadValue = new EquivilentExpression();
+            BadValue = new EquivalentExpression();
         }
     }
 
-    internal class EquivilentExpression<TSource,TDestination> : IEquivilentExpression<TSource, TDestination>
+    internal class EquivalentExpression<TSource,TDestination> : IEquivalentExpression<TSource, TDestination>
         where TSource : class 
         where TDestination : class
     {
-        private readonly Expression<Func<TSource, TDestination, bool>> _equivilentExpression;
-        private readonly Func<TSource, TDestination, bool> _equivilentFunc; 
+        private readonly Expression<Func<TSource, TDestination, bool>> _EquivalentExpression;
+        private readonly Func<TSource, TDestination, bool> _EquivalentFunc; 
 
-        public EquivilentExpression(Expression<Func<TSource,TDestination,bool>> equivilentExpression)
+        public EquivalentExpression(Expression<Func<TSource,TDestination,bool>> EquivalentExpression)
         {
-            _equivilentExpression = equivilentExpression;
-            _equivilentFunc = _equivilentExpression.Compile();
+            _EquivalentExpression = EquivalentExpression;
+            _EquivalentFunc = _EquivalentExpression.Compile();
         }
 
-        public bool IsEquivlent(TSource source, TDestination destination)
+        public bool IsEquivalent(TSource source, TDestination destination)
         {
-            return _equivilentFunc(source, destination);
+            return _EquivalentFunc(source, destination);
         }
 
         public Expression<Func<TDestination, bool>> ToSingleSourceExpression(TSource source)
@@ -38,8 +38,8 @@ namespace AutoMapper.EquivilencyExpression
             if (source == null)
                 throw new Exception("Invalid somehow");
 
-            var expression = new ParametersToConstantVisitor<TSource>(source).Visit(_equivilentExpression) as LambdaExpression;
-            return Expression.Lambda<Func<TDestination, bool>>(expression.Body, _equivilentExpression.Parameters[1]);
+            var expression = new ParametersToConstantVisitor<TSource>(source).Visit(_EquivalentExpression) as LambdaExpression;
+            return Expression.Lambda<Func<TDestination, bool>>(expression.Body, _EquivalentExpression.Parameters[1]);
         }
     }
 

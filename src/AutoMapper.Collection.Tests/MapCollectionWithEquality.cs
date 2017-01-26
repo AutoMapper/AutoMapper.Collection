@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AutoMapper.EquivilencyExpression;
+using AutoMapper.EquivalencyExpression;
 using FluentAssertions;
 
 namespace AutoMapper.Collection
@@ -12,7 +12,7 @@ namespace AutoMapper.Collection
             Mapper.Initialize(x =>
             {
                 x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().EqualityComparision((dto, entity) => dto.ID == entity.ID);
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
             });
         }
 

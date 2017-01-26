@@ -5,7 +5,7 @@ using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Reflection;
-using AutoMapper.EquivilencyExpression;
+using AutoMapper.EquivalencyExpression;
 
 namespace AutoMapper.EntityFramework
 {

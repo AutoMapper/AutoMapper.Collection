@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using AutoMapper.EquivilencyExpression;
+using AutoMapper.EquivalencyExpression;
 using static System.Linq.Expressions.Expression;
 
 namespace AutoMapper.Mappers
@@ -11,7 +11,7 @@ namespace AutoMapper.Mappers
     {
         public IConfigurationProvider ConfigurationProvider { get; set; }
 
-        public static Expression<Func<TDestination, bool>> Map<TSource, TDestination>(TSource source, IEquivilentExpression<TSource, TDestination> toSourceExpression)
+        public static Expression<Func<TDestination, bool>> Map<TSource, TDestination>(TSource source, IEquivalentExpression<TSource, TDestination> toSourceExpression)
         {
             return toSourceExpression.ToSingleSourceExpression(source);
         }
@@ -23,14 +23,14 @@ namespace AutoMapper.Mappers
             var destExpressArgType = typePair.DestinationType.GetSinglePredicateExpressionArgumentType();
             if (destExpressArgType == null)
                 return false;
-            return this.GetEquivilentExpression(typePair.SourceType, destExpressArgType) != null;
+            return this.GetEquivalentExpression(typePair.SourceType, destExpressArgType) != null;
         }
 
         public Expression MapExpression(TypeMapRegistry typeMapRegistry, IConfigurationProvider configurationProvider,
             PropertyMap propertyMap, Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
             var destExpressArgType = destExpression.Type.GetSinglePredicateExpressionArgumentType();
-            var toSourceExpression = this.GetEquivilentExpression(sourceExpression.Type, destExpressArgType);
+            var toSourceExpression = this.GetEquivalentExpression(sourceExpression.Type, destExpressArgType);
             return Call(null, MapMethodInfo.MakeGenericMethod(sourceExpression.Type, destExpressArgType), sourceExpression, Constant(toSourceExpression));
         }
     }
