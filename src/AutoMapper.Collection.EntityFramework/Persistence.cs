@@ -5,13 +5,13 @@ using System.Linq.Expressions;
 
 namespace AutoMapper.EntityFramework
 {
-    public class Persistance<TTo> : IPersistance
+    public class Persistence<TTo> : IPersistence
         where TTo : class
     {
         private readonly DbSet<TTo> _sourceSet;
         private readonly IMapper _mapper;
 
-        public Persistance(DbSet<TTo> sourceSet, IMapper mapper)
+        public Persistence(DbSet<TTo> sourceSet, IMapper mapper)
         {
             _sourceSet = sourceSet;
             _mapper = mapper;

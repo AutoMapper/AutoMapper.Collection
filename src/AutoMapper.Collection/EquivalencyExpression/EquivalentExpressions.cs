@@ -7,16 +7,16 @@ using System.Reflection;
 using AutoMapper.Collection;
 using AutoMapper.Mappers;
 
-namespace AutoMapper.EquivilencyExpression
+namespace AutoMapper.EquivalencyExpression
 {
-    public static class EquivilentExpressions
+    public static class EquivalentExpressions
     {
         private static readonly
-            IDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivilentExpression>>
-            EquivilentExpressionDictionary =
-                new Dictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivilentExpression>>();
+            IDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentExpression>>
+            EquivalentExpressionDictionary =
+                new Dictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentExpression>>();
 
-        private static ConcurrentDictionary<TypePair, IEquivilentExpression> _equalityComparisionCache = new ConcurrentDictionary<TypePair, IEquivilentExpression>();
+        private static ConcurrentDictionary<TypePair, IEquivalentExpression> _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentExpression>();
 
         private static readonly IDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>> GeneratePropertyMapsDictionary = new Dictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>>();
         private static IList<IGeneratePropertyMaps> _generatePropertyMapsCache = new List<IGeneratePropertyMaps>();
@@ -25,7 +25,7 @@ namespace AutoMapper.EquivilencyExpression
         {
             cfg.InsertBefore<ReadOnlyCollectionMapper>(
                 new ObjectToEquivalencyExpressionByEquivalencyExistingMapper(),
-                new EquivlentExpressionAddRemoveCollectionMapper());
+                new EquivalentExpressionAddRemoveCollectionMapper());
         }
 
         private static void InsertBefore<TObjectMapper>(this IMapperConfigurationExpression cfg, params IConfigurationObjectMapper[] adds)
@@ -41,25 +41,25 @@ namespace AutoMapper.EquivilencyExpression
                 foreach (var configurationObjectMapper in adds)
                     configurationObjectMapper.ConfigurationProvider = c;
 
-                EquivilentExpressionDictionary.Add(c, _equalityComparisionCache);
-                _equalityComparisionCache = new ConcurrentDictionary<TypePair, IEquivilentExpression>();
+                EquivalentExpressionDictionary.Add(c, _equalityComparisonCache);
+                _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentExpression>();
 
                 GeneratePropertyMapsDictionary.Add(c, _generatePropertyMapsCache);
                 _generatePropertyMapsCache = new List<IGeneratePropertyMaps>();
             });
         }
 
-        internal static IEquivilentExpression GetEquivilentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
+        internal static IEquivalentExpression GetEquivalentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
         {
             var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
-            return typeMap == null ? null : GetEquivilentExpression(mapper.ConfigurationProvider, typeMap);
+            return typeMap == null ? null : GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
         }
         
-        internal static IEquivilentExpression GetEquivilentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
+        internal static IEquivalentExpression GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
         {
-            return EquivilentExpressionDictionary[configurationProvider].GetOrAdd(typeMap.Types,
+            return EquivalentExpressionDictionary[configurationProvider].GetOrAdd(typeMap.Types,
                 tp =>
-                    GeneratePropertyMapsDictionary[configurationProvider].Select(_ =>_.GeneratePropertyMaps(typeMap).CreateEquivilentExpression()).FirstOrDefault(_ => _ != null));
+                    GeneratePropertyMapsDictionary[configurationProvider].Select(_ =>_.GeneratePropertyMaps(typeMap).CreateEquivalentExpression()).FirstOrDefault(_ => _ != null));
         }
 
         /// <summary>
@@ -68,16 +68,16 @@ namespace AutoMapper.EquivilencyExpression
         /// <typeparam name="TSource">Compared type</typeparam>
         /// <typeparam name="TDestination">Type being compared to</typeparam>
         /// <param name="mappingExpression">Base Mapping Expression</param>
-        /// <param name="equivilentExpression">Equivilent Expression between <typeparamref name="TSource"/> and <typeparamref name="TDestination"/></param>
+        /// <param name="EquivalentExpression">Equivalent Expression between <typeparamref name="TSource"/> and <typeparamref name="TDestination"/></param>
         /// <returns></returns>
-        public static IMappingExpression<TSource, TDestination> EqualityComparision<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, Expression<Func<TSource, TDestination, bool>> equivilentExpression) 
+        public static IMappingExpression<TSource, TDestination> EqualityComparison<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, Expression<Func<TSource, TDestination, bool>> EquivalentExpression) 
             where TSource : class 
             where TDestination : class
         {
             var typePair = new TypePair(typeof(TSource), typeof(TDestination));
-            _equalityComparisionCache.AddOrUpdate(typePair,
-                new EquivilentExpression<TSource, TDestination>(equivilentExpression),
-                (type, old) => new EquivilentExpression<TSource, TDestination>(equivilentExpression));
+            _equalityComparisonCache.AddOrUpdate(typePair,
+                new EquivalentExpression<TSource, TDestination>(EquivalentExpression),
+                (type, old) => new EquivalentExpression<TSource, TDestination>(EquivalentExpression));
             return mappingExpression;
         }
 
@@ -92,7 +92,7 @@ namespace AutoMapper.EquivilencyExpression
             _generatePropertyMapsCache.Add(generatePropertyMaps);
         }
         
-        private static IEquivilentExpression CreateEquivilentExpression(this IEnumerable<PropertyMap> propertyMaps)
+        private static IEquivalentExpression CreateEquivalentExpression(this IEnumerable<PropertyMap> propertyMaps)
         {
             if (!propertyMaps.Any() || propertyMaps.Any(pm => pm.DestinationProperty.GetMemberType() != pm.SourceMember.GetMemberType()))
                 return null;
@@ -104,12 +104,12 @@ namespace AutoMapper.EquivilencyExpression
 
             var equalExpr = propertyMaps.Select(pm => SourceEqualsDestinationExpression(pm, srcExpr, destExpr)).ToList();
             if (!equalExpr.Any())
-                return EquivilentExpression.BadValue;
+                return EquivalentExpression.BadValue;
             var finalExpression = equalExpr.Skip(1).Aggregate(equalExpr.First(), Expression.And);
 
             var expr = Expression.Lambda(finalExpression, srcExpr, destExpr);
-            var genericExpressionType = typeof(EquivilentExpression<,>).MakeGenericType(srcType, destType);
-            var equivilientExpression = Activator.CreateInstance(genericExpressionType, expr) as IEquivilentExpression;
+            var genericExpressionType = typeof(EquivalentExpression<,>).MakeGenericType(srcType, destType);
+            var equivilientExpression = Activator.CreateInstance(genericExpressionType, expr) as IEquivalentExpression;
             return equivilientExpression;
         }
 

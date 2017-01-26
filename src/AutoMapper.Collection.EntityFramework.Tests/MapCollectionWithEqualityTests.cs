@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using AutoMapper.EntityFramework;
-using AutoMapper.EquivilencyExpression;
+using AutoMapper.EquivalencyExpression;
 using FluentAssertions;
 
 namespace AutoMapper.Collection.EntityFramework.Tests

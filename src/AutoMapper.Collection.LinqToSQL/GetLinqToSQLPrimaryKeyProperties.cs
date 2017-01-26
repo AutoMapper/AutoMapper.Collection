@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Data.Linq.Mapping;
 using System.Linq;
 using System.Reflection;
-using AutoMapper.EquivilencyExpression;
+using AutoMapper.EquivalencyExpression;
 
 namespace AutoMapper.Collection.LinqToSQL
 {
