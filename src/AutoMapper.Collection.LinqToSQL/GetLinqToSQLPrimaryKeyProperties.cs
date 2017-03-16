@@ -1,29 +1,21 @@
-using System;
 using System.Collections.Generic;
 using System.Data.Linq.Mapping;
 using System.Linq;
 using System.Reflection;
-using AutoMapper.EquivilencyExpression;
+using AutoMapper.EquivalencyExpression;
 
 namespace AutoMapper.Collection.LinqToSQL
 {
     public class GetLinqToSQLPrimaryKeyProperties : IGeneratePropertyMaps
     {
-        private readonly IConfigurationProvider _configurationProvider;
-        
-        public GetLinqToSQLPrimaryKeyProperties(IConfigurationProvider configurationProvider)
+        public IEnumerable<PropertyMap> GeneratePropertyMaps(TypeMap typeMap)
         {
-            if (configurationProvider == null)
-                throw new ArgumentNullException(nameof(configurationProvider));
-            _configurationProvider = configurationProvider;
-        }
-
-        public IEnumerable<PropertyMap> GeneratePropertyMaps(Type srcType, Type destType)
-        {
-            var typeMap = _configurationProvider.ResolveTypeMap(srcType, destType);
             var propertyMaps = typeMap.GetPropertyMaps();
 
-            var primaryKeyPropertyMatches = destType.GetProperties().Where(IsPrimaryKey).Select(m => propertyMaps.FirstOrDefault(p => p.DestinationProperty.Name == m.Name)).ToList();
+            var primaryKeyPropertyMatches = typeMap.DestinationType.GetProperties()
+                .Where(IsPrimaryKey)
+                .Select(m => propertyMaps.FirstOrDefault(p => p.DestinationProperty.Name == m.Name))
+                .ToList();
 
             return primaryKeyPropertyMatches;
         }

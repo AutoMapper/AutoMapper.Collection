@@ -30,12 +30,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=5.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AutoMapper.5.1.1\lib\net45\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=0.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AutoMapper.6.0.0\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AutoMapper.Collection\**\*.cs" Exclude="..\AutoMapper.Collection\obj\debug\netstandard1.1\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\debug\netstandard1.3\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\debug\net45\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\debug\portable45-net45+win8+wpa81\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\netstandard1.1\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\netstandard1.3\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\net45\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\portable45-net45+win8+wpa81\dotnet-compile.assemblyinfo.cs">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

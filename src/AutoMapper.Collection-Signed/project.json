@@ -1,12 +1,15 @@
 {
-  "version": "2.1.0-*",
+  "version": "3.0.0-alpha-*",
   "authors": [ "Tyler Carlson" ],
-  "description": "Collection updating support for AutoMapper.",
+  "description": "Collection Add/Remove/Update support for AutoMapper. AutoMapper.Collection adds EqualityComparison Expressions for TypeMaps to determine if Source and Destination type are equivalent to each other when mapping collections.",
   "packOptions": {
+    "copyright": "Copyright Tyler Carlson",
     "owners": [ "Tyler Carlson" ],
-    "licenseUrl": "https://raw.githubusercontent.com/TylerCarlson1/Automapper.Collection/master/LICENSE",
-    "projectUrl": "https://github.com/TylerCarlson1/Automapper.Collection",
-    "requireLicenseAcceptance": false
+    "licenseUrl": "https://github.com/AutoMapper/AutoMapper.Collection/blob/master/LICENSE.txt",
+    "projectUrl": "https://github.com/AutoMapper/Automapper.Collection",
+    "iconUrl": "https://s3.amazonaws.com/automapper/icon.png",
+    "requireLicenseAcceptance": false,
+    "summary": "Collection Add/Remove/Update support for AutoMapper."
   },
 
   "buildOptions": {
@@ -18,7 +21,7 @@
   },
 
   "dependencies": {
-    "AutoMapper": "5.1.1"
+    "AutoMapper": "6.0.0"
   },
 
   "frameworks": {
@@ -28,7 +31,6 @@
     },
     "netstandard1.1": {
       "dependencies": {
-        "System.Threading": "4.0.11"
       },
       "imports": [
         "portable-net45+win8+dnxcore50",
@@ -37,8 +39,7 @@
     },
     "netstandard1.3": {
       "dependencies": {
-        "System.Threading": "4.0.11"
-      }
       }
     }
   }
+}

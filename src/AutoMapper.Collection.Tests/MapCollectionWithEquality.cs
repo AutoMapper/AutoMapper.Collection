@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using AutoMapper.EquivilencyExpression;
-using AutoMapper.Mappers;
+using AutoMapper.EquivalencyExpression;
 using FluentAssertions;
 
 namespace AutoMapper.Collection
@@ -13,8 +11,8 @@ namespace AutoMapper.Collection
         {
             Mapper.Initialize(x =>
             {
-                x.AddProfile<CollectionProfile>();
-                x.CreateMap<ThingDto, Thing>().EqualityComparision((dto, entity) => dto.ID == entity.ID);
+                x.AddCollectionMappers();
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
             });
         }
 
@@ -49,7 +47,7 @@ namespace AutoMapper.Collection
                 new Thing { ID = 3, Title = "test3" },
             };
 
-            Mapper.Map(dtos, items).Should().HaveElementAt(0, items.First());
+            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         public void Should_Work_With_Null_Destination()
@@ -61,6 +59,29 @@ namespace AutoMapper.Collection
             };
             
             Mapper.Map<List<Thing>>(dtos).Should().HaveSameCount(dtos);
+        }
+
+        public void Should_Be_Instanced_Based()
+        {
+            Mapper.Initialize(x =>
+            {
+                x.AddCollectionMappers();
+                x.CreateMap<ThingDto, Thing>().ReverseMap();
+            });
+
+            var dtos = new List<ThingDto>
+            {
+                new ThingDto { ID = 1, Title = "test0" },
+                new ThingDto { ID = 2, Title = "test2" }
+            };
+
+            var items = new List<Thing>
+            {
+                new Thing { ID = 1, Title = "test1" },
+                new Thing { ID = 3, Title = "test3" },
+            };
+
+            Mapper.Map(dtos, items.ToList()).Should().NotContain(items.First());
         }
 
         public class Thing
