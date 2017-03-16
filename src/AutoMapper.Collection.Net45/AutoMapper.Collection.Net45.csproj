@@ -30,12 +30,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=5.3.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AutoMapper.5.3.0-alpha-01276\lib\net45\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=0.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AutoMapper.6.0.0\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,12 +48,72 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AutoMapper.Collection\**\*.cs" Exclude="..\AutoMapper.Collection\obj\debug\netstandard1.1\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\debug\netstandard1.3\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\debug\net45\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\debug\portable45-net45+win8+wpa81\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\netstandard1.1\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\netstandard1.3\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\net45\dotnet-compile.assemblyinfo.cs;..\AutoMapper.Collection\obj\release\portable45-net45+win8+wpa81\dotnet-compile.assemblyinfo.cs">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    <Compile Include="..\AutoMapper.Collection\AutoMapper.Collection.EntityFramework\obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs">
+      <Link>AutoMapper.Collection.EntityFramework\obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\AutoMapper.Collection.EntityFramework\obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs">
+      <Link>AutoMapper.Collection.EntityFramework\obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\AutoMapper.Collection.EntityFramework\obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs">
+      <Link>AutoMapper.Collection.EntityFramework\obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\AutoMapper.Collection\obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs">
+      <Link>AutoMapper.Collection\obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\AutoMapper.Collection\obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs">
+      <Link>AutoMapper.Collection\obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\AutoMapper.Collection\obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs">
+      <Link>AutoMapper.Collection\obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\EquivalencyExpression\CustomExpressionVisitor.cs">
+      <Link>EquivalencyExpression\CustomExpressionVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\EquivalencyExpression\EquivalentExpression.cs">
+      <Link>EquivalencyExpression\EquivalentExpression.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\EquivalencyExpression\EquivalentExpressions.cs">
+      <Link>EquivalencyExpression\EquivalentExpressions.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\EquivalencyExpression\ExpressionExtentions.cs">
+      <Link>EquivalencyExpression\ExpressionExtentions.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\EquivalencyExpression\GenerateEquivilentExpressionFromTypeMap.cs">
+      <Link>EquivalencyExpression\GenerateEquivilentExpressionFromTypeMap.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\EquivalencyExpression\IEquivalentExpression.cs">
+      <Link>EquivalencyExpression\IEquivalentExpression.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\EquivalencyExpression\IGeneratePropertyMaps.cs">
+      <Link>EquivalencyExpression\IGeneratePropertyMaps.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\Mappers\EquivalentExpressionAddRemoveCollectionMapper.cs">
+      <Link>Mappers\EquivalentExpressionAddRemoveCollectionMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\Mappers\IConfigurationObjectMapper.cs">
+      <Link>Mappers\IConfigurationObjectMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\Mappers\ObjectToEquivalencyExpressionByEquivalencyExistingMapper.cs">
+      <Link>Mappers\ObjectToEquivalencyExpressionByEquivalencyExistingMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\PrimitiveExtensions.cs">
+      <Link>PrimitiveExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\ReflectionHelper.cs">
+      <Link>ReflectionHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\TypeExtensions.cs">
+      <Link>TypeExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\AutoMapper.Collection\TypeHelper.cs">
+      <Link>TypeHelper.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AutoMapper.Collection.LinqToSQL\obj\Debug\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
