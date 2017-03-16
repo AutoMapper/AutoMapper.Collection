@@ -1,5 +1,5 @@
 {
-  "version": "3.0.0-alpha-*",
+  "version": "3.0.0",
   "authors": [ "Tyler Carlson" ],
   "description": "Collection Add/Remove/Update support for AutoMapper. AutoMapper.Collection adds EqualityComparison Expressions for TypeMaps to determine if Source and Destination type are equivalent to each other when mapping collections.",
   "packOptions": {

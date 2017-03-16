@@ -1,5 +1,5 @@
 {
-  "version": "3.0.0-alpha-*",
+  "version": "3.0.0",
   "authors": [ "Tyler Carlson" ],
   "description": "Collection updating support for EntityFramework with AutoMapper. Extends DBSet<T> with Persist<TDto>().InsertUpdate(dto) and Persist<TDto>().Delete(dto).  Will find the matching object and will Insert/Update/Delete.",
   "packOptions": {
