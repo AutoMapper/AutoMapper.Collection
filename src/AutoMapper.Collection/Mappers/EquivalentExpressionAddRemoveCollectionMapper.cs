@@ -53,16 +53,16 @@ namespace AutoMapper.Mappers
                    && typePair.DestinationType.IsCollectionType()
                    && this.GetEquivalentExpression(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType)) != null;
         }
-
-        public Expression MapExpression(TypeMapRegistry typeMapRegistry, IConfigurationProvider configurationProvider,
-            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression, Expression contextExpression)
+        
+        public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, PropertyMap propertyMap,
+            Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
             var notNull = NotEqual(destExpression, Constant(null));
             var EquivalencyExpression = this.GetEquivalentExpression(TypeHelper.GetElementType(sourceExpression.Type), TypeHelper.GetElementType(destExpression.Type));
             var map = Call(null,
                 MapMethodInfo.MakeGenericMethod(sourceExpression.Type, TypeHelper.GetElementType(sourceExpression.Type), destExpression.Type, TypeHelper.GetElementType(destExpression.Type)),
                     sourceExpression, destExpression, contextExpression, Constant(EquivalencyExpression));
-            var collectionMap = CollectionMapper.MapExpression(typeMapRegistry, configurationProvider, propertyMap, sourceExpression, destExpression, contextExpression);
+            var collectionMap = CollectionMapper.MapExpression(configurationProvider, profileMap, propertyMap, sourceExpression, destExpression, contextExpression);
 
             return Condition(notNull, map, collectionMap);
         }

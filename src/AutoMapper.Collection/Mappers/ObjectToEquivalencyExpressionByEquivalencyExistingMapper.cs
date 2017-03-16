@@ -26,8 +26,8 @@ namespace AutoMapper.Mappers
             return this.GetEquivalentExpression(typePair.SourceType, destExpressArgType) != null;
         }
 
-        public Expression MapExpression(TypeMapRegistry typeMapRegistry, IConfigurationProvider configurationProvider,
-            PropertyMap propertyMap, Expression sourceExpression, Expression destExpression, Expression contextExpression)
+        public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, PropertyMap propertyMap,
+            Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
             var destExpressArgType = destExpression.Type.GetSinglePredicateExpressionArgumentType();
             var toSourceExpression = this.GetEquivalentExpression(sourceExpression.Type, destExpressArgType);
