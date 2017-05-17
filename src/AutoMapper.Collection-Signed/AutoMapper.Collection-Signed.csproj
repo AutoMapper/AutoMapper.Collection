@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Collection Add/Remove/Update support for AutoMapper. AutoMapper.Collection adds EqualityComparison Expressions for TypeMaps to determine if Source and Destination type are equivalent to each other when mapping collections.</Description>
+    <VersionPrefix>3.0.0</VersionPrefix>
+    <Authors>Tyler Carlson</Authors>
+    <TargetFrameworks>net45;netstandard1.1;netstandard1.3</TargetFrameworks>
+    <AssemblyName>AutoMapper.Collection-Signed</AssemblyName>
+    <AssemblyOriginatorKeyFile>../Key.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <PackageId>AutoMapper.Collection-Signed</PackageId>
+    <PackageIconUrl>https://s3.amazonaws.com/automapper/icon.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/AutoMapper/Automapper.Collection</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/AutoMapper/AutoMapper.Collection/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.1' ">$(PackageTargetFallback);portable-net45+win8+dnxcore50;portable-net45+win8</PackageTargetFallback>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="..\AutoMapper.Collection\**\obj\*;..\AutoMapper.Collection\**\bin\*" />
+    <Compile Include="..\AutoMapper.Collection\**\*.cs" Exclude="..\AutoMapper.Collection\**\obj\*;..\AutoMapper.Collection\**\bin\*;bin\**;obj\**;**\*.xproj;packages\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>

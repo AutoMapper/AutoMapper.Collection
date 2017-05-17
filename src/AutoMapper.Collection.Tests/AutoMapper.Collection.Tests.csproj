@@ -72,9 +72,9 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AutoMapper.Collection.Net45\AutoMapper.Collection.Net45.csproj">
-      <Project>{19f40e9c-a4e2-4b89-a115-c6dc953e5bf5}</Project>
-      <Name>AutoMapper.Collection.Net45</Name>
+    <ProjectReference Include="..\AutoMapper.Collection\AutoMapper.Collection.csproj">
+      <Project>{37ad667a-8080-476c-88fd-20310ac7caf3}</Project>
+      <Name>AutoMapper.Collection</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{19AAEE83-5EEC-4EAA-9CF7-16F8ED58B50E}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,19 +14,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapper.Collection", "src\AutoMapper.Collection\AutoMapper.Collection.xproj", "{37AD667A-8080-476C-88FD-20310AC7CAF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection", "src\AutoMapper.Collection\AutoMapper.Collection.csproj", "{37AD667A-8080-476C-88FD-20310AC7CAF3}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapper.Collection.EntityFramework", "src\AutoMapper.Collection.EntityFramework\AutoMapper.Collection.EntityFramework.xproj", "{E0FD41FD-AF5B-4BEC-970F-8412E7B6C914}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.EntityFramework", "src\AutoMapper.Collection.EntityFramework\AutoMapper.Collection.EntityFramework.csproj", "{E0FD41FD-AF5B-4BEC-970F-8412E7B6C914}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapper.Collection.LinqToSQL", "src\AutoMapper.Collection.LinqToSQL\AutoMapper.Collection.LinqToSQL.xproj", "{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AutoMapper.Collection-Signed", "src\AutoMapper.Collection-Signed\AutoMapper.Collection-Signed.xproj", "{17CBAFE0-F758-47FB-86A1-F3AFEB0389B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.LinqToSQL", "src\AutoMapper.Collection.LinqToSQL\AutoMapper.Collection.LinqToSQL.csproj", "{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.Tests", "src\AutoMapper.Collection.Tests\AutoMapper.Collection.Tests.csproj", "{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.Net45", "src\AutoMapper.Collection.Net45\AutoMapper.Collection.Net45.csproj", "{19F40E9C-A4E2-4B89-A115-C6DC953E5BF5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.EntityFramework.Net45", "src\AutoMapper.Collection.EntityFramework.Net45\AutoMapper.Collection.EntityFramework.Net45.csproj", "{D1CC7DD3-9E10-4FB3-8485-C1500E98DBB5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.EntityFramework.Tests", "src\AutoMapper.Collection.EntityFramework.Tests\AutoMapper.Collection.EntityFramework.Tests.csproj", "{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}"
 EndProject
@@ -48,22 +42,10 @@ Global
 		{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{17CBAFE0-F758-47FB-86A1-F3AFEB0389B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{17CBAFE0-F758-47FB-86A1-F3AFEB0389B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{17CBAFE0-F758-47FB-86A1-F3AFEB0389B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{17CBAFE0-F758-47FB-86A1-F3AFEB0389B0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{19F40E9C-A4E2-4B89-A115-C6DC953E5BF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{19F40E9C-A4E2-4B89-A115-C6DC953E5BF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{19F40E9C-A4E2-4B89-A115-C6DC953E5BF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{19F40E9C-A4E2-4B89-A115-C6DC953E5BF5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D1CC7DD3-9E10-4FB3-8485-C1500E98DBB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1CC7DD3-9E10-4FB3-8485-C1500E98DBB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1CC7DD3-9E10-4FB3-8485-C1500E98DBB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1CC7DD3-9E10-4FB3-8485-C1500E98DBB5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}.Release|Any CPU.ActiveCfg = Release|Any CPU
