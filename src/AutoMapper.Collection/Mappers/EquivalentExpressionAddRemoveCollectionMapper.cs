@@ -21,7 +21,13 @@ namespace AutoMapper.Mappers
             if (source == null || destination == null)
                 return destination;
 
-            var compareSourceToDestination = source.ToDictionary(s => s, s => destination.FirstOrDefault(d => EquivalencyExpression.IsEquivalent(s, d)));
+            var destList = destination.ToList();
+            var compareSourceToDestination = source.ToDictionary(s => s, s =>
+            {
+                var match = destList.FirstOrDefault(d => EquivalencyExpression.IsEquivalent(s, d));
+                destList.Remove(match);
+                return match;
+            });
 
             foreach (var removedItem in destination.Except(compareSourceToDestination.Values).ToList())
                 destination.Remove(removedItem);
