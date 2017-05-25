@@ -41,6 +41,8 @@ task compile -depends clean {
 
     exec { .\.nuget\NuGet.exe restore $base_dir\AutoMapper.Collection.sln }
 
+    exec { dotnet restore $base_dir\AutoMapper.Collection.sln }
+
     exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config --version-suffix=$buildSuffix -v q /nologo }
 
 	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
