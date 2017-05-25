@@ -29,20 +29,25 @@ task release {
 }
 
 task compile -depends clean {
-	$version = if ($env:APPVEYOR_BUILD_NUMBER -ne $NULL) { $env:APPVEYOR_BUILD_NUMBER } else { '0' }
-	$version = "{0:D5}" -f [convert]::ToInt32($version, 10)
+
+	$tag = $(git tag -l --points-at HEAD)
+	$revision = @{ $true = "{0:00000}" -f [convert]::ToInt32("0" + $env:APPVEYOR_BUILD_NUMBER, 10); $false = "local" }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
+	$suffix = @{ $true = ""; $false = "ci-$revision"}[$tag -ne $NULL -and $revision -ne "local"]
+	$commitHash = $(git rev-parse --short HEAD)
+	$buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
 	
+	echo "build: Tag is $tag"
+	echo "build: Package version suffix is $version"
+
     exec { & $base_dir\.nuget\Nuget.exe restore $base_dir\AutoMapper.Collection.sln }
 
-	exec { dotnet restore $base_dir\AutoMapper.Collection.sln }
+    exec { dotnet build $source_dir\AutoMapper.Collection.sln -c $config --version-suffix=$buildSuffix -v q /nologo }
 
-    exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config --version-suffix=$buildSuffix -v q /nologo }
+	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --output $artifacts_dir --version-suffix $version}
+	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --output $artifacts_dir --version-suffix $version}
-
-	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --output $artifacts_dir --version-suffix $version}
+	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
 }
 
 task test {
