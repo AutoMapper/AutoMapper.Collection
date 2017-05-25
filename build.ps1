@@ -39,9 +39,9 @@ task compile -depends clean {
 	echo "build: Tag is $tag"
 	echo "build: Package version suffix is $version"
 
-    exec { & $base_dir\.nuget\Nuget.exe restore $base_dir\AutoMapper.Collection.sln }
+    exec { .\.nuget\NuGet.exe restore $base_dir\AutoMapper.Collection.sln }
 
-    exec { dotnet build $source_dir\AutoMapper.Collection.sln -c $config --version-suffix=$buildSuffix -v q /nologo }
+    exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config --version-suffix=$buildSuffix -v q /nologo }
 
 	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
 
