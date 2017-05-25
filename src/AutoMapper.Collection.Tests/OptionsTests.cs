@@ -1,15 +1,12 @@
 ﻿using AutoMapper.EquivalencyExpression;
 using AutoMapper.Mappers;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
 namespace AutoMapper.Collection
 {
-    [TestClass]
-    public class OptionsTest
+    public class OptionsTests
     {
-        [TestMethod]
         public void Should_Retain_Options_Passed_In_Map()
         {
             var collectionTestValue = 0;
