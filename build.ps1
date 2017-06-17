@@ -37,7 +37,8 @@ task compile -depends clean {
 	$buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
 	
 	echo "build: Tag is $tag"
-	echo "build: Package version suffix is $version"
+	echo "build: Package version suffix is $suffix"
+	echo "build: Build version suffix is $buildSuffix" 
 
     exec { .\.nuget\NuGet.exe restore $base_dir\AutoMapper.Collection.sln }
 

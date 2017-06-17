@@ -50,6 +50,15 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        public void Should_Be_Fast_With_Large_Lists()
+        {
+            var dtos = new object[100000].Select((_, i) => new ThingDto {ID = i}).ToList();
+
+            var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
+
+            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+        }
+
         public void Should_Work_With_Null_Destination()
         {
             var dtos = new List<ThingDto>
