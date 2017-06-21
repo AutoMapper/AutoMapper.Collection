@@ -81,6 +81,27 @@ namespace AutoMapper.EquivalencyExpression
             return mappingExpression;
         }
 
+        /// <summary>
+        /// Make Comparison between <typeparamref name="TSource"/> and <typeparamref name="TDestination"/> based on the return object.
+        /// </summary>
+        /// <typeparam name="TSource">Compared type</typeparam>
+        /// <typeparam name="TDestination">Type being compared to</typeparam>
+        /// <param name="mappingExpression">Base Mapping Expression</param>
+        /// <param name="sourceProperty">Source property that should be used for mapping. if property is object the property on the object is used for mapping.</param>
+        /// <param name="destinationProperty">Destination property that should be used for mapping. if property is object the property on the object is used for mapping.</param>
+        /// <returns></returns>
+        public static IMappingExpression<TSource, TDestination> EqualityComparison<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, Expression<Func<TSource, object>> sourceProperty, Expression<Func<TDestination, object>> destinationProperty) 
+            where TSource : class 
+            where TDestination : class
+        {
+            var typePair = new TypePair(typeof(TSource), typeof(TDestination));
+            var expression = new EquivalentExpressionProperty<TSource, TDestination>(sourceProperty, destinationProperty);
+            _equalityComparisonCache.AddOrUpdate(typePair,
+                expression,
+                (type, old) => expression);
+            return mappingExpression;
+        }
+
         public static void SetGeneratePropertyMaps<TGeneratePropertyMaps>(this IMapperConfigurationExpression cfg)
             where TGeneratePropertyMaps : IGeneratePropertyMaps, new()
         {
