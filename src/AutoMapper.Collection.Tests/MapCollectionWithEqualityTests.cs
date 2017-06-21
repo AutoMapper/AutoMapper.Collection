@@ -74,6 +74,22 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        public void Should_Be_Fast_With_Large_Reversed_Lists_GetHashCode()
+        {
+            Mapper.Initialize(x =>
+            {
+                x.AddCollectionMappers();
+                x.CreateMap<ThingDto, Thing>().EqualityComparison(source => source.ID, dest => dest.ID);
+            });
+
+            var dtos = new object[100000].Select((_, i) => new ThingDto {ID = i}).ToList();
+            dtos.Reverse();
+
+            var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
+
+            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+        }
+
         public void Should_Be_Fast_With_Large_Lists_GetHashCode_Object()
         {
             Mapper.Initialize(x =>
@@ -98,6 +114,21 @@ namespace AutoMapper.Collection
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingDto {ID = i}).ToList();
+
+            var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
+
+            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+        }
+
+        public void Should_Be_Fast_With_Large_Lists_GetHashCode_Object3()
+        {
+            Mapper.Initialize(x =>
+            {
+                x.AddCollectionMappers();
+                x.CreateMap<ThingDto, Thing>().EqualityComparison(source => new { id11 = source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID }, dest => new { id21 = dest.ID });
+            });
+
+            var dtos = new object[100000].Select((_, i) => new ThingSubDto {ID = i + 100000}).ToList();
 
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
@@ -170,6 +201,11 @@ namespace AutoMapper.Collection
             public int ID { get; set; }
             public string Title { get; set; }
             public override string ToString() { return Title; }
+        }
+
+        public class ThingSubDto : ThingDto
+        {
+            public int ID2 => ID - 100000;
         }
 
         public class ThingDto

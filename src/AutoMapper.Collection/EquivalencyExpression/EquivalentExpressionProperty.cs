@@ -17,9 +17,8 @@ namespace AutoMapper.EquivalencyExpression
 
         public EquivalentExpressionProperty(Expression<Func<TSource, object>> sourceProperty, Expression<Func<TDestination, object>> destinationProperty)
         {
-            var hashCodeExpresssionVisitor = new MemberExpresssionExtractor();
-            var sourceMembers = hashCodeExpresssionVisitor.GetMemberExpressions(sourceProperty);
-            var destinationMembers = hashCodeExpresssionVisitor.GetMemberExpressions(destinationProperty);
+            var sourceMembers = MemberExpresssionExtractor.GetExpressions(sourceProperty);
+            var destinationMembers = MemberExpresssionExtractor.GetExpressions(destinationProperty);
 
             var sourcePropertyGetHashCode = GetHashCodeExpression(sourceProperty, sourceMembers);
             _sourcePropertyGetHashCodeFunc = sourcePropertyGetHashCode.Compile();
@@ -89,11 +88,11 @@ namespace AutoMapper.EquivalencyExpression
                 throw new Exception("Invalid somehow");
             }
 
-            var expression = new ParametersToConstantVisitor<TSource>(source).Visit(_equivalentExpression) as LambdaExpression;
+            var expression = (LambdaExpression)new ParametersToConstantVisitor<TSource>(source).Visit(_equivalentExpression);
             return Expression.Lambda<Func<TDestination, bool>>(expression.Body, _equivalentExpression.Parameters[1]);
         }
 
-        private Expression<Func<TSource, TDestination, bool>> GetEqualExpression(Expression<Func<TSource, object>> source, Expression<Func<TDestination, object>> destination, List<MemberExpression> sourceMembers, List<MemberExpression> destinationMembers)
+        private Expression<Func<TSource, TDestination, bool>> GetEqualExpression(Expression<Func<TSource, object>> source, Expression<Func<TDestination, object>> destination, List<Expression> sourceMembers, List<Expression> destinationMembers)
         {
             var sourceParam = source.Parameters.First();
             var destinationParam = destination.Parameters.First();
@@ -102,6 +101,8 @@ namespace AutoMapper.EquivalencyExpression
             var returnTarget = Expression.Label(typeof(bool));
             var returnExpression = Expression.Return(returnTarget, returnVariable, typeof(bool));
             var returnLabel = Expression.Label(returnTarget, Expression.Constant(false));
+
+            var ewualsMethod = typeof(object).GetDeclaredMethod(nameof(Equals));
 
             var expressions = new List<Expression>();
             var sourceCount = sourceMembers.Count;
@@ -121,11 +122,7 @@ namespace AutoMapper.EquivalencyExpression
                     throw new ArgumentException("Source and destination member have different type.");
                 }
 
-                var sourceMemberProperty = Expression.Property(sourceParam, typeof(TSource), sourceMember.Member.Name);
-                var destinationMemberProperty = Expression.Property(destinationParam, typeof(TDestination), destinationMember.Member.Name);
-
-                var sourceEqualDestination = Expression.Equal(sourceMemberProperty, destinationMemberProperty);
-
+                var sourceEqualDestination = Expression.Call(sourceMember, ewualsMethod, destinationMember);
                 if (expressions.Count == 0)
                 {
                     expressions.Add(Expression.Assign(returnVariable, sourceEqualDestination));
@@ -143,7 +140,7 @@ namespace AutoMapper.EquivalencyExpression
             return Expression.Lambda<Func<TSource, TDestination, bool>>(resutltBlock, sourceParam, destinationParam);
         }
 
-        private Expression<Func<T, int>> GetHashCodeExpression<T>(Expression<Func<T, object>> source, List<MemberExpression> members)
+        private Expression<Func<T, int>> GetHashCodeExpression<T>(Expression<Func<T, object>> source, List<Expression> members)
         {
             var sourceParam = source.Parameters.First();
             var hashMultiply = Expression.Constant(397L);
@@ -158,12 +155,18 @@ namespace AutoMapper.EquivalencyExpression
             var expressions = new List<Expression>();
             foreach (var member in members)
             {
-                var parameter = Expression.Property(sourceParam, typeof(T), member.Member.Name);
-                var callGetHashCode = Expression.Call(parameter, getHashCodeMethod);
+                var callGetHashCode = Expression.Call(member, getHashCodeMethod);
                 var convertHashCodeToInt64 = Expression.Convert(callGetHashCode, typeof(long));
-                var oldHashMultiplied = Expression.Multiply(hashVariable, hashMultiply);
-                var xOrHash = Expression.ExclusiveOr(oldHashMultiplied, convertHashCodeToInt64);
-                expressions.Add(Expression.Assign(hashVariable, xOrHash));
+                if (expressions.Count == 0)
+                {
+                    expressions.Add(Expression.Assign(hashVariable, convertHashCodeToInt64));
+                }
+                else
+                {
+                    var oldHashMultiplied = Expression.Multiply(hashVariable, hashMultiply);
+                    var xOrHash = Expression.ExclusiveOr(oldHashMultiplied, convertHashCodeToInt64);
+                    expressions.Add(Expression.Assign(hashVariable, xOrHash));
+                }
             }
 
             expressions.Add(returnExpression);
@@ -176,18 +179,38 @@ namespace AutoMapper.EquivalencyExpression
 
         private class MemberExpresssionExtractor : ExpressionVisitor
         {
-            private List<MemberExpression> Members { get; } = new List<MemberExpression>();
+            private readonly List<Expression> _members;
 
-            public List<MemberExpression> GetMemberExpressions(Expression expression)
+            private MemberExpresssionExtractor()
             {
-                Members.Clear();
-                Visit(expression);
-                return Members;
+                _members = new List<Expression>();
             }
 
-            protected override Expression VisitMember(MemberExpression node)
+            public static List<Expression> GetExpressions(Expression expression)
             {
-                Members.Add(node);
+                var visitoro = new MemberExpresssionExtractor();
+                visitoro.Visit(expression);
+                return visitoro._members;
+            }
+
+            protected override Expression VisitLambda<T>(Expression<T> node)
+            {
+                if (node.Body.NodeType == ExpressionType.New)
+                {
+                    var newExpresson = (NewExpression)node.Body;
+                    foreach (var a in newExpresson.Arguments)
+                    {
+                        var expression = Visit(a);
+                        _members.Add(Expression.Convert(expression, typeof(object)));
+                    }
+                }
+
+                else if (node.Body.NodeType == ExpressionType.Convert)
+                {
+                    var expression = Visit(node.Body);
+                    _members.Add(expression);
+                }
+
                 return node;
             }
         }
