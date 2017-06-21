@@ -90,7 +90,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        public void Should_Be_Fast_With_Large_Lists_GetHashCode_Object()
+        public void Should_Be_Fast_With_Large_Lists_GetHashCode_Object_SingleMember()
         {
             Mapper.Initialize(x =>
             {
@@ -105,7 +105,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        public void Should_Be_Fast_With_Large_Lists_GetHashCode_Object2()
+        public void Should_Be_Fast_With_Large_Lists_GetHashCode_Object_MultipleMembers()
         {
             Mapper.Initialize(x =>
             {
@@ -120,7 +120,22 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        public void Should_Be_Fast_With_Large_Lists_GetHashCode_Object3()
+        public void Should_Be_Fast_With_Large_Lists_GetHashCode_SubObject()
+        {
+            Mapper.Initialize(x =>
+            {
+                x.AddCollectionMappers();
+                x.CreateMap<ThingDto, Thing>().EqualityComparison(source => new { id11 = source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID }, dest => new { id21 = dest.ID });
+            });
+
+            var dtos = new object[100000].Select((_, i) => new ThingSubDto {ID = i + 100000}).Cast<ThingDto>().ToList();
+
+            var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
+
+            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+        }
+
+        public void Should_Be_Fast_With_Large_Lists_GetHashCode_SubObject_WrongCollectionType()
         {
             Mapper.Initialize(x =>
             {
