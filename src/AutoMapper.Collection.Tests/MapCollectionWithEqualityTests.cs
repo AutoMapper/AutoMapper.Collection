@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper.EquivalencyExpression;
 using FluentAssertions;
@@ -135,20 +136,21 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        //public void Should_Be_Fast_With_Large_Lists_GetHashCode_SubObject_WrongCollectionType()
-        //{
-        //    Mapper.Initialize(x =>
-        //    {
-        //        x.AddCollectionMappers();
-        //        x.CreateMap<ThingDto, Thing>().EqualityComparison(source => new { id11 = source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID }, dest => new { id21 = dest.ID });
-        //    });
+        public void Should_Be_Fast_With_Large_Lists_GetHashCode_SubObject_WrongCollectionType_Should_Throw()
+        {
+            Mapper.Initialize(x =>
+            {
+                x.AddCollectionMappers();
+                x.CreateMap<ThingDto, Thing>().EqualityComparison(source => new { id11 = source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID }, dest => new { id21 = dest.ID });
+            });
 
-        //    var dtos = new object[100000].Select((_, i) => new ThingSubDto {ID = i + 100000}).ToList();
+            var dtos = new object[100000].Select((_, i) => new ThingSubDto { ID = i + 100000 }).ToList();
 
-        //    var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
-
-        //    Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
-        //}
+            var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
+            
+            Action a = () => Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            a.ShouldThrow<ArgumentException>().Where(x => x.Message.Contains(typeof(ThingSubDto).FullName) && x.Message.Contains(typeof(ThingDto).FullName));
+        }
 
         public void Should_Work_With_Null_Destination()
         {

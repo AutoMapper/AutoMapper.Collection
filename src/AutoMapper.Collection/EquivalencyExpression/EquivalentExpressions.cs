@@ -49,13 +49,21 @@ namespace AutoMapper.EquivalencyExpression
             });
         }
 
+        internal static TypeMap GetTypeMap(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
+        {
+            return mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
+        }
+
         internal static IEquivalentExpression GetEquivalentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
         {
-            var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
-            return typeMap == null ? null : GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
+            var typeMap = mapper.GetTypeMap(sourceType, destinationType);
+            return typeMap == null ? null : mapper.ConfigurationProvider.GetEquivalentExpression(typeMap);
         }
-        
-        internal static IEquivalentExpression GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
+
+        internal static IEquivalentExpression GetEquivalentExpression(this IConfigurationObjectMapper mapper, TypeMap typeMap)
+            => mapper.ConfigurationProvider.GetEquivalentExpression(typeMap);
+
+        internal static IEquivalentExpression GetEquivalentExpression(this IConfigurationProvider configurationProvider, TypeMap typeMap)
         {
             return EquivalentExpressionDictionary[configurationProvider].GetOrAdd(typeMap.Types,
                 tp =>
