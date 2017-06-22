@@ -263,11 +263,6 @@ namespace AutoMapper.EquivalencyExpression
 
             private void Error()
             {
-                if (EquivalentExpressions.ThrowIfBadConfiguration)
-                {
-                    throw new AutoMapperConfigurationException("Can't extract properties from expression.");
-                }
-
                 _sourceMembers.Clear();
                 _destinationMembers.Clear();
             }

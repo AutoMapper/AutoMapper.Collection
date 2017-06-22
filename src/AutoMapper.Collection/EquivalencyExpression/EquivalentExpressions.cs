@@ -17,7 +17,6 @@ namespace AutoMapper.EquivalencyExpression
                 new Dictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentExpression>>();
 
         private static ConcurrentDictionary<TypePair, IEquivalentExpression> _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentExpression>();
-        internal static bool ThrowIfBadConfiguration;
 
         private static readonly IDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>> GeneratePropertyMapsDictionary = new Dictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>>();
         private static IList<IGeneratePropertyMaps> _generatePropertyMapsCache = new List<IGeneratePropertyMaps>();
@@ -27,13 +26,6 @@ namespace AutoMapper.EquivalencyExpression
             cfg.InsertBefore<ReadOnlyCollectionMapper>(
                 new ObjectToEquivalencyExpressionByEquivalencyExistingMapper(),
                 new EquivalentExpressionAddRemoveCollectionMapper());
-            ThrowIfBadConfiguration = false;
-        }
-
-        public static void AddCollectionMappers(this IMapperConfigurationExpression cfg, bool throwIfBadConfiguration)
-        {
-            cfg.AddCollectionMappers();
-            ThrowIfBadConfiguration = throwIfBadConfiguration;
         }
 
         private static void InsertBefore<TObjectMapper>(this IMapperConfigurationExpression cfg, params IConfigurationObjectMapper[] adds)
