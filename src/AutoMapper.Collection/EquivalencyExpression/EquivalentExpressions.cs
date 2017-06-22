@@ -84,8 +84,8 @@ namespace AutoMapper.EquivalencyExpression
         {
             var typePair = new TypePair(typeof(TSource), typeof(TDestination));
             _equalityComparisonCache.AddOrUpdate(typePair,
-                new EquivalentExpressionProperty<TSource, TDestination>(EquivalentExpression),
-                (type, old) => new EquivalentExpressionProperty<TSource, TDestination>(EquivalentExpression));
+                new EquivalentExpression<TSource, TDestination>(EquivalentExpression),
+                (type, old) => new EquivalentExpression<TSource, TDestination>(EquivalentExpression));
             return mappingExpression;
         }
 
@@ -103,7 +103,7 @@ namespace AutoMapper.EquivalencyExpression
             where TDestination : class
         {
             var typePair = new TypePair(typeof(TSource), typeof(TDestination));
-            var expression = new EquivalentExpressionProperty<TSource, TDestination>(sourceProperty, destinationProperty);
+            var expression = new EquivalentExpression<TSource, TDestination>(sourceProperty, destinationProperty);
             _equalityComparisonCache.AddOrUpdate(typePair,
                 expression,
                 (type, old) => expression);
@@ -138,7 +138,7 @@ namespace AutoMapper.EquivalencyExpression
             var finalExpression = equalExpr.Skip(1).Aggregate(equalExpr.First(), Expression.And);
 
             var expr = Expression.Lambda(finalExpression, srcExpr, destExpr);
-            var genericExpressionType = typeof(EquivalentExpressionProperty<,>).MakeGenericType(srcType, destType);
+            var genericExpressionType = typeof(EquivalentExpression<,>).MakeGenericType(srcType, destType);
             var equivilientExpression = Activator.CreateInstance(genericExpressionType, expr) as IEquivalentExpression;
             return equivilientExpression;
         }
