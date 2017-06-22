@@ -28,14 +28,8 @@ namespace AutoMapper.EquivalencyExpression
                     return null;
 
                 var objType = expressionOf.GetTypeInfo().GenericTypeArguments.First();
-                return CacheAndReturnType(type, objType);
+                return objType;
             });
-        }
-
-        private static Type CacheAndReturnType(Type type, Type objType)
-        {
-            _singleParameterTypeDictionary.AddOrUpdate(type, objType, (t,t2) => objType);
-            return objType;
         }
     }
 }
