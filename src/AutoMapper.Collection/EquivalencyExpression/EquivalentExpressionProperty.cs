@@ -192,25 +192,19 @@ namespace AutoMapper.EquivalencyExpression
                 visitoro.Visit(expression);
                 return visitoro._members;
             }
-
-            protected override Expression VisitLambda<T>(Expression<T> node)
+            
+            protected override Expression VisitNew(NewExpression node)
             {
-                if (node.Body.NodeType == ExpressionType.New)
+                foreach (var argument in node.Arguments)
                 {
-                    var newExpresson = (NewExpression)node.Body;
-                    foreach (var a in newExpresson.Arguments)
-                    {
-                        var expression = Visit(a);
-                        _members.Add(Expression.Convert(expression, typeof(object)));
-                    }
+                    _members.Add(Expression.Convert(argument, typeof(object)));
                 }
+                return node;
+            }
 
-                else if (node.Body.NodeType == ExpressionType.Convert)
-                {
-                    var expression = Visit(node.Body);
-                    _members.Add(expression);
-                }
-
+            protected override Expression VisitMember(MemberExpression node)
+            {
+                _members.Add(Expression.Convert(node, typeof(object)));
                 return node;
             }
         }
