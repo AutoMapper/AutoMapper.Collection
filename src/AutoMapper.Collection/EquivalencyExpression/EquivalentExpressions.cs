@@ -17,6 +17,7 @@ namespace AutoMapper.EquivalencyExpression
                 new Dictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentExpression>>();
 
         private static ConcurrentDictionary<TypePair, IEquivalentExpression> _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentExpression>();
+        internal static bool ThrowIfBadConfiguration;
 
         private static readonly IDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>> GeneratePropertyMapsDictionary = new Dictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>>();
         private static IList<IGeneratePropertyMaps> _generatePropertyMapsCache = new List<IGeneratePropertyMaps>();
@@ -26,6 +27,13 @@ namespace AutoMapper.EquivalencyExpression
             cfg.InsertBefore<ReadOnlyCollectionMapper>(
                 new ObjectToEquivalencyExpressionByEquivalencyExistingMapper(),
                 new EquivalentExpressionAddRemoveCollectionMapper());
+            ThrowIfBadConfiguration = false;
+        }
+
+        public static void AddCollectionMappers(this IMapperConfigurationExpression cfg, bool throwIfBadConfiguration)
+        {
+            cfg.AddCollectionMappers();
+            ThrowIfBadConfiguration = throwIfBadConfiguration;
         }
 
         private static void InsertBefore<TObjectMapper>(this IMapperConfigurationExpression cfg, params IConfigurationObjectMapper[] adds)
@@ -49,13 +57,21 @@ namespace AutoMapper.EquivalencyExpression
             });
         }
 
+        internal static TypeMap GetTypeMap(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
+        {
+            return mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
+        }
+
         internal static IEquivalentExpression GetEquivalentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
         {
-            var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
-            return typeMap == null ? null : GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
+            var typeMap = mapper.GetTypeMap(sourceType, destinationType);
+            return typeMap == null ? null : mapper.ConfigurationProvider.GetEquivalentExpression(typeMap);
         }
-        
-        internal static IEquivalentExpression GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
+
+        internal static IEquivalentExpression GetEquivalentExpression(this IConfigurationObjectMapper mapper, TypeMap typeMap)
+            => mapper.ConfigurationProvider.GetEquivalentExpression(typeMap);
+
+        internal static IEquivalentExpression GetEquivalentExpression(this IConfigurationProvider configurationProvider, TypeMap typeMap)
         {
             return EquivalentExpressionDictionary[configurationProvider].GetOrAdd(typeMap.Types,
                 tp =>
@@ -81,6 +97,27 @@ namespace AutoMapper.EquivalencyExpression
             return mappingExpression;
         }
 
+        /// <summary>
+        /// Make Comparison between <typeparamref name="TSource"/> and <typeparamref name="TDestination"/> based on the return object.
+        /// </summary>
+        /// <typeparam name="TSource">Compared type</typeparam>
+        /// <typeparam name="TDestination">Type being compared to</typeparam>
+        /// <param name="mappingExpression">Base Mapping Expression</param>
+        /// <param name="sourceProperty">Source property that should be used for mapping. if property is object the property on the object is used for mapping.</param>
+        /// <param name="destinationProperty">Destination property that should be used for mapping. if property is object the property on the object is used for mapping.</param>
+        /// <returns></returns>
+        public static IMappingExpression<TSource, TDestination> EqualityComparison<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, Expression<Func<TSource, object>> sourceProperty, Expression<Func<TDestination, object>> destinationProperty) 
+            where TSource : class 
+            where TDestination : class
+        {
+            var typePair = new TypePair(typeof(TSource), typeof(TDestination));
+            var expression = new EquivalentExpression<TSource, TDestination>(sourceProperty, destinationProperty);
+            _equalityComparisonCache.AddOrUpdate(typePair,
+                expression,
+                (type, old) => expression);
+            return mappingExpression;
+        }
+
         public static void SetGeneratePropertyMaps<TGeneratePropertyMaps>(this IMapperConfigurationExpression cfg)
             where TGeneratePropertyMaps : IGeneratePropertyMaps, new()
         {
@@ -94,15 +131,16 @@ namespace AutoMapper.EquivalencyExpression
         
         private static IEquivalentExpression CreateEquivalentExpression(this IEnumerable<PropertyMap> propertyMaps)
         {
-            if (!propertyMaps.Any() || propertyMaps.Any(pm => pm.DestinationProperty.GetMemberType() != pm.SourceMember.GetMemberType()))
+            var properties = propertyMaps as IList<PropertyMap> ?? propertyMaps.ToList();
+            if (!properties.Any() || properties.Any(pm => pm.DestinationProperty.GetMemberType() != pm.SourceMember.GetMemberType()))
                 return null;
-            var typeMap = propertyMaps.First().TypeMap;
+            var typeMap = properties.First().TypeMap;
             var srcType = typeMap.SourceType;
             var destType = typeMap.DestinationType;
             var srcExpr = Expression.Parameter(srcType, "src");
             var destExpr = Expression.Parameter(destType, "dest");
 
-            var equalExpr = propertyMaps.Select(pm => SourceEqualsDestinationExpression(pm, srcExpr, destExpr)).ToList();
+            var equalExpr = properties.Select(pm => SourceEqualsDestinationExpression(pm, srcExpr, destExpr)).ToList();
             if (!equalExpr.Any())
                 return EquivalentExpression.BadValue;
             var finalExpression = equalExpr.Skip(1).Aggregate(equalExpr.First(), Expression.And);
