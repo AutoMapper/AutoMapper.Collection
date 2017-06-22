@@ -9,12 +9,12 @@ namespace AutoMapper.EquivalencyExpression
 {
     internal class EquivalentExpression : IEquivalentExpression
     {
-        internal static IEquivalentExpression BadValue { get; private set; }
-
         static EquivalentExpression()
         {
             BadValue = new EquivalentExpression();
         }
+
+        internal static IEquivalentExpression BadValue { get; }
     }
 
     internal class EquivalentExpression<TSource, TDestination> : IEquivalentExpression<TSource, TDestination>
@@ -315,11 +315,6 @@ namespace AutoMapper.EquivalencyExpression
             _value = value;
         }
 
-        protected override Expression VisitParameter(ParameterExpression node)
-        {
-            return node;
-        }
-
         protected override Expression VisitMember(MemberExpression node)
         {
             if (node.Member is PropertyInfo && node.Member.DeclaringType.GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo()))
@@ -329,6 +324,11 @@ namespace AutoMapper.EquivalencyExpression
             }
 
             return base.VisitMember(node);
+        }
+
+        protected override Expression VisitParameter(ParameterExpression node)
+        {
+            return node;
         }
     }
 }
