@@ -1,4 +1,6 @@
-﻿namespace AutoMapper.Collection
+﻿using AutoMapper.Collection.Internal.Extensions;
+
+namespace AutoMapper.Collection
 {
     using System;
     using System.Collections;

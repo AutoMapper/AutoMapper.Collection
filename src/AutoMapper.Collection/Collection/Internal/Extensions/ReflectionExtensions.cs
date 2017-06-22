@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace AutoMapper.EquivalencyExpression
+namespace AutoMapper.Collection.Internal.Extensions
 {
-    public static class ExpressionExtentions
+    internal static class ReflectionExtensions
     {
         private static readonly ConcurrentDictionary<Type, Type> _singleParameterTypeDictionary = new ConcurrentDictionary<Type, Type>();
 
@@ -28,14 +28,8 @@ namespace AutoMapper.EquivalencyExpression
                     return null;
 
                 var objType = expressionOf.GetTypeInfo().GenericTypeArguments.First();
-                return CacheAndReturnType(type, objType);
+                return objType;
             });
-        }
-
-        private static Type CacheAndReturnType(Type type, Type objType)
-        {
-            _singleParameterTypeDictionary.AddOrUpdate(type, objType, (t,t2) => objType);
-            return objType;
         }
     }
 }

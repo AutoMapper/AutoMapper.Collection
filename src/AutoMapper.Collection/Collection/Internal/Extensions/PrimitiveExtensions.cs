@@ -1,10 +1,10 @@
-﻿namespace AutoMapper.Collection
-{
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Reflection;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 
+namespace AutoMapper.Collection.Internal.Extensions
+{
     internal static class PrimitiveExtensions
     {
         public static bool IsCollectionType(this Type type) => type.ImplementsGenericInterface(typeof(ICollection<>));

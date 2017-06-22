@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper.Collection;
+using AutoMapper.Collection.Internal.Extensions;
 using AutoMapper.EquivalencyExpression;
 using static System.Linq.Expressions.Expression;
 
@@ -10,59 +12,54 @@ namespace AutoMapper.Mappers
 {
     public class EquivalentExpressionAddRemoveCollectionMapper : IConfigurationObjectMapper
     {
-        private readonly CollectionMapper CollectionMapper = new CollectionMapper();
-
+        private static readonly MethodInfo _mapMethodInfo = typeof(EquivalentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().First(_ => _.IsStatic);
+        private readonly CollectionMapper _collectionMapper = new CollectionMapper();
         public IConfigurationProvider ConfigurationProvider { get; set; }
-
-        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context, IEquivalentExpression<TSourceItem, TDestinationItem> EquivalencyExpression)
-            where TSource : IEnumerable<TSourceItem>
-            where TDestination : class, ICollection<TDestinationItem>
-        {
-            if (source == null || destination == null)
-                return destination;
-
-            var destList = destination.ToList();
-            var compareSourceToDestination = source.ToDictionary(s => s, s =>
-            {
-                var match = destList.FirstOrDefault(d => EquivalencyExpression.IsEquivalent(s, d));
-                destList.Remove(match);
-                return match;
-            });
-
-            foreach (var removedItem in destination.Except(compareSourceToDestination.Values).ToList())
-                destination.Remove(removedItem);
-
-            foreach (var keypair in compareSourceToDestination)
-            {
-                if (keypair.Value == null)
-                    destination.Add((TDestinationItem) context.Mapper.Map(keypair.Key, null, typeof(TSourceItem), typeof(TDestinationItem), context));
-                else
-                    context.Mapper.Map(keypair.Key, keypair.Value, context);
-            }
-
-            return destination;
-        }
-
-        private static readonly MethodInfo MapMethodInfo = typeof(EquivalentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().First(_ => _.IsStatic);
 
         public bool IsMatch(TypePair typePair)
         {
             return typePair.SourceType.IsEnumerableType()
                    && typePair.DestinationType.IsCollectionType()
-                   && this.GetEquivalentExpression(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType)) != null;
+                   && this.GetCollectionMapper(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType)) != null;
         }
-        
-        public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, PropertyMap propertyMap,
-            Expression sourceExpression, Expression destExpression, Expression contextExpression)
-        {
-            var notNull = NotEqual(destExpression, Constant(null));
-            var EquivalencyExpression = this.GetEquivalentExpression(TypeHelper.GetElementType(sourceExpression.Type), TypeHelper.GetElementType(destExpression.Type));
-            var map = Call(null,
-                MapMethodInfo.MakeGenericMethod(sourceExpression.Type, TypeHelper.GetElementType(sourceExpression.Type), destExpression.Type, TypeHelper.GetElementType(destExpression.Type)),
-                    sourceExpression, destExpression, contextExpression, Constant(EquivalencyExpression));
-            var collectionMap = CollectionMapper.MapExpression(configurationProvider, profileMap, propertyMap, sourceExpression, destExpression, contextExpression);
 
+        public Expression MapExpression(IConfigurationProvider configurationProvider,
+            ProfileMap profileMap,
+            PropertyMap propertyMap,
+            Expression sourceExpression,
+            Expression destExpression,
+            Expression contextExpression)
+        {
+            var sourceType = TypeHelper.GetElementType(sourceExpression.Type);
+            var destinationType = TypeHelper.GetElementType(destExpression.Type);
+
+            var typeMap = this.GetTypeMap(sourceType, destinationType);
+
+            if (typeMap.SourceType != sourceType)
+            {
+                throw new ArgumentException($"Source type '{sourceType.FullName}' is not mapped, use type '{typeMap.SourceType.FullName}' instead.");
+            }
+            if (typeMap.DestinationType != destinationType)
+            {
+                throw new ArgumentException($"Destination type '{destinationType.FullName}' is not mapped, use type '{typeMap.DestinationType.FullName}' instead.");
+            }
+
+            var collectionMapper = this.GetCollectionMapper(typeMap);
+
+            var map = Call(null,
+                _mapMethodInfo.MakeGenericMethod(sourceExpression.Type, sourceType, destExpression.Type, destinationType),
+                sourceExpression, destExpression, contextExpression, Constant(collectionMapper));
+            var collectionMap = _collectionMapper.MapExpression(configurationProvider, profileMap, propertyMap, sourceExpression, destExpression, contextExpression);
+
+            var notNull = NotEqual(destExpression, Constant(null));
             return Condition(notNull, map, collectionMap);
+        }
+
+        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context, ICollectionMapper<TSourceItem, TDestinationItem> equivalencyExpression)
+            where TSource : IEnumerable<TSourceItem>
+            where TDestination : class, ICollection<TDestinationItem>
+        {
+            return equivalencyExpression.Map(source, destination, context);
         }
     }
 }
