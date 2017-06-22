@@ -60,6 +60,16 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        public void Should_Be_Fast_With_Large_Reversed_Lists()
+        {
+            var dtos = new object[100000].Select((_, i) => new ThingDto {ID = i}).ToList();
+            dtos.Reverse();
+
+            var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
+
+            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+        }
+
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping()
         {
             Mapper.Initialize(x =>
@@ -122,7 +132,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        public void Should_Be_Fast_With_Large_Lists_GetHashCode()
+        public void Should_Be_Fast_With_Large_Lists_SourceAndDestinationExpression()
         {
             Mapper.Initialize(x =>
             {
@@ -137,7 +147,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        public void Should_Be_Fast_With_Large_Reversed_Lists_GetHashCode()
+        public void Should_Be_Fast_With_Large_Reversed_Lists_SourceAndDestinationExpression()
         {
             Mapper.Initialize(x =>
             {
@@ -153,7 +163,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        public void Should_Be_Fast_With_Large_Lists_GetHashCode_Object_SingleMember()
+        public void Should_Be_Fast_With_Large_Lists_SourceAndDestinationExpression_Object_SingleMember()
         {
             Mapper.Initialize(x =>
             {
@@ -168,7 +178,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        public void Should_Be_Fast_With_Large_Lists_GetHashCode_Object_MultipleMembers()
+        public void Should_Be_Fast_With_Large_Lists_SourceAndDestinationExpression_Object_MultipleMembers()
         {
             Mapper.Initialize(x =>
             {
@@ -183,7 +193,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        public void Should_Be_Fast_With_Large_Lists_GetHashCode_SubObject()
+        public void Should_Be_Fast_With_Large_Lists_SourceAndDestinationExpression_SubObject()
         {
             Mapper.Initialize(x =>
             {
@@ -198,7 +208,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        public void Should_Be_Fast_With_Large_Lists_GetHashCode_SubObject_WrongCollectionType_Should_Throw()
+        public void Should_Be_Fast_With_Large_Lists_SourceAndDestinationExpression_SubObject_WrongCollectionType_Should_Throw()
         {
             Mapper.Initialize(x =>
             {
