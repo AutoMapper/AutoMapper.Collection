@@ -11,6 +11,7 @@
     <PackageProjectUrl>https://github.com/AutoMapper/Automapper.Collection</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/AutoMapper/AutoMapper.Collection/blob/master/LICENSE.txt</PackageLicenseUrl>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.1' ">$(PackageTargetFallback);portable-net45+win8+dnxcore50;portable-net45+win8</PackageTargetFallback>
+    <RootNamespace>AutoMapper</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

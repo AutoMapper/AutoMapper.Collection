@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace AutoMapper.EquivalencyExpression
+namespace AutoMapper.Collection.Internal.Extensions
 {
-    public static class ExpressionExtentions
+    internal static class ReflectionExtensions
     {
         private static readonly ConcurrentDictionary<Type, Type> _singleParameterTypeDictionary = new ConcurrentDictionary<Type, Type>();
 
