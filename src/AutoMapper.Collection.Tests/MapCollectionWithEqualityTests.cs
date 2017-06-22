@@ -224,6 +224,18 @@ namespace AutoMapper.Collection
             a.ShouldThrow<ArgumentException>().Where(x => x.Message.Contains(typeof(ThingSubDto).FullName) && x.Message.Contains(typeof(ThingDto).FullName));
         }
 
+        public void Cant_Extract_Negative_Should_Throw()
+        {
+            Action a = () => Mapper.Initialize(x =>
+            {
+                x.AddCollectionMappers(true);
+                // ReSharper disable once NegativeEqualityExpression
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => !(dto.ID != entity.ID));
+            });
+
+            a.ShouldThrow<AutoMapperConfigurationException>();
+        }
+
         public void Should_Work_With_Null_Destination()
         {
             var dtos = new List<ThingDto>

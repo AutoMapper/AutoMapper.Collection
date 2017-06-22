@@ -237,8 +237,7 @@ namespace AutoMapper.EquivalencyExpression
                         return base.VisitBinary(node);
                 }
 
-                _sourceMembers.Clear();
-                _destinationMembers.Clear();
+                Error();
                 return node;
             }
 
@@ -258,9 +257,19 @@ namespace AutoMapper.EquivalencyExpression
 
             protected override Expression VisitUnary(UnaryExpression node)
             {
+                Error();
+                return node;
+            }
+
+            private void Error()
+            {
+                if (EquivalentExpressions.ThrowIfBadConfiguration)
+                {
+                    throw new AutoMapperConfigurationException("Can't extract properties from expression.");
+                }
+
                 _sourceMembers.Clear();
                 _destinationMembers.Clear();
-                return node;
             }
         }
 
