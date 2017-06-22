@@ -17,16 +17,36 @@ namespace AutoMapper.EquivalencyExpression
 
         public EquivalentExpressionProperty(Expression<Func<TSource, object>> sourceProperty, Expression<Func<TDestination, object>> destinationProperty)
         {
+            var sourceParameter = sourceProperty.Parameters.First();
+            var destinationParameter = destinationProperty.Parameters.First();
+
             var sourceMembers = MemberExpresssionExtractor.GetExpressions(sourceProperty);
             var destinationMembers = MemberExpresssionExtractor.GetExpressions(destinationProperty);
 
-            var sourcePropertyGetHashCode = GetHashCodeExpression(sourceProperty, sourceMembers);
+            var sourcePropertyGetHashCode = GetHashCodeExpression<TSource>(sourceParameter, sourceMembers);
             _sourcePropertyGetHashCodeFunc = sourcePropertyGetHashCode.Compile();
 
-            var destinationPropertyGetHashCode = GetHashCodeExpression(destinationProperty, destinationMembers);
+            var destinationPropertyGetHashCode = GetHashCodeExpression<TDestination>(destinationParameter, destinationMembers);
             _destinationPropertyGetHashCodeFunc = destinationPropertyGetHashCode.Compile();
 
             _equivalentExpression = GetEqualExpression(sourceProperty, destinationProperty, sourceMembers, destinationMembers);
+            _propertyEqualFunc = _equivalentExpression.Compile();
+        }
+
+        public EquivalentExpressionProperty(Expression<Func<TSource, TDestination, bool>> equivalentExpression)
+        {
+            var sourceParameter = equivalentExpression.Parameters[0];
+            var destinationParameter = equivalentExpression.Parameters[1];
+
+            var members = MemberExpressionExpando.Expand(sourceParameter, destinationParameter, equivalentExpression);
+
+            var sourcePropertyGetHashCode = GetHashCodeExpression<TSource>(sourceParameter, members.Item1);
+            _sourcePropertyGetHashCodeFunc = sourcePropertyGetHashCode.Compile();
+
+            var destinationPropertyGetHashCode = GetHashCodeExpression<TDestination>(destinationParameter, members.Item2);
+            _destinationPropertyGetHashCodeFunc = destinationPropertyGetHashCode.Compile();
+
+            _equivalentExpression = equivalentExpression;
             _propertyEqualFunc = _equivalentExpression.Compile();
         }
 
@@ -140,9 +160,8 @@ namespace AutoMapper.EquivalencyExpression
             return Expression.Lambda<Func<TSource, TDestination, bool>>(resutltBlock, sourceParam, destinationParam);
         }
 
-        private Expression<Func<T, int>> GetHashCodeExpression<T>(Expression<Func<T, object>> source, List<Expression> members)
+        private Expression<Func<T, int>> GetHashCodeExpression<T>(ParameterExpression sourceParam, List<Expression> members)
         {
-            var sourceParam = source.Parameters.First();
             var hashMultiply = Expression.Constant(397L);
 
             var hashVariable = Expression.Variable(typeof(long), "hashCode");
@@ -177,34 +196,91 @@ namespace AutoMapper.EquivalencyExpression
             return Expression.Lambda<Func<T, int>>(resutltBlock, sourceParam);
         }
 
+        private class MemberExpressionExpando : ExpressionVisitor
+        {
+            private readonly List<Expression> _destinationMembers = new List<Expression>();
+            private readonly ParameterExpression _destinationParameter;
+            private readonly List<Expression> _sourceMembers = new List<Expression>();
+            private readonly ParameterExpression _sourceParameter;
+
+            private MemberExpressionExpando(ParameterExpression sourceParameter, ParameterExpression destinationParameter)
+            {
+                _sourceParameter = sourceParameter;
+                _destinationParameter = destinationParameter;
+            }
+
+            public static Tuple<List<Expression>, List<Expression>> Expand(ParameterExpression sourceParameter, ParameterExpression destinationParameter, Expression expression)
+            {
+                var visitor = new MemberExpressionExpando(sourceParameter, destinationParameter);
+                visitor.Visit(expression);
+                return Tuple.Create(visitor._sourceMembers, visitor._destinationMembers);
+            }
+
+            protected override Expression VisitBinary(BinaryExpression node)
+            {
+                switch (node.NodeType)
+                {
+                    case ExpressionType.Equal:
+                    case ExpressionType.And:
+                    case ExpressionType.AndAlso:
+                        return base.VisitBinary(node);
+                }
+
+                _sourceMembers.Clear();
+                _destinationMembers.Clear();
+                return node;
+            }
+
+            protected override Expression VisitMember(MemberExpression node)
+            {
+                if (node.Expression == _sourceParameter)
+                {
+                    _sourceMembers.Add(node);
+                }
+                else if (node.Expression == _destinationParameter)
+                {
+                    _destinationMembers.Add(node);
+                }
+
+                return node;
+            }
+
+            protected override Expression VisitUnary(UnaryExpression node)
+            {
+                _sourceMembers.Clear();
+                _destinationMembers.Clear();
+                return node;
+            }
+        }
+
         private class MemberExpresssionExtractor : ExpressionVisitor
         {
-            private readonly List<Expression> _members;
+            private readonly List<Expression> _members = new List<Expression>();
 
             private MemberExpresssionExtractor()
             {
-                _members = new List<Expression>();
             }
 
             public static List<Expression> GetExpressions(Expression expression)
             {
-                var visitoro = new MemberExpresssionExtractor();
-                visitoro.Visit(expression);
-                return visitoro._members;
+                var visitor = new MemberExpresssionExtractor();
+                visitor.Visit(expression);
+                return visitor._members;
             }
-            
+
+            protected override Expression VisitMember(MemberExpression node)
+            {
+                _members.Add(Expression.Convert(node, typeof(object)));
+                return node;
+            }
+
             protected override Expression VisitNew(NewExpression node)
             {
                 foreach (var argument in node.Arguments)
                 {
                     _members.Add(Expression.Convert(argument, typeof(object)));
                 }
-                return node;
-            }
 
-            protected override Expression VisitMember(MemberExpression node)
-            {
-                _members.Add(Expression.Convert(node, typeof(object)));
                 return node;
             }
         }

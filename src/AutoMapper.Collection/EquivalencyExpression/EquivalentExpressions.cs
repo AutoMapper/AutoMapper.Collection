@@ -84,8 +84,8 @@ namespace AutoMapper.EquivalencyExpression
         {
             var typePair = new TypePair(typeof(TSource), typeof(TDestination));
             _equalityComparisonCache.AddOrUpdate(typePair,
-                new EquivalentExpression<TSource, TDestination>(EquivalentExpression),
-                (type, old) => new EquivalentExpression<TSource, TDestination>(EquivalentExpression));
+                new EquivalentExpressionProperty<TSource, TDestination>(EquivalentExpression),
+                (type, old) => new EquivalentExpressionProperty<TSource, TDestination>(EquivalentExpression));
             return mappingExpression;
         }
 
@@ -123,21 +123,22 @@ namespace AutoMapper.EquivalencyExpression
         
         private static IEquivalentExpression CreateEquivalentExpression(this IEnumerable<PropertyMap> propertyMaps)
         {
-            if (!propertyMaps.Any() || propertyMaps.Any(pm => pm.DestinationProperty.GetMemberType() != pm.SourceMember.GetMemberType()))
+            var properties = propertyMaps as IList<PropertyMap> ?? propertyMaps.ToList();
+            if (!properties.Any() || properties.Any(pm => pm.DestinationProperty.GetMemberType() != pm.SourceMember.GetMemberType()))
                 return null;
-            var typeMap = propertyMaps.First().TypeMap;
+            var typeMap = properties.First().TypeMap;
             var srcType = typeMap.SourceType;
             var destType = typeMap.DestinationType;
             var srcExpr = Expression.Parameter(srcType, "src");
             var destExpr = Expression.Parameter(destType, "dest");
 
-            var equalExpr = propertyMaps.Select(pm => SourceEqualsDestinationExpression(pm, srcExpr, destExpr)).ToList();
+            var equalExpr = properties.Select(pm => SourceEqualsDestinationExpression(pm, srcExpr, destExpr)).ToList();
             if (!equalExpr.Any())
                 return EquivalentExpression.BadValue;
             var finalExpression = equalExpr.Skip(1).Aggregate(equalExpr.First(), Expression.And);
 
             var expr = Expression.Lambda(finalExpression, srcExpr, destExpr);
-            var genericExpressionType = typeof(EquivalentExpression<,>).MakeGenericType(srcType, destType);
+            var genericExpressionType = typeof(EquivalentExpressionProperty<,>).MakeGenericType(srcType, destType);
             var equivilientExpression = Activator.CreateInstance(genericExpressionType, expr) as IEquivalentExpression;
             return equivilientExpression;
         }
