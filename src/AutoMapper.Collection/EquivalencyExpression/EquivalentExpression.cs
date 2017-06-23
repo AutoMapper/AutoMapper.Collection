@@ -37,7 +37,7 @@ namespace AutoMapper.EquivalencyExpression
             var sourceParameter = equivalentExpression.Parameters[0];
             var destinationParameter = equivalentExpression.Parameters[1];
 
-            var members = MemberExpressionExpando.Expand(sourceParameter, destinationParameter, equivalentExpression);
+            var members = HashableExpressionsVisitor.Expand(sourceParameter, destinationParameter, equivalentExpression);
             
             _sourceHashCodeFunc = members.Item1.GetHashCodeExpression<TSource>(sourceParameter).Compile();
             _destinationHashCodeFunc = members.Item2.GetHashCodeExpression<TDestination>(destinationParameter).Compile();
