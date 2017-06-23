@@ -44,13 +44,13 @@ task compile -depends clean {
 
     exec { dotnet restore $base_dir\AutoMapper.Collection.sln }
 
-    exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config --version-suffix=$buildSuffix -v q /nologo }
+    exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config -v q /nologo }
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
+	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
+	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --include-symbols --no-build --output $artifacts_dir}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
+	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --include-symbols --no-build --output $artifacts_dir}
 }
 
 task test {

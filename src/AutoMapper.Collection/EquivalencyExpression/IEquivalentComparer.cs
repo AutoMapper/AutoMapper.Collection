@@ -3,11 +3,12 @@ using System.Linq.Expressions;
 
 namespace AutoMapper.EquivalencyExpression
 {
-    public interface IEquivalentExpression
+    public interface IEquivalentComparer
     {
-        
+        int GetHashCode(object obj);
     }
-    public interface IEquivalentExpression<TSource, TDestination> : IEquivalentExpression
+
+    public interface IEquivalentComparer<TSource, TDestination> : IEquivalentComparer
     {
         bool IsEquivalent(TSource source, TDestination destination);
         Expression<Func<TDestination, bool>> ToSingleSourceExpression(TSource destination);

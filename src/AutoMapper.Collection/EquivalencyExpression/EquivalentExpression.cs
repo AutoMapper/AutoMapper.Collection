@@ -5,32 +5,47 @@ using AutoMapper.Collection;
 
 namespace AutoMapper.EquivalencyExpression
 {
-    internal class EquivalentExpression : IEquivalentExpression
+    internal class EquivalentExpression : IEquivalentComparer
     {
-        internal static IEquivalentExpression BadValue { get; private set; }
+        internal static IEquivalentComparer BadValue { get; private set; }
 
         static EquivalentExpression()
         {
             BadValue = new EquivalentExpression();
         }
+
+        public int GetHashCode(object obj)
+        {
+            throw new Exception("How'd you get here");
+        }
     }
 
-    internal class EquivalentExpression<TSource,TDestination> : IEquivalentExpression<TSource, TDestination>
+    internal class EquivalentExpression<TSource,TDestination> : IEquivalentComparer<TSource, TDestination>
         where TSource : class 
         where TDestination : class
     {
-        private readonly Expression<Func<TSource, TDestination, bool>> _EquivalentExpression;
-        private readonly Func<TSource, TDestination, bool> _EquivalentFunc; 
+        private readonly Expression<Func<TSource, TDestination, bool>> _equivalentExpression;
+        private readonly Func<TSource, TDestination, bool> _equivalentFunc;
+        private readonly Func<TSource, int> _sourceHashCodeFunc;
+        private readonly Func<TDestination, int> _destinationHashCodeFunc;
 
-        public EquivalentExpression(Expression<Func<TSource,TDestination,bool>> EquivalentExpression)
+        public EquivalentExpression(Expression<Func<TSource,TDestination,bool>> equivalentExpression)
         {
-            _EquivalentExpression = EquivalentExpression;
-            _EquivalentFunc = _EquivalentExpression.Compile();
+            _equivalentExpression = equivalentExpression;
+            _equivalentFunc = _equivalentExpression.Compile();
+
+            var sourceParameter = equivalentExpression.Parameters[0];
+            var destinationParameter = equivalentExpression.Parameters[1];
+
+            var members = MemberExpressionExpando.Expand(sourceParameter, destinationParameter, equivalentExpression);
+            
+            _sourceHashCodeFunc = members.Item1.GetHashCodeExpression<TSource>(sourceParameter).Compile();
+            _destinationHashCodeFunc = members.Item2.GetHashCodeExpression<TDestination>(destinationParameter).Compile();
         }
 
         public bool IsEquivalent(TSource source, TDestination destination)
         {
-            return _EquivalentFunc(source, destination);
+            return _equivalentFunc(source, destination);
         }
 
         public Expression<Func<TDestination, bool>> ToSingleSourceExpression(TSource source)
@@ -38,8 +53,17 @@ namespace AutoMapper.EquivalencyExpression
             if (source == null)
                 throw new Exception("Invalid somehow");
 
-            var expression = new ParametersToConstantVisitor<TSource>(source).Visit(_EquivalentExpression) as LambdaExpression;
-            return Expression.Lambda<Func<TDestination, bool>>(expression.Body, _EquivalentExpression.Parameters[1]);
+            var expression = new ParametersToConstantVisitor<TSource>(source).Visit(_equivalentExpression) as LambdaExpression;
+            return Expression.Lambda<Func<TDestination, bool>>(expression.Body, _equivalentExpression.Parameters[1]);
+        }
+
+        public int GetHashCode(object obj)
+        {
+            if (obj is TSource)
+                return _sourceHashCodeFunc(obj as TSource);
+            if (obj is TDestination)
+                return _destinationHashCodeFunc(obj as TDestination);
+            return default(int);
         }
     }
 
