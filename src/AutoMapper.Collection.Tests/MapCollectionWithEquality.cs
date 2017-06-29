@@ -93,6 +93,33 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().NotContain(items.First());
         }
 
+        public void Parent_Should_Be_Same_As_Root_Object()
+        {
+            var mapper = new MapperConfiguration(
+                cfg =>
+                {
+                    cfg.AddCollectionMappers();
+                    cfg.CreateMap<ThingWithCollection, ThingWithCollection>()
+                       .PreserveReferences();
+                    cfg.CreateMap<ThingCollectionItem, ThingCollectionItem>()
+                       .EqualityComparison((src, dst) => src.ID == dst.ID)
+                       .PreserveReferences();
+                })
+                .CreateMapper();
+
+            var root = new ThingWithCollection()
+            {
+                Children = new List<ThingCollectionItem>()
+            };
+            root.Children.Add(new ThingCollectionItem() { ID = 1, Parent = root });
+
+            var target = new ThingWithCollection() { Children = new List<ThingCollectionItem>() };
+            mapper.Map(root, target).Should().Be(target);
+
+            target.Children.Count.Should().Be(1);
+            target.Children.Single().Parent.Should().Be(target);
+        }
+
         public class Thing
         {
             public int ID { get; set; }
@@ -104,6 +131,17 @@ namespace AutoMapper.Collection
         {
             public int ID { get; set; }
             public string Title { get; set; }
+        }
+
+        public class ThingWithCollection
+        {
+            public ICollection<ThingCollectionItem> Children { get; set; }
+        }
+
+        public class ThingCollectionItem
+        {
+            public int ID { get; set; }
+            public ThingWithCollection Parent { get; set; }
         }
     }
 }
