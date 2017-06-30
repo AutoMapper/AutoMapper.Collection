@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Collection updating support for LinqToSQL with AutoMapper. Extends Table&lt;T&gt; with Persist&lt;TDto&gt;().InsertUpdate(dto) and Persist&lt;TDto&gt;().Delete(dto).  Will find the matching object and will Insert/Update/Delete.</Description>
-    <VersionPrefix>3.0.1</VersionPrefix>
+    <VersionPrefix>3.1.0</VersionPrefix>
     <Authors>Tyler Carlson</Authors>
     <TargetFramework>net45</TargetFramework>
     <AssemblyName>AutoMapper.Collection.LinqToSQL</AssemblyName>

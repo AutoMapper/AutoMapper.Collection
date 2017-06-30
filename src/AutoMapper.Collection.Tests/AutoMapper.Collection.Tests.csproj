@@ -60,7 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MapCollectionWithEquality.cs" />
+    <Compile Include="MapCollectionWithEqualityTests.cs" />
     <Compile Include="OptionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
