@@ -51,6 +51,12 @@ task compile -depends clean {
 	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
 
 	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
+
+    # Build and pack signed version
+
+    exec { dotnet build $source_dir\AutoMapper.Collection\AutoMapper.Collection.csproj -c $config --version-suffix=$buildSuffix -v q /nologo /p:Signed=True }
+
+	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix /p:Signed=True}
 }
 
 task test {

@@ -12,6 +12,15 @@
     <PackageLicenseUrl>https://github.com/AutoMapper/AutoMapper.Collection/blob/master/LICENSE.txt</PackageLicenseUrl>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.1' ">$(PackageTargetFallback);portable-net45+win8+dnxcore50;portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(Signed)' == 'True' ">
+    <AssemblyTitle>$(AssemblyTitle)-Signed</AssemblyTitle>
+    <AssemblyName>$(AssemblyName)-Signed</AssemblyName>
+    <AssemblyOriginatorKeyFile>../Key.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <PackageId>$(PackageId)-Signed</PackageId>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.0.0" />
