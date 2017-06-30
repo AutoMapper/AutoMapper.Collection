@@ -12,11 +12,11 @@ namespace AutoMapper.EquivalencyExpression
     public static class EquivalentExpressions
     {
         private static readonly
-            IDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentExpression>>
+            IDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>
             EquivalentExpressionDictionary =
-                new Dictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentExpression>>();
+                new Dictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>();
 
-        private static ConcurrentDictionary<TypePair, IEquivalentExpression> _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentExpression>();
+        private static ConcurrentDictionary<TypePair, IEquivalentComparer> _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentComparer>();
 
         private static readonly IDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>> GeneratePropertyMapsDictionary = new Dictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>>();
         private static IList<IGeneratePropertyMaps> _generatePropertyMapsCache = new List<IGeneratePropertyMaps>();
@@ -42,20 +42,20 @@ namespace AutoMapper.EquivalencyExpression
                     configurationObjectMapper.ConfigurationProvider = c;
 
                 EquivalentExpressionDictionary.Add(c, _equalityComparisonCache);
-                _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentExpression>();
+                _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentComparer>();
 
                 GeneratePropertyMapsDictionary.Add(c, _generatePropertyMapsCache);
                 _generatePropertyMapsCache = new List<IGeneratePropertyMaps>();
             });
         }
 
-        internal static IEquivalentExpression GetEquivalentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
+        internal static IEquivalentComparer GetEquivalentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
         {
             var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
             return typeMap == null ? null : GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
         }
         
-        internal static IEquivalentExpression GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
+        internal static IEquivalentComparer GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
         {
             return EquivalentExpressionDictionary[configurationProvider].GetOrAdd(typeMap.Types,
                 tp =>
@@ -92,7 +92,7 @@ namespace AutoMapper.EquivalencyExpression
             _generatePropertyMapsCache.Add(generatePropertyMaps);
         }
         
-        private static IEquivalentExpression CreateEquivalentExpression(this IEnumerable<PropertyMap> propertyMaps)
+        private static IEquivalentComparer CreateEquivalentExpression(this IEnumerable<PropertyMap> propertyMaps)
         {
             if (!propertyMaps.Any() || propertyMaps.Any(pm => pm.DestinationProperty.GetMemberType() != pm.SourceMember.GetMemberType()))
                 return null;
@@ -109,7 +109,7 @@ namespace AutoMapper.EquivalencyExpression
 
             var expr = Expression.Lambda(finalExpression, srcExpr, destExpr);
             var genericExpressionType = typeof(EquivalentExpression<,>).MakeGenericType(srcType, destType);
-            var equivilientExpression = Activator.CreateInstance(genericExpressionType, expr) as IEquivalentExpression;
+            var equivilientExpression = Activator.CreateInstance(genericExpressionType, expr) as IEquivalentComparer;
             return equivilientExpression;
         }
 

@@ -11,7 +11,7 @@ namespace AutoMapper.Mappers
     {
         public IConfigurationProvider ConfigurationProvider { get; set; }
 
-        public static Expression<Func<TDestination, bool>> Map<TSource, TDestination>(TSource source, IEquivalentExpression<TSource, TDestination> toSourceExpression)
+        public static Expression<Func<TDestination, bool>> Map<TSource, TDestination>(TSource source, IEquivalentComparer<TSource, TDestination> toSourceExpression)
         {
             return toSourceExpression.ToSingleSourceExpression(source);
         }

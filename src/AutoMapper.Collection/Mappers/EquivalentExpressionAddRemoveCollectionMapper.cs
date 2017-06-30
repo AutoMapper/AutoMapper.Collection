@@ -14,30 +14,49 @@ namespace AutoMapper.Mappers
 
         public IConfigurationProvider ConfigurationProvider { get; set; }
 
-        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context, IEquivalentExpression<TSourceItem, TDestinationItem> EquivalencyExpression)
+        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context, IEquivalentComparer<TSourceItem, TDestinationItem> _equivalentComparer)
             where TSource : IEnumerable<TSourceItem>
             where TDestination : class, ICollection<TDestinationItem>
         {
             if (source == null || destination == null)
-                return destination;
-
-            var destList = destination.ToList();
-            var compareSourceToDestination = source.ToDictionary(s => s, s =>
             {
-                var match = destList.FirstOrDefault(d => EquivalencyExpression.IsEquivalent(s, d));
-                destList.Remove(match);
-                return match;
+                return destination;
+            }
+
+            var destList = destination.ToLookup(x => _equivalentComparer.GetHashCode(x)).ToDictionary(x => x.Key, x => x.ToList());
+
+            var items = source.Select(x =>
+            {
+                var sourceHash = _equivalentComparer.GetHashCode(x);
+
+                var item = default(TDestinationItem);
+                List<TDestinationItem> itemList;
+                if (destList.TryGetValue(sourceHash, out itemList))
+                {
+                    item = itemList.FirstOrDefault(dest => _equivalentComparer.IsEquivalent(x, dest));
+                    if (item != null)
+                    {
+                        itemList.Remove(item);
+                    }
+                }
+                return new { SourceItem = x, DestinationItem = item };
             });
 
-            foreach (var removedItem in destination.Except(compareSourceToDestination.Values).ToList())
-                destination.Remove(removedItem);
-
-            foreach (var keypair in compareSourceToDestination)
+            foreach (var keypair in items)
             {
-                if (keypair.Value == null)
-                    destination.Add((TDestinationItem) context.Mapper.Map(keypair.Key, null, typeof(TSourceItem), typeof(TDestinationItem), context));
+                if (keypair.DestinationItem == null)
+                {
+                    destination.Add((TDestinationItem)context.Mapper.Map(keypair.SourceItem, null, typeof(TSourceItem), typeof(TDestinationItem), context));
+                }
                 else
-                    context.Mapper.Map(keypair.Key, keypair.Value, context);
+                {
+                    context.Mapper.Map(keypair.SourceItem, keypair.DestinationItem, context);
+                }
+            }
+
+            foreach (var removedItem in destList.SelectMany(x => x.Value))
+            {
+                destination.Remove(removedItem);
             }
 
             return destination;
