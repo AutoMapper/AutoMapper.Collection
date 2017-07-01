@@ -46,25 +46,13 @@ task compile -depends clean {
 	# restore all project references (creating project.assets.json for each project)
 	exec { dotnet restore $base_dir\AutoMapper.Collection.sln }
 
-	exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config --version-suffix=$buildSuffix -v q /nologo }
+	exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config --version-suffix="$buildSuffix" /nologo }
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
+	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix="$suffix" /nologo}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
+	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix="$suffix" /nologo}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix}
-
-    # Build and pack signed version
-	# restore all project references (creating project.assets.json for each project) with signed sufix
-	exec { dotnet restore $base_dir\AutoMapper.Collection.sln /p:Signed=True }
-
-	exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config --version-suffix=$buildSuffix -v q /nologo /p:Signed=True }
-
-	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix /p:Signed=True }
-
-	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix /p:Signed=True }
-
-	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix $suffix /p:Signed=True }
+	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix="$suffix" /nologo}
 }
 
 task test {
