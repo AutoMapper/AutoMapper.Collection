@@ -3,8 +3,8 @@ pull_requests:
   do_not_increment_build_number: true
 branches:
   only:
-  - master
-  - development
+    - master
+    - development
 image: Visual Studio 2017
 nuget:
   disable_publish_on_pr: true
@@ -23,9 +23,13 @@ deploy:
   on:
     branch: development
 - provider: NuGet
-  name: production
+  server: https://www.myget.org/F/automapperdev/api/v2/package
+  api_key:
+    secure: zKeQZmIv9PaozHQRJmrlRHN+jMCI64Uvzmb/vwePdXFR5CUNEHalnZdOCg0vrh8t
+  on:
+    branch: master
+- provider: NuGet
   api_key:
     secure: Cp2+SslVkKThDVYzXuYYEpbUB5ij9mmJQ/3N6367fupC8ks132pYYwKDIvZSsJgn
   on:
-    branch: master
     appveyor_repo_tag: true
