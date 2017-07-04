@@ -36,6 +36,9 @@ task compile -depends clean {
 	$commitHash = $(git rev-parse --short HEAD)
 	$buildSuffix = @{ $true = "$($suffix)-$($commitHash)"; $false = "$($branch)-$($commitHash)" }[$suffix -ne ""]
 	
+	$buildParam = @{ $true = ""; $false = "--version-suffix=$buildSuffix"}[$tag -ne $NULL -and $revision -ne "local"]
+	$packageParam = @{ $true = ""; $false = "--version-suffix=$suffix"}[$tag -ne $NULL -and $revision -ne "local"]
+
 	echo "build: Tag is $tag"
 	echo "build: Package version suffix is $suffix"
 	echo "build: Build version suffix is $buildSuffix" 
@@ -46,13 +49,13 @@ task compile -depends clean {
 	# restore all project references (creating project.assets.json for each project)
 	exec { dotnet restore $base_dir\AutoMapper.Collection.sln }
 
-	exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config --version-suffix="$buildSuffix" /nologo }
+	exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config $buildParam /nologo }
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix="$suffix" /nologo}
+	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir $packageParam /nologo}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix="$suffix" /nologo}
+	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --include-symbols --no-build --output $artifacts_dir $packageParam /nologo}
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --include-symbols --no-build --output $artifacts_dir --version-suffix="$suffix" /nologo}
+	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --include-symbols --no-build --output $artifacts_dir $packageParam /nologo}
 }
 
 task test {
