@@ -26,6 +26,7 @@ deploy:
   server: https://www.myget.org/F/automapperdev/api/v2/package
   api_key:
     secure: zKeQZmIv9PaozHQRJmrlRHN+jMCI64Uvzmb/vwePdXFR5CUNEHalnZdOCg0vrh8t
+  skip_symbols: true
   on:
     branch: master
 - provider: NuGet
