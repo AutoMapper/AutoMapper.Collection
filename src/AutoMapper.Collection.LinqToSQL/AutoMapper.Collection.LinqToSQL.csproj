@@ -10,6 +10,9 @@
     <PackageIconUrl>https://s3.amazonaws.com/automapper/icon.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/AutoMapper/Automapper.Collection</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/AutoMapper/AutoMapper.Collection/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <AssemblyOriginatorKeyFile>../Key.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
   </PropertyGroup>
 
   <ItemGroup>
