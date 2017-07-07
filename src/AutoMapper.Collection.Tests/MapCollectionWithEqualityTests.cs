@@ -163,6 +163,42 @@ namespace AutoMapper.Collection
             a.ShouldThrow<ArgumentException>().Where(x => x.Message.Contains(typeof(ThingSubDto).FullName) && x.Message.Contains(typeof(ThingDto).FullName));
         }
 
+        public void Should_Work_With_Conditionals()
+        {
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddCollectionMappers();
+                cfg.CreateMap<ClientDto, Client>()
+                    .EqualityComparison((src, dest) => dest.DtoId == 0 ? src.Code == dest.Code : src.Id == dest.DtoId);
+            });
+            
+            var dto = new ClientDto
+            {
+                Code = "abc",
+                Id = 1
+            };
+            var entity = new Client {Code = dto.Code, Id = 42};
+            var entityCollection = new List<Client> {entity};
+
+            Mapper.Map(new[] {dto}, entityCollection);
+
+            entity.ShouldBeEquivalentTo(entityCollection[0]);
+        }
+
+        public class Client
+        {
+            public long Id { get; set; }
+            public string Code { get; set; }
+            public long DtoId { get; set; }
+        }
+
+        public class ClientDto
+        {
+            public long Id { get; set; }
+            public string Code { get; set; }
+        }
+
+
         public void Should_Work_With_Null_Destination()
         {
             var dtos = new List<ThingDto>
