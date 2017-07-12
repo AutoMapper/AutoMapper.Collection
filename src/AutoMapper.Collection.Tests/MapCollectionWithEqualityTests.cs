@@ -210,6 +210,84 @@ namespace AutoMapper.Collection
             Mapper.Map<List<Thing>>(dtos).Should().HaveSameCount(dtos);
         }
 
+        public void Should_Work_With_Comparing_String_Types()
+        {
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddCollectionMappers();
+                cfg.CreateMap<Charge, SaleCharge>()
+                    .ForMember(d => d.SaleId, o => o.Ignore())
+                    .EqualityComparison((c, sc) => sc.Category == c.Category && sc.Description == c.Description);
+
+                cfg.CreateMap<SaleCharge, Charge>()
+                    .ConstructUsing(
+                        (saleCharge => new Charge(saleCharge.Category, saleCharge.Description, saleCharge.Value)))
+                    .EqualityComparison((sc, c) => sc.Category == c.Category && sc.Description == c.Description);
+            });
+
+            var dto = new Charge("catagory", "description", 5);
+            var entity = new SaleCharge { Category = dto.Category, Description = dto.Description };
+            var entityCollection = new List<SaleCharge> { entity };
+
+            Mapper.Map(new[] { dto }, entityCollection);
+
+            entity.ShouldBeEquivalentTo(entityCollection[0]);
+        }
+
+        public class Charge
+        {
+            public Charge(string category, string description, decimal value)
+            {
+                Category = category;
+                Description = description;
+                Value = value;
+            }
+
+            public string Category { get; }
+            public string Description { get; }
+            public decimal Value { get; }
+
+            public override string ToString()
+            {
+                return $"{Category}|{Description}|{Value}";
+            }
+
+            public override int GetHashCode()
+            {
+                return $"{Category}|{Description}|{Value}".GetHashCode();
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(this, obj))
+                {
+                    return true;
+                }
+
+                if (ReferenceEquals(null, obj))
+                {
+                    return false;
+                }
+
+                var _obj = obj as Charge;
+
+                if (_obj == null)
+                {
+                    return false;
+                }
+
+                return Category == _obj.Category && Description == _obj.Description && Value == _obj.Value;
+            }
+        }
+
+        public class SaleCharge
+        {
+            public Guid SaleId { get; set; }
+            public string Category { get; set; }
+            public string Description { get; set; }
+            public decimal Value { get; set; }
+        }
+
         public void Should_Be_Instanced_Based()
         {
             Mapper.Initialize(x =>

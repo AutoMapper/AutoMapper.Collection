@@ -48,13 +48,11 @@ namespace AutoMapper.EquivalencyExpression
             var returnTarget = Expression.Label(typeof(int));
             var returnExpression = Expression.Return(returnTarget, Expression.Convert(hashVariable, typeof(int)), typeof(int));
             var returnLabel = Expression.Label(returnTarget, Expression.Constant(-1));
-
-            var getHashCodeMethod = typeof(T).GetDeclaredMethod(nameof(GetHashCode));
-
+            
             var expressions = new List<Expression>();
             foreach (var member in members)
             {
-                var callGetHashCode = Expression.Call(member, getHashCodeMethod);
+                var callGetHashCode = Expression.Call(member, member.Type.GetDeclaredMethod(nameof(GetHashCode)));
                 var convertHashCodeToInt64 = Expression.Convert(callGetHashCode, typeof(long));
                 if (expressions.Count == 0)
                 {
