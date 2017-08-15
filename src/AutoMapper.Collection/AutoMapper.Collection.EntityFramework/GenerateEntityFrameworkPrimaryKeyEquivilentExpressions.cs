@@ -10,21 +10,13 @@ namespace AutoMapper.EntityFramework
     public class GenerateEntityFrameworkPrimaryKeyEquivilentExpressions<TDatabaseContext> : GenerateEquivilentExpressionsBasedOnGeneratePropertyMaps
         where TDatabaseContext : IObjectContextAdapter, new()
     {
-        /// <summary>
-        /// Generate EquivilencyExpressions based on EnityFramework's primary key
-        /// </summary>
-        /// <param name="mapper">IMapper used to find TypeMap between classes</param>
-        public GenerateEntityFrameworkPrimaryKeyEquivilentExpressions(IMapper mapper)
-            : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(mapper))
-        {
-        }
 
         /// <summary>
         /// Generate EquivilencyExpressions based on EnityFramework's primary key
         /// Uses static API's Mapper for finding TypeMap between classes
         /// </summary>
         public GenerateEntityFrameworkPrimaryKeyEquivilentExpressions()
-           : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>(null))
+           : base(new GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext>())
         {
         }
     }

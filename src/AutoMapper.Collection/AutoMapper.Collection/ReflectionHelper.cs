@@ -1,4 +1,5 @@
 using System.Reflection;
+using AutoMapper.Impl;
 using AutoMapper.Internal;
 
 namespace AutoMapper.EquivilencyExpression

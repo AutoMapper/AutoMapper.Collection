@@ -12,21 +12,12 @@ namespace AutoMapper.EntityFramework
     public class GenerateEntityFrameworkPrimaryKeyPropertyMaps<TDatabaseContext> : IGeneratePropertyMaps
         where TDatabaseContext : IObjectContextAdapter, new()
     {
-        private readonly IMapper _mapper;
-
         private readonly TDatabaseContext _context = new TDatabaseContext();
         private readonly MethodInfo _createObjectSetMethodInfo = typeof(ObjectContext).GetMethod("CreateObjectSet", Type.EmptyTypes);
-
-        public GenerateEntityFrameworkPrimaryKeyPropertyMaps(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
-
+        
         public IEnumerable<PropertyMap> GeneratePropertyMaps(Type srcType, Type destType)
         {
-            var typeMap = _mapper == null
-                ? (Mapper.Configuration as IConfigurationProvider).ResolveTypeMap(srcType, destType)
-                : _mapper.ConfigurationProvider.ResolveTypeMap(srcType, destType);
+            var typeMap =(Mapper.Configuration as IConfigurationProvider).FindTypeMapFor(srcType, destType);
             var propertyMaps = typeMap.GetPropertyMaps();
             var createObjectSetMethod = _createObjectSetMethodInfo.MakeGenericMethod(destType);
             dynamic objectSet = createObjectSetMethod.Invoke(_context.ObjectContext, null);

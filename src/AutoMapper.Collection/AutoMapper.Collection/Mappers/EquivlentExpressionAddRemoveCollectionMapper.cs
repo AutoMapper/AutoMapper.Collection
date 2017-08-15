@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Linq;
 using AutoMapper.EquivilencyExpression;
+using AutoMapper.Impl;
 using AutoMapper.Internal;
 
 namespace AutoMapper.Mappers
@@ -12,10 +13,10 @@ namespace AutoMapper.Mappers
         private readonly ConcurrentDictionary<Type, MethodCacheItem> _methodCache = new ConcurrentDictionary<Type, MethodCacheItem>();
         private readonly CollectionMapper _collectionMapper = new CollectionMapper();
 
-        public object Map(ResolutionContext context)
+        public object Map(ResolutionContext context, IMappingEngineRunner mapper)
         {
             if (context.IsSourceValueNull || context.DestinationValue == null)
-                return _collectionMapper.Map(context);
+                return _collectionMapper.Map(context, mapper);
 
             var sourceElementType = TypeHelper.GetElementType(context.SourceType);
             var destinationElementType = TypeHelper.GetElementType(context.DestinationType);
@@ -44,11 +45,11 @@ namespace AutoMapper.Mappers
             {
                 if (keypair.Value == null)
                 {
-                    methodItem.Add(destEnumerable, context.Engine.Mapper.Map(keypair.Key, sourceElementType, destinationElementType));
+                    methodItem.Add(destEnumerable, mapper.Map(new ResolutionContext(context.TypeMap, keypair.Key, sourceElementType, destinationElementType, context.Options)));
                 }
                 else
                 {
-                    context.Engine.Mapper.Map(keypair.Key, keypair.Value, sourceElementType, destinationElementType);
+                    mapper.Map(new ResolutionContext(context.TypeMap, keypair.Key, keypair.Value, sourceElementType, destinationElementType, context.Options));
                 }
             }
 
@@ -76,6 +77,11 @@ namespace AutoMapper.Mappers
         {
             public Action<IEnumerable, object> Add { get; set; }
             public Action<IEnumerable, object> Remove { get; set; }
+        }
+        
+        public bool IsMatch(ResolutionContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 }
