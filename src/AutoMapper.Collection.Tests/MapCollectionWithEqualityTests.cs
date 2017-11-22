@@ -10,6 +10,7 @@ namespace AutoMapper.Collection
     {
         public MapCollectionWithEqualityTests()
         {
+            Mapper.Reset();
             Mapper.Initialize(x =>
             {
                 x.AddCollectionMappers();
@@ -72,6 +73,7 @@ namespace AutoMapper.Collection
 
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping()
         {
+            Mapper.Reset();
             Mapper.Initialize(x =>
             {
                 x.AddCollectionMappers();
@@ -87,6 +89,7 @@ namespace AutoMapper.Collection
 
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping_Cant_Extract()
         {
+            Mapper.Reset();
             Mapper.Initialize(x =>
             {
                 x.AddCollectionMappers();
@@ -102,6 +105,7 @@ namespace AutoMapper.Collection
 
         public void Should_Be_Fast_With_Large_Lists_Cant_Extract_Negative()
         {
+            Mapper.Reset();
             Mapper.Initialize(x =>
             {
                 x.AddCollectionMappers();
@@ -118,6 +122,7 @@ namespace AutoMapper.Collection
 
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping_Cant_Extract_Negative()
         {
+            Mapper.Reset();
             Mapper.Initialize(x =>
             {
                 x.AddCollectionMappers();
@@ -134,6 +139,7 @@ namespace AutoMapper.Collection
 
         public void Should_Be_Fast_With_Large_Lists_SubObject()
         {
+            Mapper.Reset();
             Mapper.Initialize(x =>
             {
                 x.AddCollectionMappers();
@@ -149,6 +155,7 @@ namespace AutoMapper.Collection
 
         public void Should_Be_Fast_With_Large_Lists_SubObject_WrongCollectionType_Should_Throw()
         {
+            Mapper.Reset();
             Mapper.Initialize(x =>
             {
                 x.AddCollectionMappers();
@@ -165,6 +172,7 @@ namespace AutoMapper.Collection
 
         public void Should_Work_With_Conditionals()
         {
+            Mapper.Reset();
             Mapper.Initialize(cfg =>
             {
                 cfg.AddCollectionMappers();
@@ -212,6 +220,7 @@ namespace AutoMapper.Collection
 
         public void Should_Work_With_Comparing_String_Types()
         {
+            Mapper.Reset();
             Mapper.Initialize(cfg =>
             {
                 cfg.AddCollectionMappers();
@@ -290,6 +299,7 @@ namespace AutoMapper.Collection
 
         public void Should_Be_Instanced_Based()
         {
+            Mapper.Reset();
             Mapper.Initialize(x =>
             {
                 x.AddCollectionMappers();

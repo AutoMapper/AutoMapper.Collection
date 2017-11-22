@@ -12,6 +12,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
     {
         public MapCollectionWithEqualityTests()
         {
+            Mapper.Reset();
             Mapper.Initialize(x =>
             {
                 x.AddCollectionMappers();
@@ -68,6 +69,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
 
         public void Should_Be_Instanced_Based()
         {
+            Mapper.Reset();
             Mapper.Initialize(x =>
             {
                 x.AddCollectionMappers();
