@@ -81,7 +81,7 @@ namespace AutoMapper.Mappers
                     sourceExpression, destExpression, contextExpression, Constant(EquivalencyExpression));
             var collectionMap = CollectionMapper.MapExpression(configurationProvider, profileMap, propertyMap, sourceExpression, destExpression, contextExpression);
 
-            return Condition(notNull, map, collectionMap);
+            return Condition(notNull, map, Convert(collectionMap, destExpression.Type));
         }
     }
 }
