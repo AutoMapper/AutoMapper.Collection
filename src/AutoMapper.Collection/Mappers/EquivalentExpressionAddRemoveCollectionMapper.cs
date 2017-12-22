@@ -70,7 +70,7 @@ namespace AutoMapper.Mappers
                    && typePair.DestinationType.IsCollectionType()
                    && this.GetEquivalentExpression(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType)) != null;
         }
-        
+
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, PropertyMap propertyMap,
             Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
