@@ -18,6 +18,11 @@ namespace AutoMapper.EquivalencyExpression
         {
             throw new Exception("How'd you get here");
         }
+
+        public bool IsEquivalent(object source, object destination)
+        {
+            return false;
+        }
     }
 
     internal class EquivalentExpression<TSource,TDestination> : IEquivalentComparer<TSource, TDestination>
@@ -43,9 +48,22 @@ namespace AutoMapper.EquivalencyExpression
             _destinationHashCodeFunc = members.Item2.GetHashCodeExpression<TDestination>(destinationParameter).Compile();
         }
 
-        public bool IsEquivalent(TSource source, TDestination destination)
+        public bool IsEquivalent(object source, object destination)
         {
-            return _equivalentFunc(source, destination);
+            var src = source as TSource;
+            var dest = destination as TDestination;
+
+            if (src == null && dest == null)
+            {
+                return true;
+            }
+
+            if (src == null || dest == null)
+            {
+                return false;
+            }
+
+            return _equivalentFunc(src, dest);
         }
 
         public Expression<Func<TDestination, bool>> ToSingleSourceExpression(TSource source)

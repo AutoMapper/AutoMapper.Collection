@@ -14,7 +14,7 @@ namespace AutoMapper.Mappers
 
         public IConfigurationProvider ConfigurationProvider { get; set; }
 
-        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context, IEquivalentComparer<TSourceItem, TDestinationItem> _equivalentComparer)
+        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context, IEquivalentComparer equivalentComparer)
             where TSource : IEnumerable<TSourceItem>
             where TDestination : class, ICollection<TDestinationItem>
         {
@@ -23,17 +23,17 @@ namespace AutoMapper.Mappers
                 return destination;
             }
 
-            var destList = destination.ToLookup(x => _equivalentComparer.GetHashCode(x)).ToDictionary(x => x.Key, x => x.ToList());
+            var destList = destination.ToLookup(x => equivalentComparer.GetHashCode(x)).ToDictionary(x => x.Key, x => x.ToList());
 
             var items = source.Select(x =>
             {
-                var sourceHash = _equivalentComparer.GetHashCode(x);
+                var sourceHash = equivalentComparer.GetHashCode(x);
 
                 var item = default(TDestinationItem);
                 List<TDestinationItem> itemList;
                 if (destList.TryGetValue(sourceHash, out itemList))
                 {
-                    item = itemList.FirstOrDefault(dest => _equivalentComparer.IsEquivalent(x, dest));
+                    item = itemList.FirstOrDefault(dest => equivalentComparer.IsEquivalent(x, dest));
                     if (item != null)
                     {
                         itemList.Remove(item);
@@ -74,13 +74,17 @@ namespace AutoMapper.Mappers
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, PropertyMap propertyMap,
             Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
-            var notNull = NotEqual(destExpression, Constant(null));
-            var EquivalencyExpression = this.GetEquivalentExpression(TypeHelper.GetElementType(sourceExpression.Type), TypeHelper.GetElementType(destExpression.Type));
-            var map = Call(null,
-                MapMethodInfo.MakeGenericMethod(sourceExpression.Type, TypeHelper.GetElementType(sourceExpression.Type), destExpression.Type, TypeHelper.GetElementType(destExpression.Type)),
-                    sourceExpression, destExpression, contextExpression, Constant(EquivalencyExpression));
-            var collectionMap = CollectionMapper.MapExpression(configurationProvider, profileMap, propertyMap, sourceExpression, destExpression, contextExpression);
+            var sourceType = TypeHelper.GetElementType(sourceExpression.Type);
+            var destType = TypeHelper.GetElementType(destExpression.Type);
 
+            var method = MapMethodInfo.MakeGenericMethod(sourceExpression.Type, sourceType, destExpression.Type, destType);
+            var equivalencyExpression = this.GetEquivalentExpression(sourceType, destType);
+
+            var equivalencyExpressionConst = Constant(equivalencyExpression);
+            var map = Call(null, method, sourceExpression, destExpression, contextExpression, equivalencyExpressionConst);
+
+            var notNull = NotEqual(destExpression, Constant(null));
+            var collectionMap = CollectionMapper.MapExpression(configurationProvider, profileMap, propertyMap, sourceExpression, destExpression, contextExpression);
             return Condition(notNull, map, Convert(collectionMap, destExpression.Type));
         }
     }
