@@ -153,7 +153,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        public void Should_Be_Fast_With_Large_Lists_SubObject_WrongCollectionType_Should_Throw()
+        public void Should_Be_Fast_With_Large_Lists_SubObject_switch_left_and_right_expression()
         {
             Mapper.Reset();
             Mapper.Initialize(x =>
@@ -166,8 +166,7 @@ namespace AutoMapper.Collection
 
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
-            Action a = () => Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
-            a.ShouldThrow<ArgumentException>().Where(x => x.Message.Contains(typeof(ThingSubDto).FullName) && x.Message.Contains(typeof(ThingDto).FullName));
+            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         public void Should_Work_With_Conditionals()

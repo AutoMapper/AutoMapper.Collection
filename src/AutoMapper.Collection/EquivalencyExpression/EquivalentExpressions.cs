@@ -52,14 +52,37 @@ namespace AutoMapper.EquivalencyExpression
         internal static IEquivalentComparer GetEquivalentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
         {
             var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
-            return typeMap == null ? null : GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
+            if (typeMap == null)
+            {
+                return null;
+            }
+
+            var comparer = GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
+            if (comparer == null)
+            {
+                foreach (var item in typeMap.IncludedBaseTypes)
+                {
+                    var baseTypeMap = mapper.ConfigurationProvider.ResolveTypeMap(item.SourceType, item.DestinationType);
+                    if (baseTypeMap == null)
+                    {
+                        continue;
+                    }
+
+                    comparer = GetEquivalentExpression(mapper.ConfigurationProvider, baseTypeMap);
+                    if (comparer != null)
+                    {
+                        break;
+                    }
+                }
+            }
+            return comparer;
         }
-        
+
         internal static IEquivalentComparer GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
         {
             return EquivalentExpressionDictionary[configurationProvider].GetOrAdd(typeMap.Types,
                 tp =>
-                    GeneratePropertyMapsDictionary[configurationProvider].Select(_ =>_.GeneratePropertyMaps(typeMap).CreateEquivalentExpression()).FirstOrDefault(_ => _ != null));
+                    GeneratePropertyMapsDictionary[configurationProvider].Select(_ => _.GeneratePropertyMaps(typeMap).CreateEquivalentExpression()).FirstOrDefault(_ => _ != null));
         }
 
         /// <summary>
@@ -70,8 +93,8 @@ namespace AutoMapper.EquivalencyExpression
         /// <param name="mappingExpression">Base Mapping Expression</param>
         /// <param name="EquivalentExpression">Equivalent Expression between <typeparamref name="TSource"/> and <typeparamref name="TDestination"/></param>
         /// <returns></returns>
-        public static IMappingExpression<TSource, TDestination> EqualityComparison<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, Expression<Func<TSource, TDestination, bool>> EquivalentExpression) 
-            where TSource : class 
+        public static IMappingExpression<TSource, TDestination> EqualityComparison<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, Expression<Func<TSource, TDestination, bool>> EquivalentExpression)
+            where TSource : class
             where TDestination : class
         {
             var typePair = new TypePair(typeof(TSource), typeof(TDestination));
@@ -91,7 +114,7 @@ namespace AutoMapper.EquivalencyExpression
         {
             _generatePropertyMapsCache.Add(generatePropertyMaps);
         }
-        
+
         private static IEquivalentComparer CreateEquivalentExpression(this IEnumerable<PropertyMap> propertyMaps)
         {
             if (!propertyMaps.Any() || propertyMaps.Any(pm => pm.DestinationProperty.GetMemberType() != pm.SourceMember.GetMemberType()))
