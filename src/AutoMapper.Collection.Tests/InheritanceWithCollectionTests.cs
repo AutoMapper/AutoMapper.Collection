@@ -9,57 +9,42 @@ using Xunit;
 
 namespace AutoMapper.Collection
 {
-    public class InheritanceWithCollectionTests
+    public abstract class InheritanceWithCollectionTests
     {
+        protected abstract void Create(IMapperConfigurationExpression cfg);
+
         private IMapper CreateMapper()
         {
-            void Create(IMapperConfigurationExpression cfg)
-            {
-                cfg.ShouldMapProperty = propertyInfo => propertyInfo.GetMethod.IsPublic || propertyInfo.GetMethod.IsAssembly || propertyInfo.GetMethod.IsFamily || propertyInfo.GetMethod.IsPrivate;
-                cfg.AddCollectionMappers();
-
-                //DOMAIN --> EF
-                cfg.CreateMap<RootDomain, RootEf>()
-                    .ForMember(rootEf => rootEf.Orders, opt => opt.ResolveUsing<MergeDomainOrdersToEfOrdersValueResolver>())
-                    ;
-
-                //collection type
-                cfg.CreateMap<OrderDomain, OrderEf>()
-                    .EqualityComparison((oo, dto) => BaseEquals(oo, dto))
-                    ;
-
-                cfg.CreateMap<OnlineOrderDomain, OnlineOrderEf>()
-                    .EqualityComparison((ood, ooe) => DerivedEquals(ood, ooe))
-                    .IncludeBase<OrderDomain, OrderEf>()
-                    ;
-
-                cfg.CreateMap<MailOrderDomain, MailOrderEf>()
-                    .IncludeBase<OrderDomain, OrderEf>()
-                    ;
-
-                //EF --> DOMAIN
-                cfg.CreateMap<RootEf, RootDomain>()
-                    .ForMember(rootDomain => rootDomain.OnlineOrders, opt => opt.MapFrom(rootEf => rootEf.Orders.Where(orderEf => orderEf.GetType() == typeof(OnlineOrderEf))))
-                    .ForMember(rootDomain => rootDomain.MailOrders, opt => opt.MapFrom(rootEf => rootEf.Orders.Where(orderEf => orderEf.GetType() == typeof(MailOrderEf))))
-                    ;
-
-                cfg.CreateMap<OrderEf, OrderDomain>()
-                    ;
-
-                cfg.CreateMap<OnlineOrderEf, OnlineOrderDomain>()
-                    .IncludeBase<OrderEf, OrderDomain>()
-                    ;
-
-                cfg.CreateMap<MailOrderEf, MailOrderDomain>()
-                    .IncludeBase<OrderEf, OrderDomain>()
-                    ;
-            }
-
             var map = new MapperConfiguration(Create);
             map.AssertConfigurationIsValid();
             map.CompileMappings();
 
             return map.CreateMapper();
+        }
+
+        [Fact]
+        public void TypeMap_Should_include_base_types()
+        {
+            var mapper = CreateMapper();
+            var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(typeof(MailOrderDomain), typeof(OrderEf));
+
+            var typePairs = new[]{
+                    new TypePair(typeof(OrderDomain), typeof(OrderEf))
+            };
+            typeMap.IncludedBaseTypes.ShouldBeEquivalentTo(typePairs);
+        }
+
+        [Fact]
+        public void TypeMap_Should_include_derivied_types()
+        {
+            var mapper = CreateMapper();
+            var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(typeof(OrderDomain), typeof(OrderEf));
+
+            var typePairs = new[]{
+                    new TypePair(typeof(OnlineOrderDomain), typeof(OnlineOrderEf)),
+                    new TypePair(typeof(MailOrderDomain), typeof(MailOrderEf))
+            };
+            typeMap.IncludedDerivedTypes.ShouldBeEquivalentTo(typePairs);
         }
 
         [Fact]
@@ -203,6 +188,96 @@ namespace AutoMapper.Collection
                 var efOrders = mappedOnlineOrders.Union(mappedMailOrders).ToList();
 
                 return efOrders;
+            }
+        }
+
+        public class Include : InheritanceWithCollectionTests
+        {
+            protected override void Create(IMapperConfigurationExpression cfg)
+            {
+                cfg.ShouldMapProperty = propertyInfo => propertyInfo.GetMethod.IsPublic || propertyInfo.GetMethod.IsAssembly || propertyInfo.GetMethod.IsFamily || propertyInfo.GetMethod.IsPrivate;
+                cfg.AddCollectionMappers();
+
+                //DOMAIN --> EF
+                cfg.CreateMap<RootDomain, RootEf>()
+                    .ForMember(rootEf => rootEf.Orders, opt => opt.ResolveUsing<MergeDomainOrdersToEfOrdersValueResolver>())
+                    ;
+
+                //collection type
+                cfg.CreateMap<OrderDomain, OrderEf>()
+                    .EqualityComparison((oo, dto) => BaseEquals(oo, dto))
+                    .Include<MailOrderDomain, MailOrderEf>()
+                    .Include<OnlineOrderDomain, OnlineOrderEf>()
+                    ;
+
+                cfg.CreateMap<OnlineOrderDomain, OnlineOrderEf>()
+                    .EqualityComparison((ood, ooe) => DerivedEquals(ood, ooe))
+                    ;
+
+                cfg.CreateMap<MailOrderDomain, MailOrderEf>()
+                    ;
+
+                //EF --> DOMAIN
+                cfg.CreateMap<RootEf, RootDomain>()
+                    .ForMember(rootDomain => rootDomain.OnlineOrders, opt => opt.MapFrom(rootEf => rootEf.Orders.Where(orderEf => orderEf.GetType() == typeof(OnlineOrderEf))))
+                    .ForMember(rootDomain => rootDomain.MailOrders, opt => opt.MapFrom(rootEf => rootEf.Orders.Where(orderEf => orderEf.GetType() == typeof(MailOrderEf))))
+                    ;
+
+                cfg.CreateMap<OrderEf, OrderDomain>()
+                    .Include<OnlineOrderEf, OnlineOrderDomain>()
+                    .Include<MailOrderEf, MailOrderDomain>()
+                    ;
+
+                cfg.CreateMap<OnlineOrderEf, OnlineOrderDomain>()
+                    ;
+
+                cfg.CreateMap<MailOrderEf, MailOrderDomain>()
+                    ;
+            }
+        }
+
+        public class IncludeBase : InheritanceWithCollectionTests
+        {
+            protected override void Create(IMapperConfigurationExpression cfg)
+            {
+                cfg.ShouldMapProperty = propertyInfo => propertyInfo.GetMethod.IsPublic || propertyInfo.GetMethod.IsAssembly || propertyInfo.GetMethod.IsFamily || propertyInfo.GetMethod.IsPrivate;
+                cfg.AddCollectionMappers();
+
+                //DOMAIN --> EF
+                cfg.CreateMap<RootDomain, RootEf>()
+                    .ForMember(rootEf => rootEf.Orders, opt => opt.ResolveUsing<MergeDomainOrdersToEfOrdersValueResolver>())
+                    ;
+
+                //collection type
+                cfg.CreateMap<OrderDomain, OrderEf>()
+                    .EqualityComparison((oo, dto) => BaseEquals(oo, dto))
+                    ;
+
+                cfg.CreateMap<OnlineOrderDomain, OnlineOrderEf>()
+                    .EqualityComparison((ood, ooe) => DerivedEquals(ood, ooe))
+                    .IncludeBase<OrderDomain, OrderEf>()
+                    ;
+
+                cfg.CreateMap<MailOrderDomain, MailOrderEf>()
+                    .IncludeBase<OrderDomain, OrderEf>()
+                    ;
+
+                //EF --> DOMAIN
+                cfg.CreateMap<RootEf, RootDomain>()
+                    .ForMember(rootDomain => rootDomain.OnlineOrders, opt => opt.MapFrom(rootEf => rootEf.Orders.Where(orderEf => orderEf.GetType() == typeof(OnlineOrderEf))))
+                    .ForMember(rootDomain => rootDomain.MailOrders, opt => opt.MapFrom(rootEf => rootEf.Orders.Where(orderEf => orderEf.GetType() == typeof(MailOrderEf))))
+                    ;
+
+                cfg.CreateMap<OrderEf, OrderDomain>()
+                    ;
+
+                cfg.CreateMap<OnlineOrderEf, OnlineOrderDomain>()
+                    .IncludeBase<OrderEf, OrderDomain>()
+                    ;
+
+                cfg.CreateMap<MailOrderEf, MailOrderDomain>()
+                    .IncludeBase<OrderEf, OrderDomain>()
+                    ;
             }
         }
     }
