@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper.EquivalencyExpression;
 using FluentAssertions;
+using Xunit;
 
 namespace AutoMapper.Collection
 {
@@ -18,6 +19,7 @@ namespace AutoMapper.Collection
             });
         }
 
+        [Fact]
         public void Should_Keep_Existing_List()
         {
             var dtos = new List<ThingDto>
@@ -35,6 +37,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items).Should().BeSameAs(items);
         }
 
+        [Fact]
         public void Should_Update_Existing_Item()
         {
             var dtos = new List<ThingDto>
@@ -52,6 +55,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        [Fact]
         public void Should_Be_Fast_With_Large_Lists()
         {
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
@@ -61,6 +65,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        [Fact]
         public void Should_Be_Fast_With_Large_Reversed_Lists()
         {
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
@@ -71,6 +76,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        [Fact]
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping()
         {
             Mapper.Reset();
@@ -87,6 +93,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        [Fact]
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping_Cant_Extract()
         {
             Mapper.Reset();
@@ -103,6 +110,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        [Fact]
         public void Should_Be_Fast_With_Large_Lists_Cant_Extract_Negative()
         {
             Mapper.Reset();
@@ -120,6 +128,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        [Fact]
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping_Cant_Extract_Negative()
         {
             Mapper.Reset();
@@ -137,6 +146,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        [Fact]
         public void Should_Be_Fast_With_Large_Lists_SubObject()
         {
             Mapper.Reset();
@@ -153,6 +163,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        [Fact]
         public void Should_Be_Fast_With_Large_Lists_SubObject_switch_left_and_right_expression()
         {
             Mapper.Reset();
@@ -169,6 +180,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
+        [Fact]
         public void Should_Work_With_Conditionals()
         {
             Mapper.Reset();
@@ -206,6 +218,7 @@ namespace AutoMapper.Collection
         }
 
 
+        [Fact]
         public void Should_Work_With_Null_Destination()
         {
             var dtos = new List<ThingDto>
@@ -217,6 +230,7 @@ namespace AutoMapper.Collection
             Mapper.Map<List<Thing>>(dtos).Should().HaveSameCount(dtos);
         }
 
+        [Fact]
         public void Should_Work_With_Comparing_String_Types()
         {
             Mapper.Reset();
@@ -296,6 +310,7 @@ namespace AutoMapper.Collection
             public decimal Value { get; set; }
         }
 
+        [Fact]
         public void Should_Be_Instanced_Based()
         {
             Mapper.Reset();
@@ -320,6 +335,7 @@ namespace AutoMapper.Collection
             Mapper.Map(dtos, items.ToList()).Should().NotContain(items.First());
         }
 
+        [Fact]
         public void Parent_Should_Be_Same_As_Root_Object()
         {
             var mapper = new MapperConfiguration(

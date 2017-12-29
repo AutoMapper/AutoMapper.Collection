@@ -5,6 +5,7 @@ using System.Linq;
 using AutoMapper.EntityFramework;
 using AutoMapper.EquivalencyExpression;
 using FluentAssertions;
+using Xunit;
 
 namespace AutoMapper.Collection.EntityFramework.Tests
 {
@@ -21,6 +22,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
             });
         }
 
+        [Fact]
         public void Should_Keep_Existing_List()
         {
             var dtos = new List<ThingDto>
@@ -38,6 +40,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
             Mapper.Map(dtos, items).Should().BeSameAs(items);
         }
 
+        [Fact]
         public void Should_Update_Existing_Item()
         {
             var dtos = new List<ThingDto>
@@ -56,6 +59,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
             Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, cache.First());
         }
 
+        [Fact]
         public void Should_Work_With_Null_Destination()
         {
             var dtos = new List<ThingDto>
@@ -67,6 +71,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
             Mapper.Map<List<Thing>>(dtos).Should().HaveSameCount(dtos);
         }
 
+        [Fact]
         public void Should_Be_Instanced_Based()
         {
             Mapper.Reset();
@@ -92,6 +97,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
             Mapper.Map(dtos, items.ToList()).Should().NotContain(cache.First());
         }
 
+        //[Fact]
         //public void Should_Persist_To_Update()
         //{
         //    var db = new DB();

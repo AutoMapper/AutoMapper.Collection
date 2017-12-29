@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xunit;
 
 namespace AutoMapper.Collection
 {
@@ -61,6 +62,7 @@ namespace AutoMapper.Collection
             return map.CreateMapper();
         }
 
+        [Fact]
         public void Map_Should_ReturnOnlineOrderEf_When_ListIsOfTypeOrderEf()
         {
             var mapper = CreateMapper();
@@ -95,6 +97,7 @@ namespace AutoMapper.Collection
             //Assert.AreSame(rootDomain.OnlineOrders.First(), orderDomain); that doesn't matter when we map from EF to Domain
         }
 
+        [Fact]
         public void Map_FromEfToDomain_And_AddAnOnlineOrderInTheDomainObject_And_ThenMapBackToEf_Should_UseTheSameReferenceInTheEfCollection()
         {
             var mapper = CreateMapper();
