@@ -2,11 +2,13 @@
 using AutoMapper.Mappers;
 using FluentAssertions;
 using System.Collections.Generic;
+using Xunit;
 
 namespace AutoMapper.Collection
 {
     public class OptionsTests
     {
+        [Fact]
         public void Should_Retain_Options_Passed_In_Map()
         {
             var collectionTestValue = 0;

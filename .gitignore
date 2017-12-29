@@ -192,3 +192,4 @@ ModelManifest.xml
 *.GhostDoc.xml
 /artifacts
 *.lock.json
+/results
