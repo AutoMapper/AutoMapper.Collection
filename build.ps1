@@ -51,11 +51,11 @@ task compile -depends clean {
 }
 
 task test {
-	$logger = @{ $true = "Appveyor"; $false = "trx" }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
 
-	exec { dotnet test $source_dir\AutoMapper.Collection.Tests -c $config --no-build --no-restore --results-directory $result_dir --logger $logger /nologo }
+	exec { dotnet test $source_dir\AutoMapper.Collection.Tests -c $config --no-build --no-restore --results-directory $result_dir --logger trx /nologo }
 
-	exec { dotnet test $source_dir\AutoMapper.Collection.EntityFramework.Tests -c $config --no-build --no-restore --results-directory $result_dir --logger $logger /nologo }
+	exec { dotnet test $source_dir\AutoMapper.Collection.EntityFramework.Tests -c $config --no-build --no-restore --results-directory $result_dir --logger trx /nologo }
+
 }
 
 function Install-Dotnet
