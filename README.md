@@ -24,7 +24,7 @@ Adding equivalence to objects is done with EqualityComparison extended from the 
 	cfg.CreateMap<OrderItemDTO, OrderItem>().EqualityComparison((odto, o) => odto.ID == o.ID);
 Mapping OrderDTO back to Order will compare Order items list based on if their ID's match
 
-	Mapper.Map<OrderDTO[],Order[]>(orderDtos, orders);
+	Mapper.Map<List<OrderDTO>,List<Order>>(orderDtos, orders);
 If ID's match will map OrderDTO to Order
 
 If OrderDTO exists and Order doesn't add to collection
