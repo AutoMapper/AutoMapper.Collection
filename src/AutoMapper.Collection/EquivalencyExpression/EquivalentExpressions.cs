@@ -12,13 +12,13 @@ namespace AutoMapper.EquivalencyExpression
     public static class EquivalentExpressions
     {
         private static readonly
-            IDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>
+            ConcurrentDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>
             EquivalentExpressionDictionary =
-                new Dictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>();
+                new ConcurrentDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>();
 
         private static ConcurrentDictionary<TypePair, IEquivalentComparer> _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentComparer>();
 
-        private static readonly IDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>> GeneratePropertyMapsDictionary = new Dictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>>();
+        private static readonly ConcurrentDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>> GeneratePropertyMapsDictionary = new ConcurrentDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>>();
         private static IList<IGeneratePropertyMaps> _generatePropertyMapsCache = new List<IGeneratePropertyMaps>();
 
         public static void AddCollectionMappers(this IMapperConfigurationExpression cfg)
@@ -41,10 +41,10 @@ namespace AutoMapper.EquivalencyExpression
                 foreach (var configurationObjectMapper in adds)
                     configurationObjectMapper.ConfigurationProvider = c;
 
-                EquivalentExpressionDictionary.Add(c, _equalityComparisonCache);
+                EquivalentExpressionDictionary.AddOrUpdate(c, _equalityComparisonCache, (type, old) => _equalityComparisonCache);
                 _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentComparer>();
 
-                GeneratePropertyMapsDictionary.Add(c, _generatePropertyMapsCache);
+                GeneratePropertyMapsDictionary.AddOrUpdate(c, _generatePropertyMapsCache, (type, old) => _generatePropertyMapsCache);
                 _generatePropertyMapsCache = new List<IGeneratePropertyMaps>();
             });
         }
@@ -54,7 +54,7 @@ namespace AutoMapper.EquivalencyExpression
             var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
             return typeMap == null ? null : GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
         }
-        
+
         internal static IEquivalentComparer GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
         {
             return EquivalentExpressionDictionary[configurationProvider].GetOrAdd(typeMap.Types,
@@ -70,8 +70,8 @@ namespace AutoMapper.EquivalencyExpression
         /// <param name="mappingExpression">Base Mapping Expression</param>
         /// <param name="EquivalentExpression">Equivalent Expression between <typeparamref name="TSource"/> and <typeparamref name="TDestination"/></param>
         /// <returns></returns>
-        public static IMappingExpression<TSource, TDestination> EqualityComparison<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, Expression<Func<TSource, TDestination, bool>> EquivalentExpression) 
-            where TSource : class 
+        public static IMappingExpression<TSource, TDestination> EqualityComparison<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, Expression<Func<TSource, TDestination, bool>> EquivalentExpression)
+            where TSource : class
             where TDestination : class
         {
             var typePair = new TypePair(typeof(TSource), typeof(TDestination));
@@ -91,7 +91,7 @@ namespace AutoMapper.EquivalencyExpression
         {
             _generatePropertyMapsCache.Add(generatePropertyMaps);
         }
-        
+
         private static IEquivalentComparer CreateEquivalentExpression(this IEnumerable<PropertyMap> propertyMaps)
         {
             if (!propertyMaps.Any() || propertyMaps.Any(pm => pm.DestinationProperty.GetMemberType() != pm.SourceMember.GetMemberType()))
