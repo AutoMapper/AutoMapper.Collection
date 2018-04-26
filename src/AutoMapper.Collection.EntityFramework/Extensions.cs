@@ -15,7 +15,7 @@ namespace AutoMapper.EntityFramework
         /// <typeparam name="TSource">Source table type to be updated</typeparam>
         /// <param name="source">DbSet to be updated</param>
         /// <returns>Persistence object to Update or Remove data</returns>
-        public static IPersistence Persist<TSource>(this DbSet<TSource> source)
+        public static IPersistence<TSource> Persist<TSource>(this DbSet<TSource> source)
             where TSource : class
         {
             return new Persistence<TSource>(source, Mapper.Instance);
@@ -28,7 +28,7 @@ namespace AutoMapper.EntityFramework
         /// <param name="source">DbSet to be updated</param>
         /// <param name="mapper">IMapper used to find TypeMap between classes</param>
         /// <returns>Persistence object to Update or Remove data</returns>
-        public static IPersistence Persist<TSource>(this DbSet<TSource> source, IMapper mapper)
+        public static IPersistence<TSource> Persist<TSource>(this DbSet<TSource> source, IMapper mapper)
             where TSource : class
         {
             return new Persistence<TSource>(source, mapper);
