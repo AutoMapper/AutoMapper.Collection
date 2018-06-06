@@ -18,6 +18,10 @@
     <ProjectReference Include="..\AutoMapper.Collection\AutoMapper.Collection.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="1.0.0" />
+  </ItemGroup>
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
