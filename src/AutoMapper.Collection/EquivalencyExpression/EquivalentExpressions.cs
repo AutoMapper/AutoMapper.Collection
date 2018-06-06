@@ -12,13 +12,13 @@ namespace AutoMapper.EquivalencyExpression
     public static class EquivalentExpressions
     {
         private static readonly
-            IDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>
+            ConcurrentDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>
             EquivalentExpressionDictionary =
-                new Dictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>();
+                new ConcurrentDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>();
 
         private static ConcurrentDictionary<TypePair, IEquivalentComparer> _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentComparer>();
 
-        private static readonly IDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>> GeneratePropertyMapsDictionary = new Dictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>>();
+        private static readonly ConcurrentDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>> GeneratePropertyMapsDictionary = new ConcurrentDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>>();
         private static IList<IGeneratePropertyMaps> _generatePropertyMapsCache = new List<IGeneratePropertyMaps>();
 
         public static void AddCollectionMappers(this IMapperConfigurationExpression cfg)
@@ -41,10 +41,10 @@ namespace AutoMapper.EquivalencyExpression
                 foreach (var configurationObjectMapper in adds)
                     configurationObjectMapper.ConfigurationProvider = c;
 
-                EquivalentExpressionDictionary.Add(c, _equalityComparisonCache);
+                EquivalentExpressionDictionary.AddOrUpdate(c, _equalityComparisonCache, (type, old) => _equalityComparisonCache);
                 _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentComparer>();
 
-                GeneratePropertyMapsDictionary.Add(c, _generatePropertyMapsCache);
+                GeneratePropertyMapsDictionary.AddOrUpdate(c, _generatePropertyMapsCache, (type, old) => _generatePropertyMapsCache);
                 _generatePropertyMapsCache = new List<IGeneratePropertyMaps>();
             });
         }
