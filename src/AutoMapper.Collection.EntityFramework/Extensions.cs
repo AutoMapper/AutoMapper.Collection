@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
-using AutoMapper.QueryableExtensions.Impl;
+using AutoMapper.Extensions.ExpressionMapping.Impl;
 
 namespace AutoMapper.EntityFramework
 {
