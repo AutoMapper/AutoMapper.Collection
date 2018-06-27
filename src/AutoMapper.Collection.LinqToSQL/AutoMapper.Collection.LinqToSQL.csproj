@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <Description>Collection updating support for LinqToSQL with AutoMapper. Extends Table&lt;T&gt; with Persist&lt;TDto&gt;().InsertUpdate(dto) and Persist&lt;TDto&gt;().Delete(dto).  Will find the matching object and will Insert/Update/Delete.</Description>
-    <VersionPrefix>3.1.3</VersionPrefix>
     <Authors>Tyler Carlson</Authors>
     <TargetFramework>net45</TargetFramework>
     <AssemblyName>AutoMapper.Collection.LinqToSQL</AssemblyName>
@@ -18,6 +17,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AutoMapper.Collection\AutoMapper.Collection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">

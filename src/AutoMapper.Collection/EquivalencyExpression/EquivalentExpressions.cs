@@ -52,14 +52,37 @@ namespace AutoMapper.EquivalencyExpression
         internal static IEquivalentComparer GetEquivalentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
         {
             var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
-            return typeMap == null ? null : GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
+            if (typeMap == null)
+            {
+                return null;
+            }
+
+            var comparer = GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
+            if (comparer == null)
+            {
+                foreach (var item in typeMap.IncludedBaseTypes)
+                {
+                    var baseTypeMap = mapper.ConfigurationProvider.ResolveTypeMap(item.SourceType, item.DestinationType);
+                    if (baseTypeMap == null)
+                    {
+                        continue;
+                    }
+
+                    comparer = GetEquivalentExpression(mapper.ConfigurationProvider, baseTypeMap);
+                    if (comparer != null)
+                    {
+                        break;
+                    }
+                }
+            }
+            return comparer;
         }
 
         internal static IEquivalentComparer GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
         {
             return EquivalentExpressionDictionary[configurationProvider].GetOrAdd(typeMap.Types,
                 tp =>
-                    GeneratePropertyMapsDictionary[configurationProvider].Select(_ =>_.GeneratePropertyMaps(typeMap).CreateEquivalentExpression()).FirstOrDefault(_ => _ != null));
+                    GeneratePropertyMapsDictionary[configurationProvider].Select(_ => _.GeneratePropertyMaps(typeMap).CreateEquivalentExpression()).FirstOrDefault(_ => _ != null));
         }
 
         /// <summary>

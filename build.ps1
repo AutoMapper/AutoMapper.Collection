@@ -2,9 +2,8 @@ Framework '4.5.1x86'
 
 properties {
 	$base_dir = resolve-path .
-	$build_dir = "$base_dir\build"
 	$source_dir = "$base_dir\src"
-	$result_dir = "$build_dir\results"
+	$result_dir = "$base_dir\results"
 	$artifacts_dir = "$base_dir\artifacts"
 	$global:config = "debug"
 }
@@ -15,8 +14,8 @@ task local -depends init, compile, test
 task ci -depends clean, release, local
 
 task clean {
-	rd "$source_dir\artifacts" -recurse -force  -ErrorAction SilentlyContinue | out-null
-	rd "$base_dir\build" -recurse -force  -ErrorAction SilentlyContinue | out-null
+	rd "$artifacts_dir" -recurse -force  -ErrorAction SilentlyContinue | out-null
+	rd "$result_dir" -recurse -force  -ErrorAction SilentlyContinue | out-null
 }
 
 task init {
@@ -38,38 +37,25 @@ task compile -depends clean {
 	
 	$buildParam = @{ $true = ""; $false = "--version-suffix=$buildSuffix"}[$tag -ne $NULL -and $revision -ne "local"]
 	$packageParam = @{ $true = ""; $false = "--version-suffix=$suffix"}[$tag -ne $NULL -and $revision -ne "local"]
-
+	
 	echo "build: Tag is $tag"
 	echo "build: Package version suffix is $suffix"
 	echo "build: Build version suffix is $buildSuffix" 
 
-	# restore packages to get Fixie.Console.exe in packages folder
-	exec { .\.nuget\NuGet.exe restore $base_dir\AutoMapper.Collection.sln }
-
 	# restore all project references (creating project.assets.json for each project)
-	exec { dotnet restore $base_dir\AutoMapper.Collection.sln }
+	exec { dotnet restore $base_dir\AutoMapper.Collection.sln /nologo }
 
-	exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config $buildParam /nologo }
+	exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config $buildParam /nologo --no-restore }
 
-	exec { dotnet pack $source_dir\AutoMapper.Collection -c $config --include-symbols --no-build --output $artifacts_dir $packageParam /nologo}
-
-	exec { dotnet pack $source_dir\AutoMapper.Collection.EntityFramework -c $config --include-symbols --no-build --output $artifacts_dir $packageParam /nologo}
-
-	exec { dotnet pack $source_dir\AutoMapper.Collection.LinqToSQL -c $config --include-symbols --no-build --output $artifacts_dir $packageParam /nologo}
+	exec { dotnet pack $base_dir\AutoMapper.Collection.sln -c $config --include-symbols --no-build --no-restore --output $artifacts_dir $packageParam /nologo}
 }
 
 task test {
-    $testRunners = @(gci $base_dir\packages -rec -filter Fixie.Console.exe)
 
-    if ($testRunners.Length -ne 1)
-    {
-        throw "Expected to find 1 Fixie.Console.exe, but found $($testRunners.Length)."
-    }
+	exec { dotnet test $source_dir\AutoMapper.Collection.Tests -c $config --no-build --no-restore --results-directory $result_dir --logger trx /nologo }
 
-    $testRunner = $testRunners[0].FullName
+	exec { dotnet test $source_dir\AutoMapper.Collection.EntityFramework.Tests -c $config --no-build --no-restore --results-directory $result_dir --logger trx /nologo }
 
-    exec { & $testRunner $source_dir\AutoMapper.Collection.Tests\bin\$config\AutoMapper.Collection.Tests.dll }
-    exec { & $testRunner $source_dir\AutoMapper.Collection.EntityFramework.Tests\bin\$config\AutoMapper.Collection.EntityFramework.Tests.dll }
 }
 
 function Install-Dotnet
