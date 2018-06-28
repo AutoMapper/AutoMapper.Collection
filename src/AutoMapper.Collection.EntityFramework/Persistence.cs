@@ -5,11 +5,12 @@ using System.Linq.Expressions;
 
 namespace AutoMapper.EntityFramework
 {
-    public class Persistence<TTo> : IPersistence
+    public class Persistence<TTo> : IPersistence<TTo>
         where TTo : class
     {
         private readonly DbSet<TTo> _sourceSet;
         private readonly IMapper _mapper;
+        private Func<DbSet<TTo>, IQueryable<TTo>> _includeFunc = _ => _;
 
         public Persistence(DbSet<TTo> sourceSet, IMapper mapper)
         {
@@ -31,7 +32,7 @@ namespace AutoMapper.EntityFramework
             if (equivExpr == null)
                 return;
 
-            var to = _sourceSet.FirstOrDefault(equivExpr);
+            var to = _includeFunc(_sourceSet).FirstOrDefault(equivExpr);
 
             if (to == null)
             {
@@ -56,6 +57,12 @@ namespace AutoMapper.EntityFramework
 
             if (to != null)
                 _sourceSet.Remove(to);
+        }
+
+        public IPersistence<TTo> Include(Func<DbSet<TTo>, IQueryable<TTo>> includeFunc)
+        {
+            _includeFunc = includeFunc;
+            return this;
         }
     }
 }

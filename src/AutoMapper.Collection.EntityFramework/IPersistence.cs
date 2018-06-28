@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Data.Entity;
+using System.Linq;
 
 namespace AutoMapper.EntityFramework
 {
-    public interface IPersistence
+    public interface IPersistence<TTo>
+        where TTo : class
     {
         /// <summary>
         /// Insert Or Update the <see cref="T:System.Data.Entity.DbSet`1"/> with <paramref name="from"/>
@@ -25,5 +28,11 @@ namespace AutoMapper.EntityFramework
         /// <typeparam name="TFrom">Source Type mapping from</typeparam>
         /// <param name="from">Object to remove that is Equivalent in <see cref="T:System.Data.Entity.DbSet`1"/></param>
         void Remove<TFrom>(TFrom from) where TFrom : class;
+        /// <summary>
+        /// Include Extra actions ontop of the dbset
+        /// </summary>
+        /// <param name="includeAction"></param>
+        /// <returns></returns>
+        IPersistence<TTo> Include(Func<DbSet<TTo>, IQueryable<TTo>> includeFunc);
     }
 }
