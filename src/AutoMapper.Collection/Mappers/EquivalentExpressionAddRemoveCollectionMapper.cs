@@ -16,7 +16,7 @@ namespace AutoMapper.Mappers
 
         public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context, IEquivalentComparer equivalentComparer)
             where TSource : IEnumerable<TSourceItem>
-            where TDestination : class, ICollection<TDestinationItem>
+            where TDestination : ICollection<TDestinationItem>
         {
             if (source == null || destination == null)
             {
