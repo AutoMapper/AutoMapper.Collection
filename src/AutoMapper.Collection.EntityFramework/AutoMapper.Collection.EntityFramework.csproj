@@ -12,7 +12,6 @@
     <AssemblyOriginatorKeyFile>../Key.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-    <Version>4.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
