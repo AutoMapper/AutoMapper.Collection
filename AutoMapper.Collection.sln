@@ -22,9 +22,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.Entit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.LinqToSQL", "src\AutoMapper.Collection.LinqToSQL\AutoMapper.Collection.LinqToSQL.csproj", "{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.Tests", "src\AutoMapper.Collection.Tests\AutoMapper.Collection.Tests.csproj", "{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.Tests", "src\AutoMapper.Collection.Tests\AutoMapper.Collection.Tests.csproj", "{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.EntityFramework.Tests", "src\AutoMapper.Collection.EntityFramework.Tests\AutoMapper.Collection.EntityFramework.Tests.csproj", "{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.EntityFramework.Tests", "src\AutoMapper.Collection.EntityFramework.Tests\AutoMapper.Collection.EntityFramework.Tests.csproj", "{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.EntityFrameworkCore", "src\AutoMapper.Collection.EntityFrameworkCore\AutoMapper.Collection.EntityFrameworkCore.csproj", "{1FABEDBB-1EEE-401F-A7D3-82C439BD93D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.EntityFrameworkCore.Tests", "src\AutoMapper.Collection.EntityFrameworkCore.Tests\AutoMapper.Collection.EntityFrameworkCore.Tests.csproj", "{818AC0F5-02E4-4C47-8E03-8AFC59805EDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +56,14 @@ Global
 		{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FABEDBB-1EEE-401F-A7D3-82C439BD93D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FABEDBB-1EEE-401F-A7D3-82C439BD93D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FABEDBB-1EEE-401F-A7D3-82C439BD93D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FABEDBB-1EEE-401F-A7D3-82C439BD93D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{818AC0F5-02E4-4C47-8E03-8AFC59805EDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{818AC0F5-02E4-4C47-8E03-8AFC59805EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{818AC0F5-02E4-4C47-8E03-8AFC59805EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{818AC0F5-02E4-4C47-8E03-8AFC59805EDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
