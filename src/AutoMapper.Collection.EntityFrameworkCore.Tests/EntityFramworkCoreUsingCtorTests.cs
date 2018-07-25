@@ -8,9 +8,9 @@ using Xunit;
 
 namespace AutoMapper.Collection.EntityFrameworkCore.Tests
 {
-    public class EntityFramworkCoreTests
+    public class EntityFramworkCoreUsingCtorTests
     {
-        public EntityFramworkCoreTests()
+        public EntityFramworkCoreUsingCtorTests()
         {
             Mapper.Reset();
             Mapper.Initialize(x =>
