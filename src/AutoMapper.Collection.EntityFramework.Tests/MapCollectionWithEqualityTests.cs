@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.SqlServerCe;
 using System.Linq;
 using AutoMapper.EntityFramework;
 using AutoMapper.EquivalencyExpression;
@@ -97,20 +98,20 @@ namespace AutoMapper.Collection.EntityFramework.Tests
             Mapper.Map(dtos, items.ToList()).Should().NotContain(cache.First());
         }
 
-        //[Fact]
-        //public void Should_Persist_To_Update()
-        //{
-        //    var db = new DB();
-        //    db.Things.Persist().InsertOrUpdate(new ThingDto { Title = "Test" });
-        //    db.Things.First().Title.Should().Be("Test");
-        //}
+        [Fact]
+        public void Should_Persist_To_Update()
+        {
+            var db = new DB();
+            db.Things.Persist().InsertOrUpdate(new ThingDto { Title = "Test" });
+            db.SaveChanges();
+            db.Things.First().Title.Should().Be("Test");
+        }
 
         public class DB : DbContext
         {
-            static DB()
-            {
-                Database.SetInitializer<DB>(null);
-            }
+            public DB()
+                : base(new SqlCeConnection("Data Source=MyDatabase.sdf;Persist Security Info=False;"), contextOwnsConnection: true)
+            { }
 
             public DbSet<Thing> Things { get; set; }
         }
