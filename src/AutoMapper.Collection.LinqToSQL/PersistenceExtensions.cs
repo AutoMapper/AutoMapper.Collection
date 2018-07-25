@@ -34,6 +34,13 @@ namespace AutoMapper.Collection.LinqToSQL
             return new Persistence<TSource>(source, mapper);
         }
 
+        /// <summary>
+        /// Non Generic call for For
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="destType"></param>
+        /// <returns></returns>
         public static IEnumerable For<TSource>(this IQueryDataSourceInjection<TSource> source, Type destType)
         {
             var forMethod = source.GetType().GetMethod("For").MakeGenericMethod(destType);
