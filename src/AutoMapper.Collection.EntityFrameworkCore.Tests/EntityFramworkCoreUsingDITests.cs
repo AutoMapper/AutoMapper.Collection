@@ -23,9 +23,9 @@ namespace AutoMapper.Collection.EntityFrameworkCore.Tests
             Mapper.Reset();
             Mapper.Initialize(x =>
             {
+                x.ConstructServicesUsing(type => ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, type));
                 x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().ReverseMap();
-                x.SetGeneratePropertyMaps(new GenerateEntityFrameworkCorePrimaryKeyPropertyMapsDependencyInjection<DB>(serviceProvider));
+                x.SetGeneratePropertyMaps<GenerateEntityFrameworkCorePrimaryKeyPropertyMaps<DB>>();
             });
 
             _serviceScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
