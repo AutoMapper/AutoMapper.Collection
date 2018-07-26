@@ -104,8 +104,6 @@ namespace AutoMapper.EquivalencyExpression
         /// <param name="EquivalentExpression">Equivalent Expression between <typeparamref name="TSource"/> and <typeparamref name="TDestination"/></param>
         /// <returns></returns>
         public static IMappingExpression<TSource, TDestination> EqualityComparison<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, Expression<Func<TSource, TDestination, bool>> EquivalentExpression)
-            where TSource : class
-            where TDestination : class
         {
             var typePair = new TypePair(typeof(TSource), typeof(TDestination));
 

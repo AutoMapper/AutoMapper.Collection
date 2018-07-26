@@ -25,16 +25,14 @@ namespace AutoMapper.EquivalencyExpression
         }
     }
 
-    internal class EquivalentExpression<TSource,TDestination> : IEquivalentComparer<TSource, TDestination>
-        where TSource : class 
-        where TDestination : class
+    internal class EquivalentExpression<TSource, TDestination> : IEquivalentComparer<TSource, TDestination>
     {
         private readonly Expression<Func<TSource, TDestination, bool>> _equivalentExpression;
         private readonly Func<TSource, TDestination, bool> _equivalentFunc;
         private readonly Func<TSource, int> _sourceHashCodeFunc;
         private readonly Func<TDestination, int> _destinationHashCodeFunc;
 
-        public EquivalentExpression(Expression<Func<TSource,TDestination,bool>> equivalentExpression)
+        public EquivalentExpression(Expression<Func<TSource, TDestination, bool>> equivalentExpression)
         {
             _equivalentExpression = equivalentExpression;
             _equivalentFunc = _equivalentExpression.Compile();
@@ -43,22 +41,25 @@ namespace AutoMapper.EquivalencyExpression
             var destinationParameter = equivalentExpression.Parameters[1];
 
             var members = HashableExpressionsVisitor.Expand(sourceParameter, destinationParameter, equivalentExpression);
-            
+
             _sourceHashCodeFunc = members.Item1.GetHashCodeExpression<TSource>(sourceParameter).Compile();
             _destinationHashCodeFunc = members.Item2.GetHashCodeExpression<TDestination>(destinationParameter).Compile();
         }
 
         public bool IsEquivalent(object source, object destination)
         {
-            var src = source as TSource;
-            var dest = destination as TDestination;
 
-            if (src == null && dest == null)
+            if (source == null && destination == null)
             {
                 return true;
             }
 
-            if (src == null || dest == null)
+            if (source == null || destination == null)
+            {
+                return false;
+            }
+
+            if (!(source is TSource src) || !(destination is TDestination dest))
             {
                 return false;
             }
@@ -77,10 +78,10 @@ namespace AutoMapper.EquivalencyExpression
 
         public int GetHashCode(object obj)
         {
-            if (obj is TSource)
-                return _sourceHashCodeFunc(obj as TSource);
-            if (obj is TDestination)
-                return _destinationHashCodeFunc(obj as TDestination);
+            if (obj is TSource src)
+                return _sourceHashCodeFunc(src);
+            if (obj is TDestination dest)
+                return _destinationHashCodeFunc(dest);
             return default(int);
         }
     }
