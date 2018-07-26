@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace AutoMapper.Collection.LinqToSQL
+namespace AutoMapper.EntityFrameworkCore
 {
     public interface IPersistence
     {
