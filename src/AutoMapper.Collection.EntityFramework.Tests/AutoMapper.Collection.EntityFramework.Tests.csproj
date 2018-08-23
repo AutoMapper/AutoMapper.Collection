@@ -20,6 +20,15 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSDKVersion)" />
     <PackageReference Include="xunit" Version="$(xUnitVersion)" />
     <PackageReference Include="xunit.runner.visualstudio" Version="$(xUnitVersion)" />
+    <PackageReference Include="EntityFramework.SqlServerCompact" Version="$(EfVersion)" />
+    <PackageReference Include="Microsoft.SqlServer.Compact" Version="$(SqlServerCompactVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(NuGetPackageRoot)\microsoft.sqlserver.compact\$(SqlServerCompactVersion)\NativeBinaries\**">
+      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
