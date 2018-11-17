@@ -200,7 +200,7 @@ namespace AutoMapper.Collection
 
                 //DOMAIN --> EF
                 cfg.CreateMap<RootDomain, RootEf>()
-                    .ForMember(rootEf => rootEf.Orders, opt => opt.ResolveUsing<MergeDomainOrdersToEfOrdersValueResolver>())
+                    .ForMember(rootEf => rootEf.Orders, opt => opt.MapFrom<MergeDomainOrdersToEfOrdersValueResolver>())
                     ;
 
                 //collection type
@@ -245,7 +245,7 @@ namespace AutoMapper.Collection
 
                 //DOMAIN --> EF
                 cfg.CreateMap<RootDomain, RootEf>()
-                    .ForMember(rootEf => rootEf.Orders, opt => opt.ResolveUsing<MergeDomainOrdersToEfOrdersValueResolver>())
+                    .ForMember(rootEf => rootEf.Orders, opt => opt.MapFrom<MergeDomainOrdersToEfOrdersValueResolver>())
                     ;
 
                 //collection type

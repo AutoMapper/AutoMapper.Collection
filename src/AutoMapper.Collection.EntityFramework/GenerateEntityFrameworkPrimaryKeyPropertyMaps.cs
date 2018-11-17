@@ -17,14 +17,14 @@ namespace AutoMapper.EntityFramework
         
         public IEnumerable<PropertyMap> GeneratePropertyMaps(TypeMap typeMap)
         {
-            var propertyMaps = typeMap.GetPropertyMaps();
+            var propertyMaps = typeMap.PropertyMaps;
             try
             {
                 var createObjectSetMethod = _createObjectSetMethodInfo.MakeGenericMethod(typeMap.DestinationType);
                 dynamic objectSet = createObjectSetMethod.Invoke(_context.ObjectContext, null);
 
                 IEnumerable<EdmMember> keyMembers = objectSet.EntitySet.ElementType.KeyMembers;
-                var primaryKeyPropertyMatches = keyMembers.Select(m => propertyMaps.FirstOrDefault(p => p.DestinationProperty.Name == m.Name));
+                var primaryKeyPropertyMatches = keyMembers.Select(m => propertyMaps.FirstOrDefault(p => p.DestinationMember.Name == m.Name));
 
                 return primaryKeyPropertyMatches;
             }
