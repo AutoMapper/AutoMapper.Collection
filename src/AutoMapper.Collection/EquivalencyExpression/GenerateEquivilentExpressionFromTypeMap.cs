@@ -25,7 +25,7 @@ namespace AutoMapper.EquivalencyExpression
             var express = value as LambdaExpression;
             var destExpr = Expression.Parameter(_typeMap.SourceType, express.Parameters[0].Name);
 
-            var result = new CustomExpressionVisitor(destExpr, _typeMap.GetPropertyMaps()).Visit(express.Body);
+            var result = new CustomExpressionVisitor(destExpr, _typeMap.PropertyMaps).Visit(express.Body);
 
             return Expression.Lambda(result, destExpr);
         }

@@ -10,11 +10,11 @@ namespace AutoMapper.Collection.LinqToSQL
     {
         public IEnumerable<PropertyMap> GeneratePropertyMaps(TypeMap typeMap)
         {
-            var propertyMaps = typeMap.GetPropertyMaps();
+            var propertyMaps = typeMap.PropertyMaps;
 
             var primaryKeyPropertyMatches = typeMap.DestinationType.GetProperties()
                 .Where(IsPrimaryKey)
-                .Select(m => propertyMaps.FirstOrDefault(p => p.DestinationProperty.Name == m.Name))
+                .Select(m => propertyMaps.FirstOrDefault(p => p.DestinationMember.Name == m.Name))
                 .ToList();
 
             return primaryKeyPropertyMatches;

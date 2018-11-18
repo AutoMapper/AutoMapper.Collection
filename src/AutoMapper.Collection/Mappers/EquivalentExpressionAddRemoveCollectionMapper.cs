@@ -71,7 +71,7 @@ namespace AutoMapper.Mappers
                    && this.GetEquivalentExpression(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType)) != null;
         }
 
-        public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, PropertyMap propertyMap,
+        public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, IMemberMap memberMap,
             Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
             var sourceType = TypeHelper.GetElementType(sourceExpression.Type);
@@ -84,7 +84,7 @@ namespace AutoMapper.Mappers
             var map = Call(null, method, sourceExpression, destExpression, contextExpression, equivalencyExpressionConst);
 
             var notNull = NotEqual(destExpression, Constant(null));
-            var collectionMap = CollectionMapper.MapExpression(configurationProvider, profileMap, propertyMap, sourceExpression, destExpression, contextExpression);
+            var collectionMap = CollectionMapper.MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
             return Condition(notNull, map, Convert(collectionMap, destExpression.Type));
         }
     }

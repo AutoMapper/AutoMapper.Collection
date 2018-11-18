@@ -127,7 +127,7 @@ namespace AutoMapper.EquivalencyExpression
 
         private static IEquivalentComparer CreateEquivalentExpression(this IEnumerable<PropertyMap> propertyMaps)
         {
-            if (!propertyMaps.Any() || propertyMaps.Any(pm => pm.DestinationProperty.GetMemberType() != pm.SourceMember.GetMemberType()))
+            if (!propertyMaps.Any() || propertyMaps.Any(pm => pm.DestinationMember.GetMemberType() != pm.SourceMember.GetMemberType()))
             {
                 return null;
             }
@@ -154,7 +154,7 @@ namespace AutoMapper.EquivalencyExpression
         private static BinaryExpression SourceEqualsDestinationExpression(PropertyMap propertyMap, Expression srcExpr, Expression destExpr)
         {
             var srcPropExpr = Expression.Property(srcExpr, propertyMap.SourceMember as PropertyInfo);
-            var destPropExpr = Expression.Property(destExpr, propertyMap.DestinationProperty as PropertyInfo);
+            var destPropExpr = Expression.Property(destExpr, propertyMap.DestinationMember as PropertyInfo);
             return Expression.Equal(srcPropExpr, destPropExpr);
         }
     }
