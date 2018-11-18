@@ -26,7 +26,7 @@ namespace AutoMapper.EquivalencyExpression
         {
             if (node.Member is PropertyInfo)
             {
-                var matchPM = _propertyMaps.FirstOrDefault(pm => pm.DestinationProperty == node.Member);
+                var matchPM = _propertyMaps.FirstOrDefault(pm => pm.DestinationMember == node.Member);
                 if (matchPM == null)
                     throw new Exception("No matching PropertyMap");
                 var memberGetters = matchPM.SourceMembers;
