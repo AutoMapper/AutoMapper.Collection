@@ -66,9 +66,16 @@ namespace AutoMapper.Mappers
 
         public bool IsMatch(TypePair typePair)
         {
-            return typePair.SourceType.IsEnumerableType()
-                   && typePair.DestinationType.IsCollectionType()
-                   && this.GetEquivalentExpression(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType)) != null;
+            if (typePair.SourceType.IsEnumerableType()
+                   && typePair.DestinationType.IsCollectionType())
+            {
+                var realType = new TypePair(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType));
+
+                return realType != typePair
+                    && this.GetEquivalentExpression(realType.SourceType, realType.DestinationType) != null;
+            }
+
+            return false;
         }
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, IMemberMap memberMap,
