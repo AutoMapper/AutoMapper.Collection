@@ -60,31 +60,62 @@ namespace AutoMapper.EquivalencyExpression
 
         internal static IEquivalentComparer GetEquivalentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
         {
-            var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
-            if (typeMap == null)
+            var typePair = new TypePair(sourceType, destinationType);
+            var relatedTypePairs = typePair.GetRelatedTypePairs().ToList();
+
+            var foundTypeMap = relatedTypePairs
+                .Select(mapper.ConfigurationProvider.FindTypeMapFor)
+                .FirstOrDefault(x => x != null);
+            if (foundTypeMap == null)
             {
                 return null;
             }
 
-            var comparer = GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
-            if (comparer == null)
-            {
-                foreach (var item in typeMap.IncludedBaseTypes)
-                {
-                    var baseTypeMap = mapper.ConfigurationProvider.ResolveTypeMap(item.SourceType, item.DestinationType);
-                    if (baseTypeMap == null)
-                    {
-                        continue;
-                    }
+            var matchedTypeMap = FindDeriviedTypeMap(foundTypeMap);
+            return FindComparer(matchedTypeMap);
 
-                    comparer = GetEquivalentExpression(mapper.ConfigurationProvider, baseTypeMap);
-                    if (comparer != null)
+            TypeMap FindDeriviedTypeMap(TypeMap currentTypeMap)
+            {
+                if (typePair.SourceType != currentTypeMap.SourceType)
+                {
+                    foreach (var includedDeriviedTypePair in currentTypeMap
+                        .IncludedDerivedTypes
+                        .Where(x => relatedTypePairs.Any(relatedType => relatedType.SourceType == x.SourceType)))
                     {
-                        break;
+                        var includedDeriviedTypeMap = mapper.ConfigurationProvider.FindTypeMapFor(includedDeriviedTypePair);
+                        var typeMap = FindDeriviedTypeMap(includedDeriviedTypeMap);
+                        if (typeMap != null)
+                        {
+                            return typeMap;
+                        }
                     }
                 }
+
+                return currentTypeMap;
             }
-            return comparer;
+
+            IEquivalentComparer FindComparer(TypeMap currentTypeMap)
+            {
+                var comparer = GetEquivalentExpression(mapper.ConfigurationProvider, currentTypeMap);
+                if (comparer == null)
+                {
+                    foreach (var item in currentTypeMap.IncludedBaseTypes)
+                    {
+                        var baseTypeMap = mapper.ConfigurationProvider.FindTypeMapFor(item);
+                        if (baseTypeMap == null)
+                        {
+                            continue;
+                        }
+
+                        comparer = GetEquivalentExpression(mapper.ConfigurationProvider, baseTypeMap);
+                        if (comparer != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+                return comparer;
+            }
         }
 
         internal static IEquivalentComparer GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
