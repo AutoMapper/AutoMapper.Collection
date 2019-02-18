@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using AutoMapper.EquivalencyExpression;
 using FluentAssertions;
 using Xunit;
@@ -12,7 +13,6 @@ namespace AutoMapper.Collection
         {
             var configuration = new MapperConfiguration(x =>
             {
-                //x.CreateMissingTypeMaps = false;
                 x.AddCollectionMappers();
             });
             IMapper mapper = new Mapper(configuration);
@@ -36,7 +36,10 @@ namespace AutoMapper.Collection
                 }
             };
 
-            mapper.Map<SystemViewModel>(system);
+            var model = mapper.Map<SystemViewModel>(system);
+            model.Name.Should().Be(system.Name);
+            model.Contacts.Single().Name.Should().Be(system.Contacts.Single().Name);
+            model.Contacts.Single().Emails.Single().Address.Should().Be(system.Contacts.Single().Emails.Single().Address);
         }
 
         public class System
