@@ -11,7 +11,7 @@ namespace AutoMapper.EquivalencyExpression
     {
         public static void AddCollectionMappers(this IMapperConfigurationExpression cfg)
         {
-            cfg.Advanced.Features.Set(new GeneratePropertyMapsExpressionFeature());
+            cfg.Features.Set(new GeneratePropertyMapsExpressionFeature());
             cfg.InsertBefore<ReadOnlyCollectionMapper>(
                 new ObjectToEquivalencyExpressionByEquivalencyExistingMapper(),
                 new EquivalentExpressionAddRemoveCollectionMapper());
@@ -89,14 +89,14 @@ namespace AutoMapper.EquivalencyExpression
         public static void SetGeneratePropertyMaps<TGeneratePropertyMaps>(this IMapperConfigurationExpression cfg)
             where TGeneratePropertyMaps : IGeneratePropertyMaps
         {
-            (cfg.Advanced.Features.Get<GeneratePropertyMapsExpressionFeature>()
+            (cfg.Features.Get<GeneratePropertyMapsExpressionFeature>()
                 ?? throw new ArgumentException("Invoke the IMapperConfigurationExpression.AddCollectionMappers() before adding IGeneratePropertyMaps."))
                 .Add(serviceCtor => (IGeneratePropertyMaps)serviceCtor(typeof(TGeneratePropertyMaps)));
         }
 
         public static void SetGeneratePropertyMaps(this IMapperConfigurationExpression cfg, IGeneratePropertyMaps generatePropertyMaps)
         {
-            (cfg.Advanced.Features.Get<GeneratePropertyMapsExpressionFeature>()
+            (cfg.Features.Get<GeneratePropertyMapsExpressionFeature>()
                 ?? throw new ArgumentException("Invoke the IMapperConfigurationExpression.AddCollectionMappers() before adding IGeneratePropertyMaps."))
                 .Add(_ => generatePropertyMaps);
         }
