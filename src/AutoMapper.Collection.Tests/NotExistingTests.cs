@@ -17,7 +17,7 @@ namespace AutoMapper.Collection
             });
             IMapper mapper = new Mapper(configuration);
 
-            var system = new System
+            var originalModel = new System
             {
                 Name = "My First System",
                 Contacts = new List<Contact>
@@ -36,10 +36,16 @@ namespace AutoMapper.Collection
                 }
             };
 
-            var model = mapper.Map<SystemViewModel>(system);
-            model.Name.Should().Be(system.Name);
-            model.Contacts.Single().Name.Should().Be(system.Contacts.Single().Name);
-            model.Contacts.Single().Emails.Single().Address.Should().Be(system.Contacts.Single().Emails.Single().Address);
+            var originalEmail = originalModel.Contacts.Single().Emails.Single();
+
+            var assertModel = mapper.Map<SystemViewModel>(originalModel);
+            assertModel.Name.Should().Be(originalModel.Name);
+            assertModel.Contacts.Single().Name.Should().Be(originalModel.Contacts.Single().Name);
+            assertModel.Contacts.Single().Emails.Single().Address.Should().Be(originalModel.Contacts.Single().Emails.Single().Address);
+
+            mapper.Map(assertModel, originalModel);
+            // This tests if equality was found and mapped to pre-existing object and not defaulting to AM and clearing and regenerating the list
+            originalModel.Contacts.Single().Emails.Single().Should().Be(originalEmail);
         }
 
         public class System
