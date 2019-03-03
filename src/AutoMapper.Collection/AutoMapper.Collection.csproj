@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="8.1.0-alpha-1902230949" />
+    <PackageReference Include="AutoMapper" Version="8.1.0-alpha-1903031817" />
   </ItemGroup>
 
 </Project>

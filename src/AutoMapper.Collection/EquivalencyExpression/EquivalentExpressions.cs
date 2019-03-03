@@ -11,7 +11,7 @@ namespace AutoMapper.EquivalencyExpression
     {
         public static void AddCollectionMappers(this IMapperConfigurationExpression cfg)
         {
-            cfg.Features.Set(new GeneratePropertyMapsExpressionFeature());
+            cfg.AddFeature(new GeneratePropertyMapsExpressionFeature());
             cfg.InsertBefore<ReadOnlyCollectionMapper>(
                 new ObjectToEquivalencyExpressionByEquivalencyExistingMapper(),
                 new EquivalentExpressionAddRemoveCollectionMapper());
@@ -82,7 +82,7 @@ namespace AutoMapper.EquivalencyExpression
         /// <returns></returns>
         public static IMappingExpression<TSource, TDestination> EqualityComparison<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, Expression<Func<TSource, TDestination, bool>> EquivalentExpression)
         {
-            mappingExpression.Features.Set(new CollectionMappingExpressionFeature<TSource, TDestination>(EquivalentExpression));
+            mappingExpression.AddFeature(new CollectionMappingExpressionFeature<TSource, TDestination>(EquivalentExpression));
             return mappingExpression;
         }
 

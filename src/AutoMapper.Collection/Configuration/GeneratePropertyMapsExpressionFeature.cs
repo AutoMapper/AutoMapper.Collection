@@ -20,7 +20,7 @@ namespace AutoMapper.Collection.Configuration
             var generators = _generators
                 .Select(x => x.Invoke(configurationProvider.ServiceCtor))
                 .ToList();
-            configurationProvider.Features.Set(new GeneratePropertyMapsFeature(generators));
+            configurationProvider.Features.Add(new GeneratePropertyMapsFeature(generators));
         }
     }
 }
