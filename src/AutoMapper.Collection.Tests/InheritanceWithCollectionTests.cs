@@ -1,31 +1,19 @@
 ﻿using AutoMapper.EquivalencyExpression;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 
 namespace AutoMapper.Collection
 {
-    public abstract class InheritanceWithCollectionTests
+    public abstract class InheritanceWithCollectionTests : MappingTestBase
     {
-        protected abstract void Create(IMapperConfigurationExpression cfg);
-
-        private IMapper CreateMapper()
-        {
-            var map = new MapperConfiguration(Create);
-            map.AssertConfigurationIsValid();
-            map.CompileMappings();
-
-            return map.CreateMapper();
-        }
+        protected abstract void ConfigureMapper(IMapperConfigurationExpression cfg);
 
         [Fact]
         public void TypeMap_Should_include_base_types()
         {
-            var mapper = CreateMapper();
+            var mapper = CreateMapper(ConfigureMapper);
             var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(typeof(MailOrderDomain), typeof(OrderEf));
 
             var typePairs = new[]{
@@ -37,7 +25,7 @@ namespace AutoMapper.Collection
         [Fact]
         public void TypeMap_Should_include_derivied_types()
         {
-            var mapper = CreateMapper();
+            var mapper = CreateMapper(ConfigureMapper);
             var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(typeof(OrderDomain), typeof(OrderEf));
 
             var typePairs = new[]{
@@ -50,7 +38,7 @@ namespace AutoMapper.Collection
         [Fact]
         public void Map_Should_ReturnOnlineOrderEf_When_ListIsOfTypeOrderEf()
         {
-            var mapper = CreateMapper();
+            var mapper = CreateMapper(ConfigureMapper);
 
             //arrange
             var orderDomain = new OnlineOrderDomain { Id = "Id", Key = "Key" };
@@ -85,7 +73,7 @@ namespace AutoMapper.Collection
         [Fact]
         public void Map_FromEfToDomain_And_AddAnOnlineOrderInTheDomainObject_And_ThenMapBackToEf_Should_UseTheSameReferenceInTheEfCollection()
         {
-            var mapper = CreateMapper();
+            var mapper = CreateMapper(ConfigureMapper);
 
             //arrange
             var onlineOrderEf = new OnlineOrderEf { Id = "Id", Key = "Key" };
@@ -193,7 +181,7 @@ namespace AutoMapper.Collection
 
         public class Include : InheritanceWithCollectionTests
         {
-            protected override void Create(IMapperConfigurationExpression cfg)
+            protected override void ConfigureMapper(IMapperConfigurationExpression cfg)
             {
                 cfg.ShouldMapProperty = propertyInfo => propertyInfo.GetMethod.IsPublic || propertyInfo.GetMethod.IsAssembly || propertyInfo.GetMethod.IsFamily || propertyInfo.GetMethod.IsPrivate;
                 cfg.AddCollectionMappers();
@@ -238,7 +226,7 @@ namespace AutoMapper.Collection
 
         public class IncludeBase : InheritanceWithCollectionTests
         {
-            protected override void Create(IMapperConfigurationExpression cfg)
+            protected override void ConfigureMapper(IMapperConfigurationExpression cfg)
             {
                 cfg.ShouldMapProperty = propertyInfo => propertyInfo.GetMethod.IsPublic || propertyInfo.GetMethod.IsAssembly || propertyInfo.GetMethod.IsFamily || propertyInfo.GetMethod.IsPrivate;
                 cfg.AddCollectionMappers();
