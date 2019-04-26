@@ -6,23 +6,23 @@ using Xunit;
 
 namespace AutoMapper.Collection
 {
-    public class OptionsTests
+    public class OptionsTests : MappingTestBase
     {
         [Fact]
         public void Should_Retain_Options_Passed_In_Map()
         {
             var collectionTestValue = 0;
-            var collectionMapper = new MapperConfiguration(cfg =>
+            var collectionMapper = CreateMapper(cfg =>
             {
                 cfg.AddCollectionMappers();
                 cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID).AfterMap((_, __, ctx) => collectionTestValue = (int)ctx.Options.Items["Test"]);
-            }).CreateMapper();
+            });
 
             var normalTestValue = 0;
-            var normalMapper = new MapperConfiguration(cfg =>
+            var normalMapper = CreateMapper(cfg =>
             {
                 cfg.CreateMap<ThingDto, Thing>().AfterMap((_, __, ctx) => normalTestValue = (int)ctx.Options.Items["Test"]);
-            }).CreateMapper();
+            });
 
             var dtos = new List<ThingDto>
             {
