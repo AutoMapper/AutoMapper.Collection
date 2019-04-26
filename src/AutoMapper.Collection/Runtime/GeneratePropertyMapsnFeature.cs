@@ -5,10 +5,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper.EquivalencyExpression;
+using AutoMapper.Features;
 
-namespace AutoMapper.Collection.Execution
+namespace AutoMapper.Collection.Runtime
 {
-    public class GeneratePropertyMapsFeature : IFeature
+    public class GeneratePropertyMapsFeature : IRuntimeFeature
     {
         private readonly IList<IGeneratePropertyMaps> _generators;
         private readonly ConcurrentDictionary<TypePair, IEquivalentComparer> _comparers = new ConcurrentDictionary<TypePair, IEquivalentComparer>();
@@ -27,7 +28,7 @@ namespace AutoMapper.Collection.Execution
                     .FirstOrDefault(x => x != null));
         }
 
-        void IFeature.Seal(IConfigurationProvider configurationProvider)
+        void IRuntimeFeature.Seal(IConfigurationProvider configurationProvider)
         {
         }
 

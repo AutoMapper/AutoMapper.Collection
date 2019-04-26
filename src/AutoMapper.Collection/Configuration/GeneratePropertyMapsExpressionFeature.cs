@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper.Collection.Execution;
+using AutoMapper.Collection.Runtime;
 using AutoMapper.EquivalencyExpression;
+using AutoMapper.Features;
 
 namespace AutoMapper.Collection.Configuration
 {
-    public class GeneratePropertyMapsExpressionFeature : IMapperConfigurationExpressionFeature
+    public class GeneratePropertyMapsnFeature : IGlobalFeature
     {
         private readonly List<Func<Func<Type, object>, IGeneratePropertyMaps>> _generators = new List<Func<Func<Type, object>, IGeneratePropertyMaps>>();
 
@@ -15,12 +16,12 @@ namespace AutoMapper.Collection.Configuration
             _generators.Add(creator);
         }
 
-        void IMapperConfigurationExpressionFeature.Configure(IConfigurationProvider configurationProvider)
+        void IGlobalFeature.Configure(IConfigurationProvider configurationProvider)
         {
             var generators = _generators
                 .Select(x => x.Invoke(configurationProvider.ServiceCtor))
                 .ToList();
-            configurationProvider.Features.Add(new GeneratePropertyMapsFeature(generators));
+            configurationProvider.Features.Set(new GeneratePropertyMapsFeature(generators));
         }
     }
 }

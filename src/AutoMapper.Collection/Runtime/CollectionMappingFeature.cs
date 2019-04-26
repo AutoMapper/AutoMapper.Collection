@@ -1,8 +1,9 @@
 ﻿using AutoMapper.EquivalencyExpression;
+using AutoMapper.Features;
 
-namespace AutoMapper.Collection.Execution
+namespace AutoMapper.Collection.Runtime
 {
-    public class CollectionMappingFeature : IFeature
+    public class CollectionMappingFeature : IRuntimeFeature
     {
         public CollectionMappingFeature(IEquivalentComparer equivalentComparer)
         {
@@ -11,7 +12,7 @@ namespace AutoMapper.Collection.Execution
 
         public IEquivalentComparer EquivalentComparer { get; }
 
-        void IFeature.Seal(IConfigurationProvider configurationProvider)
+        void IRuntimeFeature.Seal(IConfigurationProvider configurationProvider)
         {
         }
     }
