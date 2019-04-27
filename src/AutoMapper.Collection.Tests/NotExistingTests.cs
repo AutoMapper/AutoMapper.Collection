@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper.EquivalencyExpression;
 using FluentAssertions;
@@ -43,14 +44,14 @@ namespace AutoMapper.Collection
             assertModel.Contacts.Single().Name.Should().Be(originalModel.Contacts.Single().Name);
             assertModel.Contacts.Single().Emails.Single().Address.Should().Be(originalModel.Contacts.Single().Emails.Single().Address);
 
+            assertModel.Contacts.Single().Emails.Add(new EmailViewModel { Address = "jane@doe.com" });
+
             mapper.Map(assertModel, originalModel);
-            // This tests if equality was found and mapped to pre-existing object and not defaulting to AM and clearing and regenerating the list
-            originalModel.Contacts.Single().Emails.Single().Should().Be(originalEmail);
         }
 
         public class System
         {
-            public int Id { get; set; }
+            public Guid Id { get; set; } = Guid.NewGuid();
             public string Name { get; set; }
 
             public ICollection<Contact> Contacts { get; set; }
@@ -58,8 +59,8 @@ namespace AutoMapper.Collection
 
         public class Contact
         {
-            public int Id { get; set; }
-            public int SystemId { get; set; }
+            public Guid Id { get; set; } = Guid.NewGuid();
+            public Guid SystemId { get; set; }
             public string Name { get; set; }
 
             public System System { get; set; }
@@ -69,9 +70,9 @@ namespace AutoMapper.Collection
 
         public class Email
         {
-            public int Id { get; set; }
+            public Guid Id { get; set; } = Guid.NewGuid();
 
-            public int ContactId { get; set; }
+            public Guid ContactId { get; set; }
             public string Address { get; set; }
 
             public Contact Contact { get; set; }
@@ -79,7 +80,7 @@ namespace AutoMapper.Collection
 
         public class SystemViewModel
         {
-            public int Id { get; set; }
+            public Guid Id { get; set; }
             public string Name { get; set; }
 
             public ICollection<ContactViewModel> Contacts { get; set; }
@@ -87,8 +88,8 @@ namespace AutoMapper.Collection
 
         public class ContactViewModel
         {
-            public int Id { get; set; }
-            public int SystemId { get; set; }
+            public Guid Id { get; set; }
+            public Guid SystemId { get; set; }
             public string Name { get; set; }
 
             public SystemViewModel System { get; set; }
@@ -98,8 +99,8 @@ namespace AutoMapper.Collection
 
         public class EmailViewModel
         {
-            public int Id { get; set; }
-            public int ContactId { get; set; }
+            public Guid Id { get; set; }
+            public Guid ContactId { get; set; }
             public string Address { get; set; }
 
             public ContactViewModel Contact { get; set; }
