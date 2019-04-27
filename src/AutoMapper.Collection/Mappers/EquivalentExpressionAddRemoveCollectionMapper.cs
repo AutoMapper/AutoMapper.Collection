@@ -10,7 +10,7 @@ namespace AutoMapper.Mappers
 {
     public class EquivalentExpressionAddRemoveCollectionMapper : IConfigurationObjectMapper
     {
-        private readonly CollectionMapper CollectionMapper = new CollectionMapper();
+        private readonly CollectionMapper _collectionMapper = new CollectionMapper();
 
         public IConfigurationProvider ConfigurationProvider { get; set; }
 
@@ -62,37 +62,50 @@ namespace AutoMapper.Mappers
             return destination;
         }
 
-        private static readonly MethodInfo MapMethodInfo = typeof(EquivalentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().First(_ => _.IsStatic);
+        private static readonly MethodInfo _mapMethodInfo = typeof(EquivalentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().Single(_ => _.IsStatic && _.Name == nameof(Map));
 
         public bool IsMatch(TypePair typePair)
         {
-            if (typePair.SourceType.IsEnumerableType()
-                   && typePair.DestinationType.IsCollectionType())
-            {
-                var realType = new TypePair(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType));
+            return typePair.SourceType.IsEnumerableType()
+                   && typePair.DestinationType.IsCollectionType();
+        }
 
-                return realType != typePair
-                    && this.GetEquivalentExpression(realType.SourceType, realType.DestinationType) != null;
-            }
-
-            return false;
+        public TypePair GetAssociatedTypes(TypePair initialTypes)
+        {
+            return new TypePair(TypeHelper.GetElementType(initialTypes.SourceType), TypeHelper.GetElementType(initialTypes.DestinationType));
         }
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, IMemberMap memberMap,
             Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
+            IObjectMapper nextMapper = _collectionMapper;
+            var typePair = new TypePair(sourceExpression.Type, destExpression.Type);
+            var mappers = new List<IObjectMapper>(configurationProvider.GetMappers());
+            for (var i = mappers.IndexOf(this) + 1; i < mappers.Count; i++)
+            {
+                var mapper = mappers[i];
+                if (mapper.IsMatch(typePair))
+                {
+                    nextMapper = mapper;
+                    break;
+                }
+            }
+            var nextMapperExpression = nextMapper.MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
+
             var sourceType = TypeHelper.GetElementType(sourceExpression.Type);
             var destType = TypeHelper.GetElementType(destExpression.Type);
 
-            var method = MapMethodInfo.MakeGenericMethod(sourceExpression.Type, sourceType, destExpression.Type, destType);
             var equivalencyExpression = this.GetEquivalentExpression(sourceType, destType);
+            if (equivalencyExpression == null)
+            {
+                return nextMapperExpression;
+            }
 
-            var equivalencyExpressionConst = Constant(equivalencyExpression);
-            var map = Call(null, method, sourceExpression, destExpression, contextExpression, equivalencyExpressionConst);
+            var method = _mapMethodInfo.MakeGenericMethod(sourceExpression.Type, sourceType, destExpression.Type, destType);
+            var map = Call(null, method, sourceExpression, destExpression, contextExpression, Constant(equivalencyExpression));
 
             var notNull = NotEqual(destExpression, Constant(null));
-            var collectionMap = CollectionMapper.MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
-            return Condition(notNull, map, Convert(collectionMap, destExpression.Type));
+            return Condition(notNull, map, Convert(nextMapperExpression, destExpression.Type));
         }
     }
 }
