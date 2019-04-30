@@ -70,11 +70,6 @@ namespace AutoMapper.Mappers
                    && typePair.DestinationType.IsCollectionType();
         }
 
-        public TypePair GetAssociatedTypes(TypePair initialTypes)
-        {
-            return new TypePair(TypeHelper.GetElementType(initialTypes.SourceType), TypeHelper.GetElementType(initialTypes.DestinationType));
-        }
-
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, IMemberMap memberMap,
             Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
