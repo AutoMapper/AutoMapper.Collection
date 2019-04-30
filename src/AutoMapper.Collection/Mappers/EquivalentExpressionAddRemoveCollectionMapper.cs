@@ -62,7 +62,7 @@ namespace AutoMapper.Mappers
             return destination;
         }
 
-        private static readonly MethodInfo _mapMethodInfo = typeof(EquivalentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().Single(_ => _.IsStatic && _.Name == nameof(Map));
+        private static readonly MethodInfo _mapMethodInfo = typeof(EquivalentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().Single(x => x.IsStatic && x.Name == nameof(Map));
 
         public bool IsMatch(TypePair typePair)
         {
