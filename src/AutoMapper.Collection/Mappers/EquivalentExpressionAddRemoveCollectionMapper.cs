@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -63,6 +64,7 @@ namespace AutoMapper.Mappers
         }
 
         private static readonly MethodInfo _mapMethodInfo = typeof(EquivalentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().Single(x => x.IsStatic && x.Name == nameof(Map));
+        private static readonly ConcurrentDictionary<TypePair, IObjectMapper> _objectMapperCache = new ConcurrentDictionary<TypePair, IObjectMapper>();
 
         public bool IsMatch(TypePair typePair)
         {
@@ -73,34 +75,35 @@ namespace AutoMapper.Mappers
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, IMemberMap memberMap,
             Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
-            IObjectMapper nextMapper = _collectionMapper;
-            var typePair = new TypePair(sourceExpression.Type, destExpression.Type);
-            var mappers = new List<IObjectMapper>(configurationProvider.GetMappers());
-            for (var i = mappers.IndexOf(this) + 1; i < mappers.Count; i++)
-            {
-                var mapper = mappers[i];
-                if (mapper.IsMatch(typePair))
-                {
-                    nextMapper = mapper;
-                    break;
-                }
-            }
-            var nextMapperExpression = nextMapper.MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
-
             var sourceType = TypeHelper.GetElementType(sourceExpression.Type);
             var destType = TypeHelper.GetElementType(destExpression.Type);
 
             var equivalencyExpression = this.GetEquivalentExpression(sourceType, destType);
             if (equivalencyExpression == null)
             {
-                return nextMapperExpression;
+                var typePair = new TypePair(sourceExpression.Type, destExpression.Type);
+                return _objectMapperCache.GetOrAdd(typePair, _ =>
+                {
+                    var mappers = new List<IObjectMapper>(configurationProvider.GetMappers());
+                    for (var i = mappers.IndexOf(this) + 1; i < mappers.Count; i++)
+                    {
+                        var mapper = mappers[i];
+                        if (mapper.IsMatch(typePair))
+                        {
+                            return mapper;
+                        }
+                    }
+                    return _collectionMapper;
+                })
+                .MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
             }
 
             var method = _mapMethodInfo.MakeGenericMethod(sourceExpression.Type, sourceType, destExpression.Type, destType);
             var map = Call(null, method, sourceExpression, destExpression, contextExpression, Constant(equivalencyExpression));
 
             var notNull = NotEqual(destExpression, Constant(null));
-            return Condition(notNull, map, Convert(nextMapperExpression, destExpression.Type));
+            var collectionMapperExpression = _collectionMapper.MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
+            return Condition(notNull, map, Convert(collectionMapperExpression, destExpression.Type));
         }
     }
 }
