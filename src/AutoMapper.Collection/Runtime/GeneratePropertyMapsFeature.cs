@@ -19,7 +19,7 @@ namespace AutoMapper.Collection.Runtime
             _generators = generators.AsReadOnly();
         }
 
-        internal IEquivalentComparer Get(TypeMap typeMap)
+        public IEquivalentComparer Get(TypeMap typeMap)
         {
             return _comparers
                 .GetOrAdd(typeMap.Types, _ =>
