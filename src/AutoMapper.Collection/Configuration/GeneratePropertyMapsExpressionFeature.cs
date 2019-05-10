@@ -7,7 +7,7 @@ using AutoMapper.Features;
 
 namespace AutoMapper.Collection.Configuration
 {
-    public class GeneratePropertyMapsnFeature : IGlobalFeature
+    public class GeneratePropertyMapsExpressionFeature : IGlobalFeature
     {
         private readonly List<Func<Func<Type, object>, IGeneratePropertyMaps>> _generators = new List<Func<Func<Type, object>, IGeneratePropertyMaps>>();
 
