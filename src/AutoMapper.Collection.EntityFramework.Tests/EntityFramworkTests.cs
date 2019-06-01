@@ -69,7 +69,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
         public class DB : DbContext
         {
             public DB()
-                : base(new SqlCeConnection("Data Source=MyDatabase.sdf;Persist Security Info=False;"), contextOwnsConnection: true)
+                : base(new SqlCeConnection($"Data Source={Guid.NewGuid()}.sdf;Persist Security Info=False;"), contextOwnsConnection: true)
             {
                 Things.RemoveRange(Things);
                 SaveChanges();
