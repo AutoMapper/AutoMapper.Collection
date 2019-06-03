@@ -7,21 +7,18 @@ using Xunit;
 
 namespace AutoMapper.Collection
 {
-    public class MapCollectionWithEqualityTests
+    public class MapCollectionWithEqualityTests : MappingTestBase
     {
-        public MapCollectionWithEqualityTests()
+        protected virtual void ConfigureMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.Reset();
-            Mapper.Initialize(x =>
-            {
-                x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
-            });
+            cfg.AddCollectionMappers();
+            cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
         }
 
         [Fact]
         public void Should_Keep_Existing_List()
         {
+            var mapper = CreateMapper(ConfigureMapper);
             var dtos = new List<ThingDto>
             {
                 new ThingDto { ID = 1, Title = "test0" },
@@ -34,12 +31,14 @@ namespace AutoMapper.Collection
                 new Thing { ID = 3, Title = "test3" },
             };
 
-            Mapper.Map(dtos, items).Should().BeSameAs(items);
+            mapper.Map(dtos, items).Should().BeSameAs(items);
         }
 
         [Fact]
         public void Should_Update_Existing_Item()
         {
+            var mapper = CreateMapper(ConfigureMapper);
+
             var dtos = new List<ThingDto>
             {
                 new ThingDto { ID = 1, Title = "test0" },
@@ -52,143 +51,141 @@ namespace AutoMapper.Collection
                 new Thing { ID = 3, Title = "test3" },
             };
 
-            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         [Fact]
         public void Should_Be_Fast_With_Large_Lists()
         {
+            var mapper = CreateMapper(ConfigureMapper);
+
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
 
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
-            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         [Fact]
         public void Should_Be_Fast_With_Large_Reversed_Lists()
         {
+            var mapper = CreateMapper(ConfigureMapper);
+
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
             dtos.Reverse();
 
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
-            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         [Fact]
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping()
         {
-            Mapper.Reset();
-            Mapper.Initialize(x =>
+            var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID && dto.ID == entity.ID);
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => dto.ID == entity.ID && dto.ID == entity.ID);
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
 
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
-            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         [Fact]
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping_Cant_Extract()
         {
-            Mapper.Reset();
-            Mapper.Initialize(x =>
+            var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID || dto.ID == entity.ID);
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => dto.ID == entity.ID || dto.ID == entity.ID);
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
 
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
-            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         [Fact]
         public void Should_Be_Fast_With_Large_Lists_Cant_Extract_Negative()
         {
-            Mapper.Reset();
-            Mapper.Initialize(x =>
+            var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
                 // ReSharper disable once NegativeEqualityExpression
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => !(dto.ID != entity.ID));
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => !(dto.ID != entity.ID));
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
 
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
-            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         [Fact]
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping_Cant_Extract_Negative()
         {
-            Mapper.Reset();
-            Mapper.Initialize(x =>
+            var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
                 // ReSharper disable once NegativeEqualityExpression
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID && !(dto.ID != entity.ID));
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => dto.ID == entity.ID && !(dto.ID != entity.ID));
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
 
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
-            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         [Fact]
         public void Should_Be_Fast_With_Large_Lists_SubObject()
         {
-            Mapper.Reset();
-            Mapper.Initialize(x =>
+            var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((source, dest) => dest.ID == (source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID));
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto source, Thing dest) => dest.ID == (source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID));
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingSubDto { ID = i + 100000 }).Cast<ThingDto>().ToList();
 
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
-            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         [Fact]
         public void Should_Be_Fast_With_Large_Lists_SubObject_switch_left_and_right_expression()
         {
-            Mapper.Reset();
-            Mapper.Initialize(x =>
+            var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((source, dest) => (source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID) == dest.ID);
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto source, Thing dest) => (source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID) == dest.ID);
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingSubDto { ID = i + 100000 }).ToList();
 
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
-            Mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
         [Fact]
         public void Should_Work_With_Conditionals()
         {
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
+            var mapper = CreateMapper(cfg =>
             {
                 cfg.AddCollectionMappers();
                 cfg.CreateMap<ClientDto, Client>()
-                    .EqualityComparison((src, dest) => dest.DtoId == 0 ? src.Code == dest.Code : src.Id == dest.DtoId);
+                    .ForMember(x => x.DtoId, m => m.Ignore())
+                    .EqualityComparison((ClientDto src, Client dest) => dest.DtoId == 0 ? src.Code == dest.Code : src.Id == dest.DtoId);
             });
             
             var dto = new ClientDto
@@ -199,7 +196,7 @@ namespace AutoMapper.Collection
             var entity = new Client {Code = dto.Code, Id = 42};
             var entityCollection = new List<Client> {entity};
 
-            Mapper.Map(new[] {dto}, entityCollection);
+            mapper.Map(new[] { dto }, entityCollection);
 
             entity.ShouldBeEquivalentTo(entityCollection[0]);
         }
@@ -221,37 +218,38 @@ namespace AutoMapper.Collection
         [Fact]
         public void Should_Work_With_Null_Destination()
         {
+            var mapper = CreateMapper(ConfigureMapper);
+
             var dtos = new List<ThingDto>
             {
                 new ThingDto { ID = 1, Title = "test0" },
                 new ThingDto { ID = 2, Title = "test2" }
             };
 
-            Mapper.Map<List<Thing>>(dtos).Should().HaveSameCount(dtos);
+            mapper.Map<List<Thing>>(dtos).Should().HaveSameCount(dtos);
         }
 
         [Fact]
         public void Should_Work_With_Comparing_String_Types()
         {
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
+            var mapper = CreateMapper(cfg =>
             {
                 cfg.AddCollectionMappers();
                 cfg.CreateMap<Charge, SaleCharge>()
-                    .ForMember(d => d.SaleId, o => o.Ignore())
-                    .EqualityComparison((c, sc) => sc.Category == c.Category && sc.Description == c.Description);
+                    .ForMember(d => d.SaleId, (IMemberConfigurationExpression<Charge, SaleCharge, Guid> o) => o.Ignore())
+                    .EqualityComparison((Charge c, SaleCharge sc) => sc.Category == c.Category && sc.Description == c.Description);
 
                 cfg.CreateMap<SaleCharge, Charge>()
                     .ConstructUsing(
                         (saleCharge => new Charge(saleCharge.Category, saleCharge.Description, saleCharge.Value)))
-                    .EqualityComparison((sc, c) => sc.Category == c.Category && sc.Description == c.Description);
+                    .EqualityComparison((SaleCharge sc, Charge c) => sc.Category == c.Category && sc.Description == c.Description);
             });
 
             var dto = new Charge("catagory", "description", 5);
             var entity = new SaleCharge { Category = dto.Category, Description = dto.Description };
             var entityCollection = new List<SaleCharge> { entity };
 
-            Mapper.Map(new[] { dto }, entityCollection);
+            mapper.Map(new[] { dto }, entityCollection);
 
             entity.ShouldBeEquivalentTo(entityCollection[0]);
         }
@@ -313,8 +311,7 @@ namespace AutoMapper.Collection
         [Fact]
         public void Should_Be_Instanced_Based()
         {
-            Mapper.Reset();
-            Mapper.Initialize(x =>
+            var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
                 x.CreateMap<ThingDto, Thing>().ReverseMap();
@@ -332,13 +329,13 @@ namespace AutoMapper.Collection
                 new Thing { ID = 3, Title = "test3" },
             };
 
-            Mapper.Map(dtos, items.ToList()).Should().NotContain(items.First());
+            mapper.Map(dtos, items.ToList()).Should().NotContain(items.First());
         }
 
         [Fact]
         public void Parent_Should_Be_Same_As_Root_Object()
         {
-            var mapper = new MapperConfiguration(
+            var mapper = CreateMapper(
                     cfg =>
                     {
                         cfg.AddCollectionMappers();
@@ -347,8 +344,7 @@ namespace AutoMapper.Collection
                         cfg.CreateMap<ThingCollectionItem, ThingCollectionItem>()
                             .EqualityComparison((src, dst) => src.ID == dst.ID)
                             .PreserveReferences();
-                    })
-                .CreateMapper();
+                    });
 
             var root = new ThingWithCollection()
             {

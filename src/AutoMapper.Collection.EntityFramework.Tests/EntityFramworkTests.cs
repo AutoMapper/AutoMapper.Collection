@@ -10,22 +10,20 @@ using Xunit;
 
 namespace AutoMapper.Collection.EntityFramework.Tests
 {
-    public class EntityFramworkTests
+    public class EntityFramworkTests : MappingTestBase
     {
-        public EntityFramworkTests()
+        private void ConfigureMapper(IMapperConfigurationExpression cfg)
         {
-            Mapper.Reset();
-            Mapper.Initialize(x =>
-            {
-                x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().ReverseMap();
-                x.SetGeneratePropertyMaps<GenerateEntityFrameworkPrimaryKeyPropertyMaps<DB>>();
-            });
+            cfg.AddCollectionMappers();
+            cfg.CreateMap<ThingDto, Thing>().ReverseMap();
+            cfg.SetGeneratePropertyMaps<GenerateEntityFrameworkPrimaryKeyPropertyMaps<DB>>();
         }
 
         [Fact]
         public void Should_Persist_To_Update()
         {
+            var mapper = CreateMapper(ConfigureMapper);
+
             var db = new DB();
             db.Things.Add(new Thing { Title = "Test2" });
             db.Things.Add(new Thing { Title = "Test3" });
@@ -36,7 +34,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
 
             var item = db.Things.First();
 
-            db.Things.Persist().InsertOrUpdate(new ThingDto { ID = item.ID, Title = "Test" });
+            db.Things.Persist(mapper).InsertOrUpdate(new ThingDto { ID = item.ID, Title = "Test" });
             Assert.Equal(1, db.ChangeTracker.Entries<Thing>().Count(x => x.State == EntityState.Modified));
 
             Assert.Equal(3, db.Things.Count());
@@ -47,6 +45,8 @@ namespace AutoMapper.Collection.EntityFramework.Tests
         [Fact]
         public void Should_Persist_To_Insert()
         {
+            var mapper = CreateMapper(ConfigureMapper);
+
             var db = new DB();
             db.Things.Add(new Thing { Title = "Test2" });
             db.Things.Add(new Thing { Title = "Test3" });
@@ -55,7 +55,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
 
             Assert.Equal(3, db.Things.Count());
 
-            db.Things.Persist().InsertOrUpdate(new ThingDto { Title = "Test" });
+            db.Things.Persist(mapper).InsertOrUpdate(new ThingDto { Title = "Test" });
             Assert.Equal(3, db.Things.Count());
             Assert.Equal(1, db.ChangeTracker.Entries<Thing>().Count(x => x.State == EntityState.Added));
 
@@ -69,7 +69,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
         public class DB : DbContext
         {
             public DB()
-                : base(new SqlCeConnection("Data Source=MyDatabase.sdf;Persist Security Info=False;"), contextOwnsConnection: true)
+                : base(new SqlCeConnection($"Data Source={Guid.NewGuid()}.sdf;Persist Security Info=False;"), contextOwnsConnection: true)
             {
                 Things.RemoveRange(Things);
                 SaveChanges();
