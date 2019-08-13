@@ -45,9 +45,9 @@ task compile -depends clean {
 	# restore all project references (creating project.assets.json for each project)
 	exec { dotnet restore $base_dir\AutoMapper.Collection.sln /nologo }
 
-	exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config $buildParam /nologo --no-restore }
+	exec { dotnet build $base_dir\AutoMapper.Collection.sln -c $config $buildParam --no-restore /nologo }
 
-	exec { dotnet pack $base_dir\AutoMapper.Collection.sln -c $config --include-symbols --no-build --no-restore --output $artifacts_dir $packageParam /nologo}
+	exec { dotnet pack $base_dir\AutoMapper.Collection.sln -c $config --include-symbols --no-build --no-restore --output $artifacts_dir $packageParam /nologo }
 }
 
 task test {
