@@ -8,6 +8,9 @@ branches:
 image: Visual Studio 2017
 nuget:
   disable_publish_on_pr: true
+environment:
+  DOTNET_CLI_VERSION: 3.0.100-preview6-012264
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
 build_script:
 - cmd: .\build.cmd
 test: off
