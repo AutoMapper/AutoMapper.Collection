@@ -10,18 +10,12 @@
     <ProjectReference Include="..\AutoMapper.Collection.EntityFramework\AutoMapper.Collection.EntityFramework.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="$(FluentAssertions)" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSDKVersion)" />
     <PackageReference Include="xunit" Version="$(xUnitVersion)" />
     <PackageReference Include="xunit.runner.visualstudio" Version="$(xUnitVersion)" />
-    <PackageReference Include="EntityFramework.SqlServerCompact" Version="$(EfVersion)" />
-    <PackageReference Include="Microsoft.SqlServer.Compact" Version="$(SqlServerCompactVersion)" />
+    <PackageReference Include="Effort.EF6" Version="$(EffortVersion)" />
   </ItemGroup>
 
   <ItemGroup>

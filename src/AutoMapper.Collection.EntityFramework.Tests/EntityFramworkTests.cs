@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.SqlServerCe;
 using System.Linq;
 using AutoMapper.EntityFramework;
 using AutoMapper.EquivalencyExpression;
@@ -69,7 +68,7 @@ namespace AutoMapper.Collection.EntityFramework.Tests
         public class DB : DbContext
         {
             public DB()
-                : base(new SqlCeConnection($"Data Source={Guid.NewGuid()}.sdf;Persist Security Info=False;"), contextOwnsConnection: true)
+                : base(Effort.DbConnectionFactory.CreateTransient(), contextOwnsConnection: true)
             {
                 Things.RemoveRange(Things);
                 SaveChanges();
