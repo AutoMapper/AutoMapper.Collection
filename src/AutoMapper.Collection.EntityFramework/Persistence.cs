@@ -14,7 +14,7 @@ namespace AutoMapper.EntityFramework
         public Persistence(DbSet<TTo> sourceSet, IMapper mapper)
         {
             _sourceSet = sourceSet;
-            _mapper = mapper;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public void InsertOrUpdate<TFrom>(TFrom from)
@@ -25,10 +25,7 @@ namespace AutoMapper.EntityFramework
 
         public void InsertOrUpdate(Type type, object from)
         {
-            var equivExpr = _mapper == null
-                ? Mapper.Map(from, type, typeof(Expression<Func<TTo, bool>>)) as Expression<Func<TTo, bool>>
-                : _mapper.Map(from, type, typeof(Expression<Func<TTo, bool>>)) as Expression<Func<TTo, bool>>;
-            if (equivExpr == null)
+            if (!(_mapper.Map(from, type, typeof(Expression<Func<TTo, bool>>)) is Expression<Func<TTo, bool>> equivExpr))
                 return;
 
             var to = _sourceSet.FirstOrDefault(equivExpr);
@@ -38,18 +35,13 @@ namespace AutoMapper.EntityFramework
                 to = _sourceSet.Create<TTo>();
                 _sourceSet.Add(to);
             }
-            if (_mapper == null)
-                Mapper.Map(from, to);
-            else
-                _mapper.Map(from,to);
+            _mapper.Map(from, to);
         }
 
         public void Remove<TFrom>(TFrom from)
             where TFrom : class
         {
-            var equivExpr = _mapper == null
-                ? Mapper.Map<TFrom, Expression<Func<TTo, bool>>>(from)
-                : _mapper.Map<TFrom, Expression<Func<TTo, bool>>>(from);
+            var equivExpr = _mapper.Map<TFrom, Expression<Func<TTo, bool>>>(from);
             if (equivExpr == null)
                 return;
             var to = _sourceSet.FirstOrDefault(equivExpr);

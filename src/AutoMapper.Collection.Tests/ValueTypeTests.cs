@@ -13,8 +13,7 @@ namespace AutoMapper.Collection
         [Fact]
         public void MapValueTypes()
         {
-            Mapper.Reset();
-            Mapper.Initialize(c =>
+            var mapper = new Mapper(new MapperConfiguration(c =>
             {
                 c.AddCollectionMappers();
 
@@ -24,7 +23,7 @@ namespace AutoMapper.Collection
 
                 c.CreateMap<int, PersonNationality>()
                     .EqualityComparison((src, dest) => dest.NationalityCountryId == src);
-            });
+            }));
 
             var persons = new[]
             {
@@ -37,7 +36,7 @@ namespace AutoMapper.Collection
             var country = new Country { Persons = new List<PersonNationality>(persons) };
             var countryDto = new CountryDto { Nationalities = new List<int> { 104, 103, 105 } };
 
-            Mapper.Map(countryDto, country);
+            mapper.Map(countryDto, country);
 
             Assert.NotStrictEqual(new[] { persons[3], persons[2], country.Persons.Last() }, country.Persons);
             Assert.Equal(0, country.Persons.Last().PersonId);
