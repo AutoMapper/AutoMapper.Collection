@@ -2,10 +2,18 @@
   <Import Project="version.props" />
 
   <PropertyGroup>
-    <EFVersion>6.1.3</EFVersion>
     <FluentAssertions>4.15.0</FluentAssertions>
     <TestSDKVersion>15.5.0</TestSDKVersion>
-    <xUnitVersion>2.3.1</xUnitVersion>
-    <SqlServerCompactVersion>4.0.8876.1</SqlServerCompactVersion>
+    <xUnitVersion>2.4.1</xUnitVersion>
+    <EffortVersion>2.2.1</EffortVersion>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <EFVersion>6.1.3</EFVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' or '$(TargetFramework)' == 'netcoreapp3.0' ">
+    <EFVersion>6.3.0</EFVersion>
+  </PropertyGroup>
+
 </Project>

@@ -38,9 +38,9 @@ task compile -depends clean {
 	$buildParam = @{ $true = ""; $false = "--version-suffix=$buildSuffix"}[$tag -ne $NULL -and $revision -ne "local"]
 	$packageParam = @{ $true = ""; $false = "--version-suffix=$suffix"}[$tag -ne $NULL -and $revision -ne "local"]
 	
-	echo "build: Tag is $tag"
-	echo "build: Package version suffix is $suffix"
-	echo "build: Build version suffix is $buildSuffix" 
+	Write-Output "build: Tag is $tag"
+	Write-Output "build: Package version suffix is $suffix"
+	Write-Output "build: Build version suffix is $buildSuffix" 
 
 	# restore all project references (creating project.assets.json for each project)
 	exec { dotnet restore $base_dir\AutoMapper.Collection.sln /nologo }
@@ -60,29 +60,30 @@ task test {
 
 function Install-Dotnet
 {
-    $dotnetcli = where-is('dotnet')
+	$dotnetCli = (where-is "dotnet" | Select-Object -First 1)
+	$install = ($null -eq $dotnetCli -or ($null -ne $env:DOTNET_CLI_VERSION -and $null -eq (&"$dotnetCli" --info | Where-Object { $_ -like "  $env:DOTNET_CLI_VERSION*" })))
 	
-    if($dotnetcli -eq $null)
-    {
+	if ($install)
+	{
 		$dotnetPath = "$pwd\.dotnet"
-		$dotnetCliVersion = if ($env:DOTNET_CLI_VERSION -eq $null) { 'Latest' } else { $env:DOTNET_CLI_VERSION }
-		$dotnetInstallScriptUrl = 'https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1'
-		$dotnetInstallScriptPath = '.\scripts\obtain\install.ps1'
+		$dotnetCliVersion = if ($null -eq $env:DOTNET_CLI_VERSION) { 'Latest' } else { $env:DOTNET_CLI_VERSION }
+		$dotnetInstallScriptUrl = 'https://raw.githubusercontent.com/dotnet/cli/v2.1.4/scripts/obtain/dotnet-install.ps1'
+		$dotnetInstallScriptPath = '.\scripts\obtain\dotnet-install.ps1'
 
-		md -Force ".\scripts\obtain\" | Out-Null
-		curl $dotnetInstallScriptUrl -OutFile $dotnetInstallScriptPath
-		& .\scripts\obtain\install.ps1 -Channel "preview" -version $dotnetCliVersion -InstallDir $dotnetPath -NoPath
+		mkdir -Force ".\scripts\obtain\" | Out-Null
+		Invoke-WebRequest $dotnetInstallScriptUrl -OutFile $dotnetInstallScriptPath
+		& .\scripts\obtain\dotnet-install.ps1 -Channel "preview" -version $dotnetCliVersion -InstallDir $dotnetPath -NoPath
 		$env:Path = "$dotnetPath;$env:Path"
 	}
 }
 
 function where-is($command) {
-    (ls env:\path).Value.split(';') | `
-        where { $_ } | `
-        %{ [System.Environment]::ExpandEnvironmentVariables($_) } | `
-        where { test-path $_ } |`
-        %{ ls "$_\*" -include *.bat,*.exe,*cmd } | `
-        %{  $file = $_.Name; `
+    (Get-ChildItem env:\path).Value.split(';') | `
+        Where-Object { $_ } | `
+        ForEach-Object{ [System.Environment]::ExpandEnvironmentVariables($_) } | `
+        Where-Object { test-path $_ } |`
+        ForEach-Object{ Get-ChildItem "$_\*" -include *.bat,*.exe,*cmd } | `
+        ForEach-Object{  $file = $_.Name; `
             if($file -and ($file -eq $command -or `
 			   $file -eq ($command + '.exe') -or  `
 			   $file -eq ($command + '.bat') -or  `
@@ -91,5 +92,5 @@ function where-is($command) {
                 $_.FullName `
             } `
         } | `
-        select -unique
+        Select-Object -unique
 }

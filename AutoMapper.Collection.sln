@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{19AAEE83-5EEC-4EAA-9CF7-16F8ED58B50E}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{19AAEE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{578F2483-CF08-409D-A316-31BCB7C5D9D0}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
 		Directory.Build.props = Directory.Build.props
 		global.json = global.json
 		README.md = README.md
@@ -22,9 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.Entit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.LinqToSQL", "src\AutoMapper.Collection.LinqToSQL\AutoMapper.Collection.LinqToSQL.csproj", "{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.Tests", "src\AutoMapper.Collection.Tests\AutoMapper.Collection.Tests.csproj", "{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.Tests", "src\AutoMapper.Collection.Tests\AutoMapper.Collection.Tests.csproj", "{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMapper.Collection.EntityFramework.Tests", "src\AutoMapper.Collection.EntityFramework.Tests\AutoMapper.Collection.EntityFramework.Tests.csproj", "{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.EntityFramework.Tests", "src\AutoMapper.Collection.EntityFramework.Tests\AutoMapper.Collection.EntityFramework.Tests.csproj", "{BDE127AB-AC3F-44DF-BC33-210DAFD12E15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
