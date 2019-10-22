@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' or '$(TargetFramework)' == 'netcoreapp3.0' ">
-    <EFVersion>6.3.0-preview7-*</EFVersion>
+    <EFVersion>6.3.0</EFVersion>
   </PropertyGroup>
 
 </Project>
