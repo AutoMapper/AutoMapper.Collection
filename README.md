@@ -25,11 +25,11 @@ Mapping OrderDTO back to Order will compare Order items list based on if their I
 ```
 Mapper.Map<List<OrderDTO>,List<Order>>(orderDtos, orders);
 ```
-If ID's match will map OrderDTO to Order
+If ID's match, then AutoMapper will map OrderDTO to Order
 
-If OrderDTO exists and Order doesn't add to collection
+If OrderDTO exists and Order doesn't, then AutoMapper will add a new Order mappeed from OrderDTO to the collection
 
-If Order exists and OrderDTO doesn't remove from collection
+If Order exists and OrderDTO doesn't, then AutoMapper will remove Order from collection
 
 ## Why update collection? Just recreate it 
 ORMs don't like setting the collection, so you need to add and remove from preexisting one.
