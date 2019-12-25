@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -10,7 +11,7 @@ namespace AutoMapper.Mappers
 {
     public class EquivalentExpressionAddRemoveCollectionMapper : IConfigurationObjectMapper
     {
-        private readonly CollectionMapper CollectionMapper = new CollectionMapper();
+        private readonly CollectionMapper _collectionMapper = new CollectionMapper();
 
         public IConfigurationProvider ConfigurationProvider { get; set; }
 
@@ -62,13 +63,13 @@ namespace AutoMapper.Mappers
             return destination;
         }
 
-        private static readonly MethodInfo MapMethodInfo = typeof(EquivalentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().First(_ => _.IsStatic);
+        private static readonly MethodInfo _mapMethodInfo = typeof(EquivalentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().Single(x => x.IsStatic && x.Name == nameof(Map));
+        private static readonly ConcurrentDictionary<TypePair, IObjectMapper> _objectMapperCache = new ConcurrentDictionary<TypePair, IObjectMapper>();
 
         public bool IsMatch(TypePair typePair)
         {
             return typePair.SourceType.IsEnumerableType()
-                   && typePair.DestinationType.IsCollectionType()
-                   && this.GetEquivalentExpression(TypeHelper.GetElementType(typePair.SourceType), TypeHelper.GetElementType(typePair.DestinationType)) != null;
+                   && typePair.DestinationType.IsCollectionType();
         }
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, IMemberMap memberMap,
@@ -77,15 +78,32 @@ namespace AutoMapper.Mappers
             var sourceType = TypeHelper.GetElementType(sourceExpression.Type);
             var destType = TypeHelper.GetElementType(destExpression.Type);
 
-            var method = MapMethodInfo.MakeGenericMethod(sourceExpression.Type, sourceType, destExpression.Type, destType);
             var equivalencyExpression = this.GetEquivalentExpression(sourceType, destType);
+            if (equivalencyExpression == null)
+            {
+                var typePair = new TypePair(sourceExpression.Type, destExpression.Type);
+                return _objectMapperCache.GetOrAdd(typePair, _ =>
+                {
+                    var mappers = new List<IObjectMapper>(configurationProvider.GetMappers());
+                    for (var i = mappers.IndexOf(this) + 1; i < mappers.Count; i++)
+                    {
+                        var mapper = mappers[i];
+                        if (mapper.IsMatch(typePair))
+                        {
+                            return mapper;
+                        }
+                    }
+                    return _collectionMapper;
+                })
+                .MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
+            }
 
-            var equivalencyExpressionConst = Constant(equivalencyExpression);
-            var map = Call(null, method, sourceExpression, destExpression, contextExpression, equivalencyExpressionConst);
+            var method = _mapMethodInfo.MakeGenericMethod(sourceExpression.Type, sourceType, destExpression.Type, destType);
+            var map = Call(null, method, sourceExpression, destExpression, contextExpression, Constant(equivalencyExpression));
 
             var notNull = NotEqual(destExpression, Constant(null));
-            var collectionMap = CollectionMapper.MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
-            return Condition(notNull, map, Convert(collectionMap, destExpression.Type));
+            var collectionMapperExpression = _collectionMapper.MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
+            return Condition(notNull, map, Convert(collectionMapperExpression, destExpression.Type));
         }
     }
 }

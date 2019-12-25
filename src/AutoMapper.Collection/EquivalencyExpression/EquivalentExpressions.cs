@@ -1,30 +1,17 @@
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using AutoMapper.Collection;
+using AutoMapper.Collection.Configuration;
+using AutoMapper.Collection.Runtime;
 using AutoMapper.Mappers;
 
 namespace AutoMapper.EquivalencyExpression
 {
     public static class EquivalentExpressions
     {
-        private static readonly ConcurrentDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>
-            _equivalentExpressionDictionary = new ConcurrentDictionary<IConfigurationProvider, ConcurrentDictionary<TypePair, IEquivalentComparer>>();
-
-        private static readonly ConcurrentDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>>
-            _generatePropertyMapsDictionary = new ConcurrentDictionary<IConfigurationProvider, IList<IGeneratePropertyMaps>>();
-
-        private static ConcurrentDictionary<TypePair, IEquivalentComparer>
-            _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentComparer>();
-
-        private static IList<Func<Func<Type, object>, IGeneratePropertyMaps>>
-            _generatePropertyMapsCache = new List<Func<Func<Type, object>, IGeneratePropertyMaps>>();
-
         public static void AddCollectionMappers(this IMapperConfigurationExpression cfg)
         {
+            cfg.Features.Set(new GeneratePropertyMapsExpressionFeature());
             cfg.InsertBefore<ReadOnlyCollectionMapper>(
                 new ObjectToEquivalencyExpressionByEquivalencyExistingMapper(),
                 new EquivalentExpressionAddRemoveCollectionMapper());
@@ -47,14 +34,6 @@ namespace AutoMapper.EquivalencyExpression
                 {
                     configurationObjectMapper.ConfigurationProvider = c;
                 }
-
-                var propertyMapsGenerators = _generatePropertyMapsCache.Select(x => x?.Invoke(c.ServiceCtor)).ToList();
-
-                _equivalentExpressionDictionary.AddOrUpdate(c, _equalityComparisonCache, (_, __) => _equalityComparisonCache);
-                _equalityComparisonCache = new ConcurrentDictionary<TypePair, IEquivalentComparer>();
-
-                _generatePropertyMapsDictionary.AddOrUpdate(c, propertyMapsGenerators, (_, __) => propertyMapsGenerators);
-                _generatePropertyMapsCache = new List<Func<Func<Type, object>, IGeneratePropertyMaps>>();
             });
         }
 
@@ -89,10 +68,8 @@ namespace AutoMapper.EquivalencyExpression
 
         internal static IEquivalentComparer GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
         {
-            return _equivalentExpressionDictionary[configurationProvider].GetOrAdd(typeMap.Types, _
-                => _generatePropertyMapsDictionary[configurationProvider]
-                        .Select(x => x.GeneratePropertyMaps(typeMap).CreateEquivalentExpression())
-                        .FirstOrDefault(x => x != null));
+            return typeMap.Features.Get<CollectionMappingFeature>()?.EquivalentComparer
+                ?? configurationProvider.Features.Get<GeneratePropertyMapsFeature>().Get(typeMap);
         }
 
         /// <summary>
@@ -105,57 +82,23 @@ namespace AutoMapper.EquivalencyExpression
         /// <returns></returns>
         public static IMappingExpression<TSource, TDestination> EqualityComparison<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, Expression<Func<TSource, TDestination, bool>> EquivalentExpression)
         {
-            var typePair = new TypePair(typeof(TSource), typeof(TDestination));
-
-            _equalityComparisonCache.AddOrUpdate(typePair,
-                new EquivalentExpression<TSource, TDestination>(EquivalentExpression),
-                (_, __) => new EquivalentExpression<TSource, TDestination>(EquivalentExpression));
-
+            mappingExpression.Features.Set(new CollectionMappingExpressionFeature<TSource, TDestination>(EquivalentExpression));
             return mappingExpression;
         }
 
         public static void SetGeneratePropertyMaps<TGeneratePropertyMaps>(this IMapperConfigurationExpression cfg)
             where TGeneratePropertyMaps : IGeneratePropertyMaps
         {
-            _generatePropertyMapsCache.Add(serviceCtor => (IGeneratePropertyMaps)serviceCtor(typeof(TGeneratePropertyMaps)));
+            (cfg.Features.Get<GeneratePropertyMapsExpressionFeature>()
+                ?? throw new ArgumentException("Invoke the IMapperConfigurationExpression.AddCollectionMappers() before adding IGeneratePropertyMaps."))
+                .Add(serviceCtor => (IGeneratePropertyMaps)serviceCtor(typeof(TGeneratePropertyMaps)));
         }
 
         public static void SetGeneratePropertyMaps(this IMapperConfigurationExpression cfg, IGeneratePropertyMaps generatePropertyMaps)
         {
-            _generatePropertyMapsCache.Add(_ => generatePropertyMaps);
-        }
-
-        private static IEquivalentComparer CreateEquivalentExpression(this IEnumerable<PropertyMap> propertyMaps)
-        {
-            if (!propertyMaps.Any() || propertyMaps.Any(pm => pm.DestinationMember.GetMemberType() != pm.SourceMember.GetMemberType()))
-            {
-                return null;
-            }
-
-            var typeMap = propertyMaps.First().TypeMap;
-            var srcType = typeMap.SourceType;
-            var destType = typeMap.DestinationType;
-            var srcExpr = Expression.Parameter(srcType, "src");
-            var destExpr = Expression.Parameter(destType, "dest");
-
-            var equalExpr = propertyMaps.Select(pm => SourceEqualsDestinationExpression(pm, srcExpr, destExpr)).ToList();
-            if (equalExpr.Count == 0)
-            {
-                return EquivalentExpression.BadValue;
-            }
-
-            var finalExpression = equalExpr.Skip(1).Aggregate(equalExpr[0], Expression.And);
-
-            var expr = Expression.Lambda(finalExpression, srcExpr, destExpr);
-            var genericExpressionType = typeof(EquivalentExpression<,>).MakeGenericType(srcType, destType);
-            return Activator.CreateInstance(genericExpressionType, expr) as IEquivalentComparer;
-        }
-
-        private static BinaryExpression SourceEqualsDestinationExpression(PropertyMap propertyMap, Expression srcExpr, Expression destExpr)
-        {
-            var srcPropExpr = Expression.Property(srcExpr, propertyMap.SourceMember as PropertyInfo);
-            var destPropExpr = Expression.Property(destExpr, propertyMap.DestinationMember as PropertyInfo);
-            return Expression.Equal(srcPropExpr, destPropExpr);
+            (cfg.Features.Get<GeneratePropertyMapsExpressionFeature>()
+                ?? throw new ArgumentException("Invoke the IMapperConfigurationExpression.AddCollectionMappers() before adding IGeneratePropertyMaps."))
+                .Add(_ => generatePropertyMaps);
         }
     }
 }

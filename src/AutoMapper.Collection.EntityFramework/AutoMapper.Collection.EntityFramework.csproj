@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>Collection updating support for EntityFramework with AutoMapper. Extends DBSet&lt;T&gt; with Persist&lt;TDto&gt;().InsertUpdate(dto) and Persist&lt;TDto&gt;().Delete(dto).  Will find the matching object and will Insert/Update/Delete.</Description>
     <Authors>Tyler Carlson</Authors>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFrameworks>net461;netstandard2.1</TargetFrameworks>
     <AssemblyName>AutoMapper.Collection.EntityFramework</AssemblyName>
     <PackageId>AutoMapper.Collection.EntityFramework</PackageId>
     <PackageIconUrl>https://s3.amazonaws.com/automapper/icon.png</PackageIconUrl>
@@ -21,11 +21,6 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="1.0.0" />
     <PackageReference Include="EntityFramework" Version="$(EfVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
 </Project>

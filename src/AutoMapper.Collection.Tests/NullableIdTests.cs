@@ -5,13 +5,12 @@ using Xunit;
 
 namespace AutoMapper.Collection
 {
-    public class NullableIdTests
+    public class NullableIdTests : MappingTestBase
     {
         [Fact]
         public void Should_Work_With_Null_Id()
         {
-            Mapper.Reset();
-            Mapper.Initialize(x =>
+            var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
                 x.CreateMap<ThingWithStringIdDto, ThingWithStringId>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
@@ -30,7 +29,7 @@ namespace AutoMapper.Collection
                 new ThingWithStringIdDto { Title = "test3" }
             };
 
-            Mapper.Map(dtos, original);
+            mapper.Map(dtos, original);
 
             original.Should().HaveSameCount(dtos);
         }
@@ -39,8 +38,7 @@ namespace AutoMapper.Collection
         [Fact]
         public void Should_Work_With_Multiple_Null_Id()
         {
-            Mapper.Reset();
-            Mapper.Initialize(x =>
+            var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
                 x.CreateMap<ThingWithStringIdDto, ThingWithStringId>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
@@ -61,7 +59,7 @@ namespace AutoMapper.Collection
                 new ThingWithStringIdDto { Title = "test4" },
             };
 
-            Mapper.Map(dtos, original);
+            mapper.Map(dtos, original);
 
             original.Should().HaveSameCount(dtos);
         }
