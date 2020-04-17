@@ -86,6 +86,14 @@ namespace AutoMapper.EquivalencyExpression
             return mappingExpression;
         }
 
+        public static IMappingExpression<TSource, TDestination> UseSourceOrder<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, bool useSourceOrder)
+        {
+            (mappingExpression.Features.Get<CollectionMappingExpressionFeature<TSource, TDestination>>()
+             ?? throw new ArgumentException("Invoke the IMapperConfigurationExpression.EqualityComparison() before UseSourceOrder."))
+                .UseSourceOrder = useSourceOrder;
+            return mappingExpression;
+        }
+
         public static void SetGeneratePropertyMaps<TGeneratePropertyMaps>(this IMapperConfigurationExpression cfg)
             where TGeneratePropertyMaps : IGeneratePropertyMaps
         {

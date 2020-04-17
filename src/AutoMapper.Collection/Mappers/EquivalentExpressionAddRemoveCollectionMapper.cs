@@ -15,7 +15,7 @@ namespace AutoMapper.Mappers
 
         public IConfigurationProvider ConfigurationProvider { get; set; }
 
-        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context, IEquivalentComparer equivalentComparer)
+        public static TDestination Map<TSource, TSourceItem, TDestination, TDestinationItem>(TSource source, TDestination destination, ResolutionContext context, IEquivalentComparer equivalentComparer, bool useSourceOrder)
             where TSource : IEnumerable<TSourceItem>
             where TDestination : ICollection<TDestinationItem>
         {
@@ -98,8 +98,11 @@ namespace AutoMapper.Mappers
                 .MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
             }
 
+            // todo: get the value from IFeature
+            var useSourceOrder = true;
+
             var method = _mapMethodInfo.MakeGenericMethod(sourceExpression.Type, sourceType, destExpression.Type, destType);
-            var map = Call(null, method, sourceExpression, destExpression, contextExpression, Constant(equivalencyExpression));
+            var map = Call(null, method, sourceExpression, destExpression, contextExpression, Constant(equivalencyExpression), Constant(useSourceOrder));
 
             var notNull = NotEqual(destExpression, Constant(null));
             var collectionMapperExpression = _collectionMapper.MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
