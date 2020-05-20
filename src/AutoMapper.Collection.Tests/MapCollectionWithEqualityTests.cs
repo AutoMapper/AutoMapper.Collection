@@ -11,8 +11,18 @@ namespace AutoMapper.Collection
     {
         protected virtual void ConfigureMapper(IMapperConfigurationExpression cfg)
         {
+            ApplyBaseConfiguration(cfg);
+            CreateThingMapping(cfg);
+        }
+
+        protected void ApplyBaseConfiguration(IMapperConfigurationExpression cfg)
+        {
             cfg.AddCollectionMappers();
-            cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
+        }
+
+        protected IMappingExpression<ThingDto, Thing> CreateThingMapping(IMapperConfigurationExpression cfg)
+        {
+            return cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
         }
 
         [Fact]
@@ -57,7 +67,11 @@ namespace AutoMapper.Collection
         [Fact]
         public void Should_Reorder_Destination_Collection_When_UseSourceOrder_Option_Specified()
         {
-            var mapper = CreateMapper(ConfigureMapper);
+            var mapper = CreateMapper(cfg =>
+            {
+                ApplyBaseConfiguration(cfg);
+                CreateThingMapping(cfg).UseSourceOrder(true);
+            });
 
             var dtos = new List<ThingDto>
             {

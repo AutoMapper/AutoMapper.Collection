@@ -39,14 +39,35 @@ namespace AutoMapper.EquivalencyExpression
 
         internal static IEquivalentComparer GetEquivalentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
         {
+            return GetFeatureValue(mapper, sourceType, destinationType, GetEquivalentExpression);
+        }
+
+        internal static IEquivalentComparer GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
+        {
+            return typeMap.Features.Get<CollectionMappingFeature>()?.EquivalentComparer
+                ?? configurationProvider.Features.Get<GeneratePropertyMapsFeature>().Get(typeMap);
+        }
+
+        internal static bool GetUseSourceOrder(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
+        {
+            return GetFeatureValue(mapper, sourceType, destinationType, GetUseSourceOrder) ?? false;
+        }
+
+        internal static bool? GetUseSourceOrder(IConfigurationProvider configurationProvider, TypeMap typeMap)
+        {
+            return typeMap.Features.Get<CollectionMappingFeature>()?.UseSourceOrder;
+        }
+
+        private static T GetFeatureValue<T>(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType, Func<IConfigurationProvider, TypeMap, T> getFunc)
+        {
             var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
             if (typeMap == null)
             {
-                return null;
+                return default;
             }
 
-            var comparer = GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
-            if (comparer == null)
+            var value = getFunc(mapper.ConfigurationProvider, typeMap);
+            if (value == null)
             {
                 foreach (var item in typeMap.IncludedBaseTypes)
                 {
@@ -56,20 +77,15 @@ namespace AutoMapper.EquivalencyExpression
                         continue;
                     }
 
-                    comparer = GetEquivalentExpression(mapper.ConfigurationProvider, baseTypeMap);
-                    if (comparer != null)
+                    value = getFunc(mapper.ConfigurationProvider, baseTypeMap);
+                    if (value != null)
                     {
                         break;
                     }
                 }
             }
-            return comparer;
-        }
 
-        internal static IEquivalentComparer GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
-        {
-            return typeMap.Features.Get<CollectionMappingFeature>()?.EquivalentComparer
-                ?? configurationProvider.Features.Get<GeneratePropertyMapsFeature>().Get(typeMap);
+            return value;
         }
 
         /// <summary>

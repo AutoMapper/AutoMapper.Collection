@@ -24,40 +24,64 @@ namespace AutoMapper.Mappers
                 return destination;
             }
 
-            var destList = destination.ToLookup(x => equivalentComparer.GetHashCode(x)).ToDictionary(x => x.Key, x => x.ToList());
+            var destItemsByHash = destination.GroupBy(x => equivalentComparer.GetHashCode(x)).ToDictionary(x => x.Key, x => x.ToList());
 
-            var items = source.Select(x =>
+            if (useSourceOrder)
             {
-                var sourceHash = equivalentComparer.GetHashCode(x);
+                destination.Clear();
 
-                var item = default(TDestinationItem);
-                List<TDestinationItem> itemList;
-                if (destList.TryGetValue(sourceHash, out itemList))
+                foreach (var srcItem in source)
                 {
-                    item = itemList.FirstOrDefault(dest => equivalentComparer.IsEquivalent(x, dest));
-                    if (item != null)
+                    var srcHash = equivalentComparer.GetHashCode(srcItem);
+                    TDestinationItem dstItem = default;
+                    if (destItemsByHash.TryGetValue(srcHash, out var destCandidateItems))
                     {
-                        itemList.Remove(item);
-                    }
-                }
-                return new { SourceItem = x, DestinationItem = item };
-            });
 
-            foreach (var keypair in items)
-            {
-                if (keypair.DestinationItem == null)
-                {
-                    destination.Add((TDestinationItem)context.Mapper.Map(keypair.SourceItem, null, typeof(TSourceItem), typeof(TDestinationItem), context));
-                }
-                else
-                {
-                    context.Mapper.Map(keypair.SourceItem, keypair.DestinationItem, context);
+                        dstItem = destCandidateItems.FirstOrDefault(x => equivalentComparer.IsEquivalent(srcItem, x));
+                    }
+
+                    if (dstItem == null)
+                    {
+                        dstItem = (TDestinationItem)context.Mapper.Map(srcItem, null, typeof(TSourceItem), typeof(TDestinationItem), context);
+                    }
+                    else
+                    {
+                        context.Mapper.Map(srcItem, dstItem, context);
+                    }
+
+                    destination.Add(dstItem);
                 }
             }
-
-            foreach (var removedItem in destList.SelectMany(x => x.Value))
+            else
             {
-                destination.Remove(removedItem);
+                foreach (var srcItem in source)
+                {
+                    var srcHash = equivalentComparer.GetHashCode(srcItem);
+                    TDestinationItem dstItem = default;
+                    if (destItemsByHash.TryGetValue(srcHash, out var destCandidateItems))
+                    {
+
+                        dstItem = destCandidateItems.FirstOrDefault(x => equivalentComparer.IsEquivalent(srcItem, x));
+                        if (dstItem != null)
+                        {
+                            destCandidateItems.Remove(dstItem);
+                        }
+                    }
+
+                    if (dstItem == null)
+                    {
+                        destination.Add((TDestinationItem)context.Mapper.Map(srcItem, null, typeof(TSourceItem), typeof(TDestinationItem), context));
+                    }
+                    else
+                    {
+                        context.Mapper.Map(srcItem, dstItem, context);
+                    }
+                }
+
+                foreach (var removedItem in destItemsByHash.SelectMany(x => x.Value))
+                {
+                    destination.Remove(removedItem);
+                }
             }
 
             return destination;
@@ -98,8 +122,7 @@ namespace AutoMapper.Mappers
                 .MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression, contextExpression);
             }
 
-            // todo: get the value from IFeature
-            var useSourceOrder = true;
+            var useSourceOrder = this.GetUseSourceOrder(sourceType, destType);
 
             var method = _mapMethodInfo.MakeGenericMethod(sourceExpression.Type, sourceType, destExpression.Type, destType);
             var map = Call(null, method, sourceExpression, destExpression, contextExpression, Constant(equivalencyExpression), Constant(useSourceOrder));
