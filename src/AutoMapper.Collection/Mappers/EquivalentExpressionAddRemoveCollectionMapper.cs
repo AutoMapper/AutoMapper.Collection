@@ -32,22 +32,9 @@ namespace AutoMapper.Mappers
 
                 foreach (var srcItem in source)
                 {
-                    var srcHash = equivalentComparer.GetHashCode(srcItem);
-                    TDestinationItem dstItem = default;
-                    if (destItemsByHash.TryGetValue(srcHash, out var destCandidateItems))
-                    {
+                    RetrieveCorrespondingItems(srcItem, out var dstItem, out var _);
 
-                        dstItem = destCandidateItems.FirstOrDefault(x => equivalentComparer.IsEquivalent(srcItem, x));
-                    }
-
-                    if (dstItem == null)
-                    {
-                        dstItem = (TDestinationItem)context.Mapper.Map(srcItem, null, typeof(TSourceItem), typeof(TDestinationItem), context);
-                    }
-                    else
-                    {
-                        context.Mapper.Map(srcItem, dstItem, context);
-                    }
+                    dstItem = MapItem(srcItem, dstItem);
 
                     destination.Add(dstItem);
                 }
@@ -56,25 +43,18 @@ namespace AutoMapper.Mappers
             {
                 foreach (var srcItem in source)
                 {
-                    var srcHash = equivalentComparer.GetHashCode(srcItem);
-                    TDestinationItem dstItem = default;
-                    if (destItemsByHash.TryGetValue(srcHash, out var destCandidateItems))
-                    {
+                    RetrieveCorrespondingItems(srcItem, out var dstItem, out var destCandidateItems);
+                    var itemExistsInDestination = dstItem != null;
 
-                        dstItem = destCandidateItems.FirstOrDefault(x => equivalentComparer.IsEquivalent(srcItem, x));
-                        if (dstItem != null)
-                        {
-                            destCandidateItems.Remove(dstItem);
-                        }
+                    if (itemExistsInDestination)
+                    {
+                        destCandidateItems.Remove(dstItem);
                     }
 
-                    if (dstItem == null)
+                    dstItem = MapItem(srcItem, dstItem);
+                    if (!itemExistsInDestination)
                     {
-                        destination.Add((TDestinationItem)context.Mapper.Map(srcItem, null, typeof(TSourceItem), typeof(TDestinationItem), context));
-                    }
-                    else
-                    {
-                        context.Mapper.Map(srcItem, dstItem, context);
+                        destination.Add(dstItem);
                     }
                 }
 
@@ -85,6 +65,31 @@ namespace AutoMapper.Mappers
             }
 
             return destination;
+
+            void RetrieveCorrespondingItems(TSourceItem srcItem, out TDestinationItem dstItem, out List<TDestinationItem> destCandidateItems)
+            {
+                var srcHash = equivalentComparer.GetHashCode(srcItem);
+                dstItem = default;
+                destCandidateItems = default;
+                if (destItemsByHash.TryGetValue(srcHash, out destCandidateItems))
+                {
+                    dstItem = destCandidateItems.FirstOrDefault(x => equivalentComparer.IsEquivalent(srcItem, x));
+                }
+            }
+
+            TDestinationItem MapItem(TSourceItem srcItem, TDestinationItem dstItem)
+            {
+                if (dstItem == null)
+                {
+                    dstItem = (TDestinationItem)context.Mapper.Map(srcItem, null, typeof(TSourceItem), typeof(TDestinationItem), context);
+                }
+                else
+                {
+                    context.Mapper.Map(srcItem, dstItem, context);
+                }
+
+                return dstItem;
+            }
         }
 
         private static readonly MethodInfo _mapMethodInfo = typeof(EquivalentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().Single(x => x.IsStatic && x.Name == nameof(Map));
