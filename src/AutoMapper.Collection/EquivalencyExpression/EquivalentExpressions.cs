@@ -102,6 +102,14 @@ namespace AutoMapper.EquivalencyExpression
             return mappingExpression;
         }
 
+        /// <summary>
+        /// Make destination collection reordered according to source.
+        /// </summary>
+        /// <typeparam name="TSource">Source type</typeparam>
+        /// <typeparam name="TDestination">Destination being compared to</typeparam>
+        /// <param name="mappingExpression">Base Mapping Expression</param>
+        /// <param name="useSourceOrder">When <code>true</code> is passed then destination items reordered according to source.</param>
+        /// <returns></returns>
         public static IMappingExpression<TSource, TDestination> UseSourceOrder<TSource, TDestination>(this IMappingExpression<TSource, TDestination> mappingExpression, bool useSourceOrder)
         {
             (mappingExpression.Features.Get<CollectionMappingExpressionFeature<TSource, TDestination>>()

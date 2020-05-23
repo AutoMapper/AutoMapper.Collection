@@ -76,16 +76,20 @@ namespace AutoMapper.Collection
             var dtos = new List<ThingDto>
             {
                 new ThingDto { ID = 2, Title = "test2" },
+                new ThingDto { ID = 4, Title = "test4" },
                 new ThingDto { ID = 1, Title = "test0" },
             };
 
             var items = new List<Thing>
             {
                 new Thing { ID = 1, Title = "test1" },
+                new Thing { ID = 4, Title = "test4" },
                 new Thing { ID = 3, Title = "test3" },
             };
 
-            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(1, items.First());
+            mapper.Map(dtos, items.ToList()).Should()
+                .HaveElementAt(2, items[0])
+                .And.HaveElementAt(1, items[1]);
         }
 
         [Fact]
