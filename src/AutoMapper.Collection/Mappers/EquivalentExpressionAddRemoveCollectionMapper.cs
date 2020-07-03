@@ -47,11 +47,11 @@ namespace AutoMapper.Mappers
             {
                 if (keypair.DestinationItem == null)
                 {
-                    destination.Add((TDestinationItem)context.Mapper.Map(keypair.SourceItem, null, typeof(TSourceItem), typeof(TDestinationItem), context));
+                    destination.Add((TDestinationItem)context.Mapper.Map(keypair.SourceItem, null, typeof(TSourceItem), typeof(TDestinationItem)));
                 }
                 else
                 {
-                    context.Mapper.Map(keypair.SourceItem, keypair.DestinationItem, context);
+                    context.Mapper.Map(keypair.SourceItem, keypair.DestinationItem);
                 }
             }
 
