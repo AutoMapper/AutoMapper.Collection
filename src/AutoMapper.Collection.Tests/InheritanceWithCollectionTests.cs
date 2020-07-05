@@ -170,8 +170,8 @@ namespace AutoMapper.Collection
                 var mappedOnlineOrders = new List<OrderEf>(destination.Orders);
                 var mappedMailOrders = new List<OrderEf>(destination.Orders);
 
-                context.Mapper.Map(source.OnlineOrders, mappedOnlineOrders, context);
-                context.Mapper.Map(source.MailOrders, mappedMailOrders, context);
+                context.Mapper.Map(source.OnlineOrders, mappedOnlineOrders);
+                context.Mapper.Map(source.MailOrders, mappedMailOrders);
 
                 var efOrders = mappedOnlineOrders.Union(mappedMailOrders).ToList();
 
