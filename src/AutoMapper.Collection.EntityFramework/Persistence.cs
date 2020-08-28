@@ -18,10 +18,7 @@ namespace AutoMapper.EntityFramework
         }
 
         public void InsertOrUpdate<TFrom>(TFrom from)
-            where TFrom : class
-        {
-            InsertOrUpdate(typeof(TFrom), from);
-        }
+            where TFrom : class => InsertOrUpdate(typeof(TFrom), from);
 
         public void InsertOrUpdate(Type type, object from)
         {

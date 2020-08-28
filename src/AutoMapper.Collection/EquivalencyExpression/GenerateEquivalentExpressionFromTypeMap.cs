@@ -1,15 +1,15 @@
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace AutoMapper.EquivalencyExpression
 {
     internal class GenerateEquivalentExpressionFromTypeMap
     {
-        private static readonly ConcurrentDictionary<TypeMap, GenerateEquivalentExpressionFromTypeMap> _EquivalentExpressionses = new ConcurrentDictionary<TypeMap, GenerateEquivalentExpressionFromTypeMap>();
+        private static readonly ConcurrentDictionary<TypeMap, GenerateEquivalentExpressionFromTypeMap> _EquivalentExpressions = new ConcurrentDictionary<TypeMap, GenerateEquivalentExpressionFromTypeMap>();
+
         internal static Expression GetExpression(TypeMap typeMap, object value)
         {
-            return _EquivalentExpressionses.GetOrAdd(typeMap, t => new GenerateEquivalentExpressionFromTypeMap(t))
+            return _EquivalentExpressions.GetOrAdd(typeMap, t => new GenerateEquivalentExpressionFromTypeMap(t))
                 .CreateEquivalentExpression(value);
         }
 

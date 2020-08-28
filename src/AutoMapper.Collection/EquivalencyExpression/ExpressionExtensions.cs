@@ -7,7 +7,7 @@ using AutoMapper.Collection;
 
 namespace AutoMapper.EquivalencyExpression
 {
-    internal static class ExpressionExtentions
+    internal static class ExpressionExtensions
     {
         private static readonly ConcurrentDictionary<Type, Type> _singleParameterTypeDictionary = new ConcurrentDictionary<Type, Type>();
 

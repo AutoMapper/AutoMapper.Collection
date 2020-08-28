@@ -31,10 +31,9 @@ namespace AutoMapper.Mappers
                 var sourceHash = equivalentComparer.GetHashCode(x);
 
                 var item = default(TDestinationItem);
-                List<TDestinationItem> itemList;
-                if (destList.TryGetValue(sourceHash, out itemList))
+                if (destList.TryGetValue(sourceHash, out var itemList))
                 {
-                    item = itemList.FirstOrDefault(dest => equivalentComparer.IsEquivalent(x, dest));
+                    item = itemList.Find(dest => equivalentComparer.IsEquivalent(x, dest));
                     if (item != null)
                     {
                         itemList.Remove(item);

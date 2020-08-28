@@ -18,10 +18,7 @@ namespace AutoMapper.Collection.LinqToSQL
         /// <returns>Persistence object to Update or Remove data</returns>
         [Obsolete("Use Persist(IMapper) instead.", true)]
         public static IPersistence Persist<TSource>(this Table<TSource> source)
-            where TSource : class
-        {
-            throw new NotSupportedException();
-        }
+            where TSource : class => throw new NotSupportedException();
 
         /// <summary>
         /// Create a Persistence object for the <see cref="T:System.Data.Entity.DbSet`1"/> to have data persisted or removed from
@@ -31,10 +28,7 @@ namespace AutoMapper.Collection.LinqToSQL
         /// <param name="mapper">IMapper used to find TypeMap between classes</param>
         /// <returns>Persistence object to Update or Remove data</returns>
         public static IPersistence Persist<TSource>(this Table<TSource> source, IMapper mapper)
-            where TSource : class
-        {
-            return new Persistence<TSource>(source, mapper);
-        }
+            where TSource : class => new Persistence<TSource>(source, mapper);
 
         public static IEnumerable For<TSource>(this IQueryDataSourceInjection<TSource> source, Type destType)
         {

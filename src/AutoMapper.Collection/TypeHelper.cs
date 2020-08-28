@@ -11,14 +11,14 @@
         public static Type GetElementType(Type enumerableType) => GetElementTypes(enumerableType, null)[0];
 
         private static Type[] GetElementTypes(Type enumerableType, IEnumerable enumerable,
-            ElemntTypeFlags flags = ElemntTypeFlags.None)
+            ElementTypeFlags flags = ElementTypeFlags.None)
         {
             if (enumerableType.HasElementType)
             {
                 return new[] { enumerableType.GetElementType() };
             }
 
-            if (flags.HasFlag(ElemntTypeFlags.BreakKeyValuePair) && enumerableType.IsGenericType() &&
+            if (flags.HasFlag(ElementTypeFlags.BreakKeyValuePair) && enumerableType.IsGenericType() &&
                 enumerableType.IsDictionaryType())
             {
                 return enumerableType.GetTypeInfo().GenericTypeArguments;
@@ -60,7 +60,7 @@
         }
     }
 
-    public enum ElemntTypeFlags
+    public enum ElementTypeFlags
     {
         None = 0,
         BreakKeyValuePair = 1

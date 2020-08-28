@@ -17,20 +17,17 @@ namespace AutoMapper.EquivalencyExpression
             _propertyMaps = propertyMaps;
         }
 
-        protected override Expression VisitParameter(ParameterExpression node)
-        {
-            return _parameter;
-        }
+        protected override Expression VisitParameter(ParameterExpression node) => _parameter;
 
         protected override Expression VisitMember(MemberExpression node)
         {
-            if (node.Member is PropertyInfo)
+            if (node.Member is PropertyInfo pi)
             {
-                var matchPM = _propertyMaps.FirstOrDefault(pm => pm.DestinationMember == node.Member);
+                var matchPM = _propertyMaps.FirstOrDefault(pm => pm.DestinationMember == pi);
                 if (matchPM == null)
                     throw new Exception("No matching PropertyMap");
                 var memberGetters = matchPM.SourceMembers;
-                
+
                 var memberExpression = Expression.Property(Visit(node.Expression), memberGetters.First() as PropertyInfo);
 
                 foreach (var memberGetter in memberGetters.Skip(1))

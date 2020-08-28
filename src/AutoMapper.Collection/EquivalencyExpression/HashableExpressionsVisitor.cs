@@ -27,10 +27,7 @@ namespace AutoMapper.EquivalencyExpression
             return Tuple.Create(visitor._sourceMembers, visitor._destinationMembers);
         }
 
-        protected override Expression VisitConditional(ConditionalExpression node)
-        {
-            return node;
-        }
+        protected override Expression VisitConditional(ConditionalExpression node) => node;
 
         protected override Expression VisitBinary(BinaryExpression node)
         {

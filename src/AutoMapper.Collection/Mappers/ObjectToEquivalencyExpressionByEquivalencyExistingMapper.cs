@@ -11,13 +11,10 @@ namespace AutoMapper.Mappers
     {
         public IConfigurationProvider ConfigurationProvider { get; set; }
 
-        public static Expression<Func<TDestination, bool>> Map<TSource, TDestination>(TSource source, IEquivalentComparer<TSource, TDestination> toSourceExpression)
-        {
-            return toSourceExpression.ToSingleSourceExpression(source);
-        }
+        public static Expression<Func<TDestination, bool>> Map<TSource, TDestination>(TSource source, IEquivalentComparer<TSource, TDestination> toSourceExpression) => toSourceExpression.ToSingleSourceExpression(source);
 
         private static readonly MethodInfo MapMethodInfo = typeof(ObjectToEquivalencyExpressionByEquivalencyExistingMapper).GetRuntimeMethods().First(_ => _.IsStatic);
-        
+
         public bool IsMatch(TypePair typePair)
         {
             var destExpressArgType = typePair.DestinationType.GetSinglePredicateExpressionArgumentType();
