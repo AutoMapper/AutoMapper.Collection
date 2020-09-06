@@ -8,7 +8,7 @@ namespace AutoMapper.EquivalencyExpression
 {
     internal class CustomExpressionVisitor : ExpressionVisitor
     {
-        readonly ParameterExpression _parameter;
+        private readonly ParameterExpression _parameter;
         private readonly IEnumerable<PropertyMap> _propertyMaps;
 
         internal CustomExpressionVisitor(ParameterExpression parameter, IEnumerable<PropertyMap> propertyMaps)
@@ -23,9 +23,8 @@ namespace AutoMapper.EquivalencyExpression
         {
             if (node.Member is PropertyInfo pi)
             {
-                var matchPM = _propertyMaps.FirstOrDefault(pm => pm.DestinationMember == pi);
-                if (matchPM == null)
-                    throw new Exception("No matching PropertyMap");
+                var matchPM = _propertyMaps.FirstOrDefault(pm => pm.DestinationMember == pi)
+                        ?? throw new ArgumentException("No matching PropertyMap");
                 var memberGetters = matchPM.SourceMembers;
 
                 var memberExpression = Expression.Property(Visit(node.Expression), memberGetters.First() as PropertyInfo);

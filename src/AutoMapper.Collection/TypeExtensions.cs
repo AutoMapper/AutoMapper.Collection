@@ -1,10 +1,10 @@
-﻿namespace AutoMapper.Collection
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
+namespace AutoMapper.Collection
+{
     internal static class TypeExtensions
     {
         public static Type GetGenericTypeDefinitionIfGeneric(this Type type) => type.IsGenericType()

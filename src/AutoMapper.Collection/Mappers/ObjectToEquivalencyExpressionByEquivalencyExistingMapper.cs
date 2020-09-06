@@ -18,9 +18,9 @@ namespace AutoMapper.Mappers
         public bool IsMatch(TypePair typePair)
         {
             var destExpressArgType = typePair.DestinationType.GetSinglePredicateExpressionArgumentType();
-            if (destExpressArgType == null)
-                return false;
-            return this.GetEquivalentExpression(typePair.SourceType, destExpressArgType) != null;
+            return destExpressArgType == null
+                ? false
+                : this.GetEquivalentExpression(typePair.SourceType, destExpressArgType) != null;
         }
 
         public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, IMemberMap memberMap,

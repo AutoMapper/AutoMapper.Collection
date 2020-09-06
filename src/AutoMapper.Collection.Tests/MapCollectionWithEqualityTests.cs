@@ -276,15 +276,9 @@ namespace AutoMapper.Collection
 
             public override bool Equals(object obj)
             {
-                if (ReferenceEquals(this, obj))
-                {
-                    return true;
-                }
+                if (ReferenceEquals(this, obj)) return true;
 
-                if (obj is null)
-                {
-                    return false;
-                }
+                if (obj is null) return false;
 
                 return obj is Charge chg && Category == chg.Category && Description == chg.Description && Value == chg.Value;
             }

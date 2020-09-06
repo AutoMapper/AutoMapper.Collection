@@ -39,9 +39,9 @@ namespace AutoMapper.EquivalencyExpression
                 case ExpressionType.And:
                 case ExpressionType.AndAlso:
                     return base.VisitBinary(node);
-                case ExpressionType.Or:
-                case ExpressionType.OrElse:
-                    return node; // Maybe compare 0r's for expression matching on side
+                //case ExpressionType.Or:
+                //case ExpressionType.OrElse:
+                //    return node; // Maybe compare 0r's for expression matching on side
             }
 
             return node;

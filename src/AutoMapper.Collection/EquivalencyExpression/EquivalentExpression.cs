@@ -1,7 +1,6 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using AutoMapper.Collection;
 
 namespace AutoMapper.EquivalencyExpression
 {
@@ -9,10 +8,7 @@ namespace AutoMapper.EquivalencyExpression
     {
         internal static IEquivalentComparer BadValue { get; }
 
-        static EquivalentExpression()
-        {
-            BadValue = new EquivalentExpression();
-        }
+        static EquivalentExpression() => BadValue = new EquivalentExpression();
 
         public int GetHashCode(object obj) => throw new Exception("How'd you get here");
 
@@ -42,27 +38,16 @@ namespace AutoMapper.EquivalencyExpression
 
         public bool IsEquivalent(object source, object destination)
         {
-            if (source == null && destination == null)
-            {
-                return true;
-            }
+            if (source == null && destination == null) return true;
 
-            if (source == null || destination == null)
-            {
-                return false;
-            }
-
-            if (source is TSource src && destination is TDestination dest)
-            {
-                return _equivalentFunc(src, dest);
-            }
-            return false;
+            return source == null || destination == null
+                ? false
+                : source is TSource src && destination is TDestination dest && _equivalentFunc(src, dest);
         }
 
         public Expression<Func<TDestination, bool>> ToSingleSourceExpression(TSource source)
         {
-            if (source == null)
-                throw new Exception("Invalid somehow");
+            if (source == null) throw new ArgumentNullException("Invalid somehow");
 
             var expression = new ParametersToConstantVisitor<TSource>(source).Visit(_equivalentExpression) as LambdaExpression;
             return Expression.Lambda<Func<TDestination, bool>>(expression.Body, _equivalentExpression.Parameters[1]);
@@ -70,11 +55,11 @@ namespace AutoMapper.EquivalencyExpression
 
         public int GetHashCode(object obj)
         {
-            if (obj is TSource src)
-                return _sourceHashCodeFunc(src);
-            if (obj is TDestination dest)
-                return _destinationHashCodeFunc(dest);
-            return default;
+            if (obj is TSource src) return _sourceHashCodeFunc(src);
+
+            return obj is TDestination dest
+                ? _destinationHashCodeFunc(dest)
+                : default;
         }
     }
 
@@ -82,20 +67,15 @@ namespace AutoMapper.EquivalencyExpression
     {
         private readonly T _value;
 
-        public ParametersToConstantVisitor(T value)
-        {
-            _value = value;
-        }
+        public ParametersToConstantVisitor(T value) => _value = value;
 
         protected override Expression VisitParameter(ParameterExpression node) => node;
 
         protected override Expression VisitMember(MemberExpression node)
         {
-            if (node.Member is PropertyInfo pi && pi.DeclaringType.GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo()))
-            {
-                return Expression.Constant(pi.GetValue(_value, null));
-            }
-            return base.VisitMember(node);
+            return (node.Member is PropertyInfo pi && pi.DeclaringType.GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo()))
+            ? Expression.Constant(pi.GetValue(_value, null))
+            : base.VisitMember(node);
         }
     }
 }

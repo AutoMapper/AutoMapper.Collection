@@ -39,12 +39,10 @@ namespace AutoMapper.Collection.LinqToSQL
             where TFrom : class
         {
             var equivExpr = _mapper.Map<TFrom, Expression<Func<TTo, bool>>>(from);
-            if (equivExpr == null)
-                return;
+            if (equivExpr == null) return;
             var to = _sourceSet.FirstOrDefault(equivExpr);
 
-            if (to != null)
-                _sourceSet.DeleteOnSubmit(to);
+            if (to != null) _sourceSet.DeleteOnSubmit(to);
         }
     }
 }

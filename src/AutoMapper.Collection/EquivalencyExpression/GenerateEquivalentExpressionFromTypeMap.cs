@@ -7,18 +7,14 @@ namespace AutoMapper.EquivalencyExpression
     {
         private static readonly ConcurrentDictionary<TypeMap, GenerateEquivalentExpressionFromTypeMap> _EquivalentExpressions = new ConcurrentDictionary<TypeMap, GenerateEquivalentExpressionFromTypeMap>();
 
-        internal static Expression GetExpression(TypeMap typeMap, object value)
-        {
-            return _EquivalentExpressions.GetOrAdd(typeMap, t => new GenerateEquivalentExpressionFromTypeMap(t))
+        internal static Expression GetExpression(TypeMap typeMap, object value) =>
+            _EquivalentExpressions
+                .GetOrAdd(typeMap, t => new GenerateEquivalentExpressionFromTypeMap(t))
                 .CreateEquivalentExpression(value);
-        }
 
         private readonly TypeMap _typeMap;
 
-        private GenerateEquivalentExpressionFromTypeMap(TypeMap typeMap)
-        {
-            _typeMap = typeMap;
-        }
+        private GenerateEquivalentExpressionFromTypeMap(TypeMap typeMap) => _typeMap = typeMap;
 
         private Expression CreateEquivalentExpression(object value)
         {
@@ -26,7 +22,6 @@ namespace AutoMapper.EquivalencyExpression
             var destExpr = Expression.Parameter(_typeMap.SourceType, express.Parameters[0].Name);
 
             var result = new CustomExpressionVisitor(destExpr, _typeMap.PropertyMaps).Visit(express.Body);
-
             return Expression.Lambda(result, destExpr);
         }
     }

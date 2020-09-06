@@ -42,8 +42,7 @@ namespace AutoMapper.EntityFramework
             var forMethod = source.GetType().GetMethod("For").MakeGenericMethod(destType);
             var listType = typeof(List<>).MakeGenericType(destType);
             var forResult = forMethod.Invoke(source, new object[] { null });
-            var enumeratedResult = Activator.CreateInstance(listType, forResult);
-            return enumeratedResult as IEnumerable;
+            return Activator.CreateInstance(listType, forResult) as IEnumerable;
         }
     }
 }
