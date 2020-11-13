@@ -81,11 +81,11 @@ namespace AutoMapper.Mappers
             {
                 if (dstItem == null)
                 {
-                    dstItem = (TDestinationItem)context.Mapper.Map(srcItem, null, typeof(TSourceItem), typeof(TDestinationItem), context);
+                    dstItem = (TDestinationItem)context.Mapper.Map(srcItem, null, typeof(TSourceItem), typeof(TDestinationItem));
                 }
                 else
                 {
-                    context.Mapper.Map(srcItem, dstItem, context);
+                    context.Mapper.Map(srcItem, dstItem);
                 }
 
                 return dstItem;
