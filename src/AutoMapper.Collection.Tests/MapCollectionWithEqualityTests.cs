@@ -339,11 +339,9 @@ namespace AutoMapper.Collection
                     cfg =>
                     {
                         cfg.AddCollectionMappers();
-                        cfg.CreateMap<ThingWithCollection, ThingWithCollection>()
-                            .PreserveReferences();
+                        cfg.CreateMap<ThingWithCollection, ThingWithCollection>();
                         cfg.CreateMap<ThingCollectionItem, ThingCollectionItem>()
-                            .EqualityComparison((src, dst) => src.ID == dst.ID)
-                            .PreserveReferences();
+                            .EqualityComparison((src, dst) => src.ID == dst.ID);
                     });
 
             var root = new ThingWithCollection()
