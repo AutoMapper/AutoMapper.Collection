@@ -9,7 +9,7 @@ using static System.Linq.Expressions.Expression;
 
 namespace AutoMapper.Mappers
 {
-    public class EquivalentExpressionAddRemoveCollectionMapper : IConfigurationObjectMapper
+    public class EquivalentExpressionAddRemoveCollectionMapper : EnumerableMapperBase, IConfigurationObjectMapper
     {
         private readonly CollectionMapper _collectionMapper = new CollectionMapper();
 
@@ -95,13 +95,13 @@ namespace AutoMapper.Mappers
         private static readonly MethodInfo _mapMethodInfo = typeof(EquivalentExpressionAddRemoveCollectionMapper).GetRuntimeMethods().Single(x => x.IsStatic && x.Name == nameof(Map));
         private static readonly ConcurrentDictionary<TypePair, IObjectMapper> _objectMapperCache = new ConcurrentDictionary<TypePair, IObjectMapper>();
 
-        public bool IsMatch(TypePair typePair)
+        public override bool IsMatch(TypePair typePair)
         {
             return typePair.SourceType.IsEnumerableType()
                    && typePair.DestinationType.IsCollectionType();
         }
 
-        public Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, IMemberMap memberMap,
+        public override Expression MapExpression(IConfigurationProvider configurationProvider, ProfileMap profileMap, IMemberMap memberMap,
             Expression sourceExpression, Expression destExpression, Expression contextExpression)
         {
             var sourceType = TypeHelper.GetElementType(sourceExpression.Type);
