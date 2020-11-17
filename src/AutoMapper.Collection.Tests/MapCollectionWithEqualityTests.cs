@@ -7,22 +7,12 @@ using Xunit;
 
 namespace AutoMapper.Collection
 {
-    public class MapCollectionWithEqualityTests : MappingTestBase
+    public abstract class MapCollectionWithEqualityTests : MappingTestBase
     {
         protected virtual void ConfigureMapper(IMapperConfigurationExpression cfg)
         {
-            ApplyBaseConfiguration(cfg);
-            CreateThingMapping(cfg);
-        }
-
-        protected void ApplyBaseConfiguration(IMapperConfigurationExpression cfg)
-        {
             cfg.AddCollectionMappers();
-        }
-
-        protected IMappingExpression<ThingDto, Thing> CreateThingMapping(IMapperConfigurationExpression cfg)
-        {
-            return cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
+            cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
         }
 
         [Fact]
@@ -65,34 +55,6 @@ namespace AutoMapper.Collection
         }
 
         [Fact]
-        public void Should_Reorder_Destination_Collection_When_UseSourceOrder_Option_Specified()
-        {
-            var mapper = CreateMapper(cfg =>
-            {
-                ApplyBaseConfiguration(cfg);
-                CreateThingMapping(cfg).UseSourceOrder(true);
-            });
-
-            var dtos = new List<ThingDto>
-            {
-                new ThingDto { ID = 2, Title = "test2" },
-                new ThingDto { ID = 4, Title = "test4" },
-                new ThingDto { ID = 1, Title = "test0" },
-            };
-
-            var items = new List<Thing>
-            {
-                new Thing { ID = 1, Title = "test1" },
-                new Thing { ID = 4, Title = "test4" },
-                new Thing { ID = 3, Title = "test3" },
-            };
-
-            mapper.Map(dtos, items.ToList()).Should()
-                .HaveElementAt(2, items[0])
-                .And.HaveElementAt(1, items[1]);
-        }
-
-        [Fact]
         public void Should_Be_Fast_With_Large_Lists()
         {
             var mapper = CreateMapper(ConfigureMapper);
@@ -104,7 +66,7 @@ namespace AutoMapper.Collection
             mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        [Fact]
+        /*[Fact]
         public void Should_Be_Fast_With_Large_Reversed_Lists()
         {
             var mapper = CreateMapper(ConfigureMapper);
@@ -115,7 +77,7 @@ namespace AutoMapper.Collection
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
             mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
-        }
+        }*/
 
         [Fact]
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping()
@@ -422,6 +384,78 @@ namespace AutoMapper.Collection
         {
             public int ID { get; set; }
             public ThingWithCollection Parent { get; set; }
+        }
+
+        public class UseSourceOrderTrue : MapCollectionWithEqualityTests
+        {
+            protected override void ConfigureMapper(IMapperConfigurationExpression cfg)
+            {
+                cfg.AddCollectionMappers();
+                cfg
+                    .CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID)
+                    .UseSourceOrder(true);
+            }
+
+            [Fact]
+            public void Should_Reorder_Destination_Collection_When_UseSourceOrder_Option_Specified()
+            {
+                var mapper = CreateMapper(ConfigureMapper);
+
+                var dtos = new List<ThingDto>
+                {
+                    new ThingDto { ID = 2, Title = "test2" },
+                    new ThingDto { ID = 4, Title = "test4" },
+                    new ThingDto { ID = 1, Title = "test0" },
+                };
+
+                var items = new List<Thing>
+                {
+                    new Thing { ID = 1, Title = "test1" },
+                    new Thing { ID = 4, Title = "test4" },
+                    new Thing { ID = 3, Title = "test3" },
+                };
+
+                mapper.Map(dtos, items.ToList()).Should()
+                    .HaveElementAt(2, items[0])
+                    .And.HaveElementAt(1, items[1]);
+            }
+
+            [Fact]
+            public void Should_Be_Fast_With_Large_Reversed_Lists()
+            {
+                var mapper = CreateMapper(ConfigureMapper);
+
+                var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
+                dtos.Reverse();
+
+                var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
+
+                mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.Last());
+            }
+        }
+
+        public class UseSourceOrderFalse : MapCollectionWithEqualityTests
+        {
+            protected override void ConfigureMapper(IMapperConfigurationExpression cfg)
+            {
+                cfg.AddCollectionMappers();
+                cfg
+                    .CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID)
+                    .UseSourceOrder(false);
+            }
+
+            [Fact]
+            public void Should_Be_Fast_With_Large_Reversed_Lists()
+            {
+                var mapper = CreateMapper(ConfigureMapper);
+
+                var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
+                dtos.Reverse();
+
+                var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
+
+                mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            }
         }
     }
 }
