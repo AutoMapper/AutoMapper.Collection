@@ -12,8 +12,11 @@ namespace AutoMapper.Collection
         protected virtual void ConfigureMapper(IMapperConfigurationExpression cfg)
         {
             cfg.AddCollectionMappers();
-            cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
+            cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID)
+                .Tap(ApplySourceOrder);
         }
+
+        protected abstract IMappingExpression<TSource, TDestination> ApplySourceOrder<TSource, TDestination>(IMappingExpression<TSource, TDestination> mappingExpression);
 
         [Fact]
         public void Should_Keep_Existing_List()
@@ -66,26 +69,14 @@ namespace AutoMapper.Collection
             mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
         }
 
-        /*[Fact]
-        public void Should_Be_Fast_With_Large_Reversed_Lists()
-        {
-            var mapper = CreateMapper(ConfigureMapper);
-
-            var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
-            dtos.Reverse();
-
-            var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
-
-            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
-        }*/
-
         [Fact]
         public void Should_Be_Fast_With_Large_Lists_MultiProperty_Mapping()
         {
             var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => dto.ID == entity.ID && dto.ID == entity.ID);
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => dto.ID == entity.ID && dto.ID == entity.ID)
+                    .Tap(ApplySourceOrder);
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
@@ -101,7 +92,8 @@ namespace AutoMapper.Collection
             var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => dto.ID == entity.ID || dto.ID == entity.ID);
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => dto.ID == entity.ID || dto.ID == entity.ID)
+                    /*.Tap(ApplySourceOrder)*/;
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
@@ -118,7 +110,8 @@ namespace AutoMapper.Collection
             {
                 x.AddCollectionMappers();
                 // ReSharper disable once NegativeEqualityExpression
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => !(dto.ID != entity.ID));
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => !(dto.ID != entity.ID))
+                    /*.Tap(ApplySourceOrder)*/;
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
@@ -135,7 +128,8 @@ namespace AutoMapper.Collection
             {
                 x.AddCollectionMappers();
                 // ReSharper disable once NegativeEqualityExpression
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => dto.ID == entity.ID && !(dto.ID != entity.ID));
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => dto.ID == entity.ID && !(dto.ID != entity.ID))
+                    .Tap(ApplySourceOrder);
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
@@ -151,7 +145,8 @@ namespace AutoMapper.Collection
             var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto source, Thing dest) => dest.ID == (source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID));
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto source, Thing dest) => dest.ID == (source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID))
+                    .Tap(ApplySourceOrder);
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingSubDto { ID = i + 100000 }).Cast<ThingDto>().ToList();
@@ -167,7 +162,8 @@ namespace AutoMapper.Collection
             var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto source, Thing dest) => (source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID) == dest.ID);
+                x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto source, Thing dest) => (source is ThingSubDto ? ((ThingSubDto)source).ID2 : source.ID) == dest.ID)
+                    .Tap(ApplySourceOrder);
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingSubDto { ID = i + 100000 }).ToList();
@@ -185,7 +181,8 @@ namespace AutoMapper.Collection
                 cfg.AddCollectionMappers();
                 cfg.CreateMap<ClientDto, Client>()
                     .ForMember(x => x.DtoId, m => m.Ignore())
-                    .EqualityComparison((ClientDto src, Client dest) => dest.DtoId == 0 ? src.Code == dest.Code : src.Id == dest.DtoId);
+                    .EqualityComparison((ClientDto src, Client dest) => dest.DtoId == 0 ? src.Code == dest.Code : src.Id == dest.DtoId)
+                    .Tap(ApplySourceOrder);
             });
             
             var dto = new ClientDto
@@ -237,12 +234,14 @@ namespace AutoMapper.Collection
                 cfg.AddCollectionMappers();
                 cfg.CreateMap<Charge, SaleCharge>()
                     .ForMember(d => d.SaleId, (IMemberConfigurationExpression<Charge, SaleCharge, Guid> o) => o.Ignore())
-                    .EqualityComparison((Charge c, SaleCharge sc) => sc.Category == c.Category && sc.Description == c.Description);
+                    .EqualityComparison((Charge c, SaleCharge sc) => sc.Category == c.Category && sc.Description == c.Description)
+                    .Tap(ApplySourceOrder);
 
                 cfg.CreateMap<SaleCharge, Charge>()
                     .ConstructUsing(
                         (saleCharge => new Charge(saleCharge.Category, saleCharge.Description, saleCharge.Value)))
-                    .EqualityComparison((SaleCharge sc, Charge c) => sc.Category == c.Category && sc.Description == c.Description);
+                    .EqualityComparison((SaleCharge sc, Charge c) => sc.Category == c.Category && sc.Description == c.Description)
+                    .Tap(ApplySourceOrder);
             });
 
             var dto = new Charge("catagory", "description", 5);
@@ -314,7 +313,7 @@ namespace AutoMapper.Collection
             var mapper = CreateMapper(x =>
             {
                 x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>().ReverseMap();
+                x.CreateMap<ThingDto, Thing>()/*.Tap(ApplySourceOrder)*/.ReverseMap();
             });
 
             var dtos = new List<ThingDto>
@@ -341,7 +340,8 @@ namespace AutoMapper.Collection
                         cfg.AddCollectionMappers();
                         cfg.CreateMap<ThingWithCollection, ThingWithCollection>();
                         cfg.CreateMap<ThingCollectionItem, ThingCollectionItem>()
-                            .EqualityComparison((src, dst) => src.ID == dst.ID);
+                            .EqualityComparison((src, dst) => src.ID == dst.ID)
+                            .Tap(ApplySourceOrder);
                     });
 
             var root = new ThingWithCollection()
@@ -388,13 +388,9 @@ namespace AutoMapper.Collection
 
         public class UseSourceOrderTrue : MapCollectionWithEqualityTests
         {
-            protected override void ConfigureMapper(IMapperConfigurationExpression cfg)
-            {
-                cfg.AddCollectionMappers();
-                cfg
-                    .CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID)
-                    .UseSourceOrder(true);
-            }
+            protected override IMappingExpression<TSource, TDestination> ApplySourceOrder<TSource, TDestination>(
+                IMappingExpression<TSource, TDestination> mappingExpression)
+                => mappingExpression.UseSourceOrder(true);
 
             [Fact]
             public void Should_Reorder_Destination_Collection_When_UseSourceOrder_Option_Specified()
@@ -436,13 +432,9 @@ namespace AutoMapper.Collection
 
         public class UseSourceOrderFalse : MapCollectionWithEqualityTests
         {
-            protected override void ConfigureMapper(IMapperConfigurationExpression cfg)
-            {
-                cfg.AddCollectionMappers();
-                cfg
-                    .CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID)
-                    .UseSourceOrder(false);
-            }
+            protected override IMappingExpression<TSource, TDestination> ApplySourceOrder<TSource, TDestination>(
+                IMappingExpression<TSource, TDestination> mappingExpression)
+                => mappingExpression.UseSourceOrder(false);
 
             [Fact]
             public void Should_Be_Fast_With_Large_Reversed_Lists()
