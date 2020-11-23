@@ -32,4 +32,4 @@ exec { & dotnet build -c Release }
 
 exec { & dotnet test -c Release -r $artifacts --no-build -l trx --verbosity=normal }
 
-exec { & dotnet pack .\src\AutoMapper\AutoMapper.csproj -c Release -o $artifacts --no-build }
+exec { & dotnet pack .\AutoMapper.Collection.sln -c Release -o $artifacts --no-build }
