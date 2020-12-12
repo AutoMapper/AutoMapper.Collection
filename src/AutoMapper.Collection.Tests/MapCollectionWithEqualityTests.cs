@@ -93,7 +93,7 @@ namespace AutoMapper.Collection
             {
                 x.AddCollectionMappers();
                 x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => dto.ID == entity.ID || dto.ID == entity.ID)
-                    /*.Tap(ApplySourceOrder)*/;
+                    .Tap(ApplySourceOrder);
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
@@ -111,7 +111,7 @@ namespace AutoMapper.Collection
                 x.AddCollectionMappers();
                 // ReSharper disable once NegativeEqualityExpression
                 x.CreateMap<ThingDto, Thing>().EqualityComparison((ThingDto dto, Thing entity) => !(dto.ID != entity.ID))
-                    /*.Tap(ApplySourceOrder)*/;
+                    .Tap(ApplySourceOrder);
             });
 
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
@@ -308,30 +308,6 @@ namespace AutoMapper.Collection
         }
 
         [Fact]
-        public void Should_Be_Instanced_Based()
-        {
-            var mapper = CreateMapper(x =>
-            {
-                x.AddCollectionMappers();
-                x.CreateMap<ThingDto, Thing>()/*.Tap(ApplySourceOrder)*/.ReverseMap();
-            });
-
-            var dtos = new List<ThingDto>
-            {
-                new ThingDto { ID = 1, Title = "test0" },
-                new ThingDto { ID = 2, Title = "test2" }
-            };
-
-            var items = new List<Thing>
-            {
-                new Thing { ID = 1, Title = "test1" },
-                new Thing { ID = 3, Title = "test3" },
-            };
-
-            mapper.Map(dtos, items.ToList()).Should().NotContain(items.First());
-        }
-
-        [Fact]
         public void Parent_Should_Be_Same_As_Root_Object()
         {
             var mapper = CreateMapper(
@@ -447,6 +423,30 @@ namespace AutoMapper.Collection
                 var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
                 mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
+            }
+
+            [Fact]
+            public void Should_Be_Instanced_Based()
+            {
+                var mapper = CreateMapper(x =>
+                {
+                    x.AddCollectionMappers();
+                    x.CreateMap<ThingDto, Thing>().ReverseMap();
+                });
+
+                var dtos = new List<ThingDto>
+                {
+                    new ThingDto { ID = 1, Title = "test0" },
+                    new ThingDto { ID = 2, Title = "test2" }
+                };
+
+                var items = new List<Thing>
+                {
+                    new Thing { ID = 1, Title = "test1" },
+                    new Thing { ID = 3, Title = "test3" },
+                };
+
+                mapper.Map(dtos, items.ToList()).Should().NotContain(items.First());
             }
         }
     }

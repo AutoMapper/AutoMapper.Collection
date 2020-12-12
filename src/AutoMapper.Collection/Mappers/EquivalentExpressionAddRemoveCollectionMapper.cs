@@ -43,13 +43,7 @@ namespace AutoMapper.Mappers
             {
                 foreach (var srcItem in source)
                 {
-                    RetrieveCorrespondingItems(srcItem, out var dstItem, out var destCandidateItems);
-                    var itemExistsInDestination = dstItem != null;
-
-                    if (itemExistsInDestination)
-                    {
-                        destCandidateItems.Remove(dstItem);
-                    }
+                    RetrieveCorrespondingItems(srcItem, out var dstItem, out var itemExistsInDestination);
 
                     dstItem = MapItem(srcItem, dstItem);
                     if (!itemExistsInDestination)
@@ -66,14 +60,23 @@ namespace AutoMapper.Mappers
 
             return destination;
 
-            void RetrieveCorrespondingItems(TSourceItem srcItem, out TDestinationItem dstItem, out List<TDestinationItem> destCandidateItems)
+            void RetrieveCorrespondingItems(TSourceItem srcItem, out TDestinationItem dstItem, out bool isFound)
             {
                 var srcHash = equivalentComparer.GetHashCode(srcItem);
                 dstItem = default;
-                destCandidateItems = default;
-                if (destItemsByHash.TryGetValue(srcHash, out destCandidateItems))
+                isFound = false;
+                if (destItemsByHash.TryGetValue(srcHash, out var destCandidateItems))
                 {
-                    dstItem = destCandidateItems.FirstOrDefault(x => equivalentComparer.IsEquivalent(srcItem, x));
+                    foreach (var item in destCandidateItems)
+                    {
+                        if (equivalentComparer.IsEquivalent(srcItem, item))
+                        {
+                            dstItem = item;
+                            isFound = true;
+                            destCandidateItems.Remove(item);
+                            return;
+                        }
+                    }
                 }
             }
 
