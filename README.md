@@ -29,7 +29,7 @@ Mapper.Map<List<OrderDTO>,List<Order>>(orderDtos, orders);
 ```
 If ID's match, then AutoMapper will map OrderDTO to Order
 
-If OrderDTO exists and Order doesn't, then AutoMapper will add a new Order mappeed from OrderDTO to the collection
+If OrderDTO exists and Order doesn't, then AutoMapper will add a new Order mapped from OrderDTO to the collection
 
 If Order exists and OrderDTO doesn't, then AutoMapper will remove Order from collection
 
