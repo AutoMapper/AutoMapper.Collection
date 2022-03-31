@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper.EquivalencyExpression;
 using AutoMapper.Features;
+using AutoMapper.Internal;
 
 namespace AutoMapper.Collection.Runtime
 {
@@ -28,7 +29,7 @@ namespace AutoMapper.Collection.Runtime
                     .FirstOrDefault(x => x != null));
         }
 
-        void IRuntimeFeature.Seal(IConfigurationProvider configurationProvider)
+        void IRuntimeFeature.Seal(IGlobalConfiguration configurationProvider)
         {
         }
 
