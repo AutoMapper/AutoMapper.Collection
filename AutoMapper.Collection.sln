@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29411.108
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{578F2483-CF08-409D-A316-31BCB7C5D9D0}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,8 +19,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection", "src\AutoMapper.Collection\AutoMapper.Collection.csproj", "{37AD667A-8080-476C-88FD-20310AC7CAF3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.EntityFramework", "src\AutoMapper.Collection.EntityFramework\AutoMapper.Collection.EntityFramework.csproj", "{E0FD41FD-AF5B-4BEC-970F-8412E7B6C914}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.LinqToSQL", "src\AutoMapper.Collection.LinqToSQL\AutoMapper.Collection.LinqToSQL.csproj", "{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMapper.Collection.Tests", "src\AutoMapper.Collection.Tests\AutoMapper.Collection.Tests.csproj", "{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}"
 EndProject
@@ -40,10 +38,6 @@ Global
 		{E0FD41FD-AF5B-4BEC-970F-8412E7B6C914}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0FD41FD-AF5B-4BEC-970F-8412E7B6C914}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0FD41FD-AF5B-4BEC-970F-8412E7B6C914}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0A023B6-D02A-4CD3-9B3D-3B3022DB001A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D3D34AD-6A0A-4382-9A2F-894F52D184A7}.Release|Any CPU.ActiveCfg = Release|Any CPU

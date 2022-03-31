@@ -3,6 +3,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using AutoMapper.Collection.Configuration;
 using AutoMapper.Collection.Runtime;
+using AutoMapper.Internal;
+using AutoMapper.Internal.Mappers;
 using AutoMapper.Mappers;
 
 namespace AutoMapper.EquivalencyExpression
@@ -11,52 +13,46 @@ namespace AutoMapper.EquivalencyExpression
     {
         public static void AddCollectionMappers(this IMapperConfigurationExpression cfg)
         {
-            cfg.Features.Set(new GeneratePropertyMapsExpressionFeature());
-            cfg.InsertBefore<ReadOnlyCollectionMapper>(
-                new ObjectToEquivalencyExpressionByEquivalencyExistingMapper(),
+            var mapper = new ObjectToEquivalencyExpressionByEquivalencyExistingMapper();
+            cfg.Internal().Features.Set(new GeneratePropertyMapsExpressionFeature(mapper));
+            cfg.Internal().InsertBefore<CollectionMapper>(
+                mapper,
                 new EquivalentExpressionAddRemoveCollectionMapper());
         }
 
-        private static void InsertBefore<TObjectMapper>(this IMapperConfigurationExpression cfg, params IConfigurationObjectMapper[] adds)
+        private static void InsertBefore<TObjectMapper>(this IMapperConfigurationExpression cfg, params IObjectMapper[] adds)
             where TObjectMapper : IObjectMapper
         {
-            var mappers = cfg.Mappers;
+            var mappers = cfg.Internal().Mappers;
             var targetMapper = mappers.FirstOrDefault(om => om is TObjectMapper);
             var index = targetMapper == null ? 0 : mappers.IndexOf(targetMapper);
             foreach (var mapper in adds.Reverse())
             {
                 mappers.Insert(index, mapper);
             }
-
-            cfg.Advanced.BeforeSeal(c =>
-            {
-                foreach (var configurationObjectMapper in adds)
-                {
-                    configurationObjectMapper.ConfigurationProvider = c;
-                }
-            });
         }
 
-        internal static IEquivalentComparer GetEquivalentExpression(this IConfigurationObjectMapper mapper, Type sourceType, Type destinationType)
+        internal static IEquivalentComparer GetEquivalentExpression(this IObjectMapper mapper, Type sourceType,
+            Type destinationType, IConfigurationProvider configuration)
         {
-            var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(sourceType, destinationType);
+            var typeMap = configuration.Internal().ResolveTypeMap(sourceType, destinationType);
             if (typeMap == null)
             {
                 return null;
             }
 
-            var comparer = GetEquivalentExpression(mapper.ConfigurationProvider, typeMap);
+            var comparer = GetEquivalentExpression(configuration, typeMap);
             if (comparer == null)
             {
                 foreach (var item in typeMap.IncludedBaseTypes)
                 {
-                    var baseTypeMap = mapper.ConfigurationProvider.ResolveTypeMap(item.SourceType, item.DestinationType);
+                    var baseTypeMap = configuration.Internal().ResolveTypeMap(item.SourceType, item.DestinationType);
                     if (baseTypeMap == null)
                     {
                         continue;
                     }
 
-                    comparer = GetEquivalentExpression(mapper.ConfigurationProvider, baseTypeMap);
+                    comparer = GetEquivalentExpression(configuration, baseTypeMap);
                     if (comparer != null)
                     {
                         break;
@@ -69,7 +65,7 @@ namespace AutoMapper.EquivalencyExpression
         internal static IEquivalentComparer GetEquivalentExpression(IConfigurationProvider configurationProvider, TypeMap typeMap)
         {
             return typeMap.Features.Get<CollectionMappingFeature>()?.EquivalentComparer
-                ?? configurationProvider.Features.Get<GeneratePropertyMapsFeature>().Get(typeMap);
+                ?? configurationProvider.Internal().Features.Get<GeneratePropertyMapsFeature>().Get(typeMap);
         }
 
         /// <summary>
@@ -89,14 +85,14 @@ namespace AutoMapper.EquivalencyExpression
         public static void SetGeneratePropertyMaps<TGeneratePropertyMaps>(this IMapperConfigurationExpression cfg)
             where TGeneratePropertyMaps : IGeneratePropertyMaps
         {
-            (cfg.Features.Get<GeneratePropertyMapsExpressionFeature>()
+            (cfg.Internal().Features.Get<GeneratePropertyMapsExpressionFeature>()
                 ?? throw new ArgumentException("Invoke the IMapperConfigurationExpression.AddCollectionMappers() before adding IGeneratePropertyMaps."))
                 .Add(serviceCtor => (IGeneratePropertyMaps)serviceCtor(typeof(TGeneratePropertyMaps)));
         }
 
         public static void SetGeneratePropertyMaps(this IMapperConfigurationExpression cfg, IGeneratePropertyMaps generatePropertyMaps)
         {
-            (cfg.Features.Get<GeneratePropertyMapsExpressionFeature>()
+            (cfg.Internal().Features.Get<GeneratePropertyMapsExpressionFeature>()
                 ?? throw new ArgumentException("Invoke the IMapperConfigurationExpression.AddCollectionMappers() before adding IGeneratePropertyMaps."))
                 .Add(_ => generatePropertyMaps);
         }

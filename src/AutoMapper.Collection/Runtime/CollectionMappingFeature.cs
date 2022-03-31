@@ -1,5 +1,6 @@
 ﻿using AutoMapper.EquivalencyExpression;
 using AutoMapper.Features;
+using AutoMapper.Internal;
 
 namespace AutoMapper.Collection.Runtime
 {
@@ -12,7 +13,7 @@ namespace AutoMapper.Collection.Runtime
 
         public IEquivalentComparer EquivalentComparer { get; }
 
-        void IRuntimeFeature.Seal(IConfigurationProvider configurationProvider)
+        void IRuntimeFeature.Seal(IGlobalConfiguration configurationProvider)
         {
         }
     }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper.EquivalencyExpression;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper.Internal;
 using FluentAssertions;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace AutoMapper.Collection
         public void TypeMap_Should_include_base_types()
         {
             var mapper = CreateMapper(ConfigureMapper);
-            var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(typeof(MailOrderDomain), typeof(OrderEf));
+            var typeMap = mapper.ConfigurationProvider.Internal().ResolveTypeMap(typeof(MailOrderDomain), typeof(OrderEf));
 
             var typePairs = new[]{
                     new TypePair(typeof(OrderDomain), typeof(OrderEf))
@@ -26,7 +27,7 @@ namespace AutoMapper.Collection
         public void TypeMap_Should_include_derivied_types()
         {
             var mapper = CreateMapper(ConfigureMapper);
-            var typeMap = mapper.ConfigurationProvider.ResolveTypeMap(typeof(OrderDomain), typeof(OrderEf));
+            var typeMap = mapper.ConfigurationProvider.Internal().ResolveTypeMap(typeof(OrderDomain), typeof(OrderEf));
 
             var typePairs = new[]{
                     new TypePair(typeof(OnlineOrderDomain), typeof(OnlineOrderEf)),
