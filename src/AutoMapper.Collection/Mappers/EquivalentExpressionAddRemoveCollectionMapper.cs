@@ -12,7 +12,7 @@ using static AutoMapper.Execution.ExpressionBuilder;
 
 namespace AutoMapper.Mappers
 {
-    public class EquivalentExpressionAddRemoveCollectionMapper : IObjectMapper
+    public class EquivalentExpressionAddRemoveCollectionMapper : IObjectMapperInfo
     {
         private readonly CollectionMapper _collectionMapper = new CollectionMapper();
 
@@ -104,6 +104,11 @@ namespace AutoMapper.Mappers
             var notNull = NotEqual(destExpression, Constant(null));
             var collectionMapperExpression = _collectionMapper.MapExpression(configurationProvider, profileMap, memberMap, sourceExpression, destExpression);
             return Condition(notNull, map, Convert(collectionMapperExpression, destExpression.Type));
+        }
+
+        public TypePair GetAssociatedTypes(TypePair initialTypes)
+        {
+            return _collectionMapper.GetAssociatedTypes(initialTypes);
         }
     }
 }
