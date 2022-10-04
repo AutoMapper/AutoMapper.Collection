@@ -15,13 +15,13 @@ namespace AutoMapper.Collection
             var collectionMapper = CreateMapper(cfg =>
             {
                 cfg.AddCollectionMappers();
-                cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID).AfterMap((_, __, ctx) => collectionTestValue = (int)ctx.Options.Items["Test"]);
+                cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID).AfterMap((_, __, ctx) => collectionTestValue = (int)ctx.Items["Test"]);
             });
 
             var normalTestValue = 0;
             var normalMapper = CreateMapper(cfg =>
             {
-                cfg.CreateMap<ThingDto, Thing>().AfterMap((_, __, ctx) => normalTestValue = (int)ctx.Options.Items["Test"]);
+                cfg.CreateMap<ThingDto, Thing>().AfterMap((_, __, ctx) => normalTestValue = (int)ctx.Items["Test"]);
             });
 
             var dtos = new List<ThingDto>
