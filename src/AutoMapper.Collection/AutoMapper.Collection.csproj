@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>Collection Add/Remove/Update support for AutoMapper. AutoMapper.Collection adds EqualityComparison Expressions for TypeMaps to determine if Source and Destination type are equivalent to each other when mapping collections.</Description>
     <Authors>Tyler Carlson</Authors>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <AssemblyName>AutoMapper.Collection</AssemblyName>
     <PackageId>AutoMapper.Collection</PackageId>
     <PackageIcon>icon.png</PackageIcon>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="[12.0.0, 13.0.0)" />
+    <PackageReference Include="AutoMapper" Version="[13.0.0, 14.0.0)" />
     <PackageReference Include="MinVer" Version="2.3.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

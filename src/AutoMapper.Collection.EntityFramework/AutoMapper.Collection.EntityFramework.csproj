@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>Collection updating support for EntityFramework with AutoMapper. Extends DBSet&lt;T&gt; with Persist&lt;TDto&gt;().InsertUpdate(dto) and Persist&lt;TDto&gt;().Delete(dto).  Will find the matching object and will Insert/Update/Delete.</Description>
     <Authors>Tyler Carlson</Authors>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <AssemblyName>AutoMapper.Collection.EntityFramework</AssemblyName>
     <PackageId>AutoMapper.Collection.EntityFramework</PackageId>
     <PackageIcon>icon.png</PackageIcon>
@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="1.0.0" />
-    <PackageReference Include="EntityFramework" Version="$(EfVersion)" />
+    <PackageReference Include="EntityFramework" Version="6.3.0" />
     <PackageReference Include="MinVer" Version="2.3.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
