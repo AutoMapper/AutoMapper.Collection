@@ -45,7 +45,10 @@ This automates the process by just specifying what is equal to each other.
 Mapper.Initialize(cfg =>
 {
     cfg.AddCollectionMappers();
+// entity framework
     cfg.SetGeneratePropertyMaps<GenerateEntityFrameworkPrimaryKeyPropertyMaps<DB>>();
+// entity framework core
+cfg.SetGeneratePropertyMaps<GenerateEntityFrameworkCorePrimaryKeyPropertyMaps<DB>>();
     // Configuration code
 });
 ```
