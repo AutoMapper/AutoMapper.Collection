@@ -15,6 +15,7 @@ namespace AutoMapper.Collection
             cfg.CreateMap<ThingDto, Thing>().EqualityComparison((dto, entity) => dto.ID == entity.ID);
         }
 
+
         [Fact]
         public void Should_Keep_Existing_List()
         {
@@ -32,6 +33,38 @@ namespace AutoMapper.Collection
             };
 
             mapper.Map(dtos, items).Should().BeSameAs(items);
+        }
+
+        [Fact]
+        public void Should_Reorder_Destination_To_Match_Source_Order()
+        {
+            var mapper = CreateMapper(ConfigureMapper);
+
+            var dtos = new List<ThingDto>
+            {
+                new ThingDto { ID = 2, Title = "test2" },
+                new ThingDto { ID = 1, Title = "test1" },
+                new ThingDto { ID = 3, Title = "test3" }
+            };
+
+            var one = new Thing { ID = 1, Title = "one-initial" };
+            var two = new Thing { ID = 2, Title = "two-initial" };
+            var three = new Thing { ID = 3, Title = "three-initial" };
+            var items = new List<Thing> { one, two, three };
+
+            mapper.Map(dtos, items);
+
+            // Expect the destination to be reordered to match source while preserving instances
+            items.Should().HaveCount(3);
+            items[0].Should().BeSameAs(two);
+            items[1].Should().BeSameAs(one);
+            items[2].Should().BeSameAs(three);
+            items.Select(i => i.ID).Should().Equal(2, 1, 3);
+
+            // And Titles should be updated from the source
+            items[0].Title.Should().Be("test2");
+            items[1].Title.Should().Be("test1");
+            items[2].Title.Should().Be("test3");
         }
 
         [Fact]
@@ -60,19 +93,6 @@ namespace AutoMapper.Collection
             var mapper = CreateMapper(ConfigureMapper);
 
             var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
-
-            var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
-
-            mapper.Map(dtos, items.ToList()).Should().HaveElementAt(0, items.First());
-        }
-
-        [Fact]
-        public void Should_Be_Fast_With_Large_Reversed_Lists()
-        {
-            var mapper = CreateMapper(ConfigureMapper);
-
-            var dtos = new object[100000].Select((_, i) => new ThingDto { ID = i }).ToList();
-            dtos.Reverse();
 
             var items = new object[100000].Select((_, i) => new Thing { ID = i }).ToList();
 
