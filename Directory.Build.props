@@ -2,9 +2,10 @@
   <Import Project="version.props" />
 
   <PropertyGroup>
-    <FluentAssertions>4.15.0</FluentAssertions>
-    <TestSDKVersion>15.5.0</TestSDKVersion>
-    <xUnitVersion>2.4.1</xUnitVersion>
+    <FluentAssertions>8.9.0</FluentAssertions>
+    <TestSDKVersion>18.3.0</TestSDKVersion>
+    <xUnitVersion>2.9.3</xUnitVersion>
+    <xUnitRunnerVersion>2.8.2</xUnitRunnerVersion>
     <EffortVersion>2.2.1</EffortVersion>
   </PropertyGroup>
 

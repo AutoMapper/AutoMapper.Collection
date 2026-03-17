@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <AssemblyName>AutoMapper.Collection.Tests</AssemblyName>
     <RootNamespace>AutoMapper.Collection</RootNamespace>
     <IsPackable>false</IsPackable>
@@ -15,7 +15,7 @@
     <PackageReference Include="FluentAssertions" Version="$(FluentAssertions)" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSDKVersion)" />
     <PackageReference Include="xunit" Version="$(xUnitVersion)" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="$(xUnitVersion)" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(xUnitRunnerVersion)" />
   </ItemGroup>
 
 </Project>

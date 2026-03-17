@@ -198,7 +198,7 @@ namespace AutoMapper.Collection
 
             mapper.Map(new[] { dto }, entityCollection);
 
-            entity.ShouldBeEquivalentTo(entityCollection[0]);
+            entity.Should().BeEquivalentTo(entityCollection[0]);
         }
 
         public class Client
@@ -251,7 +251,7 @@ namespace AutoMapper.Collection
 
             mapper.Map(new[] { dto }, entityCollection);
 
-            entity.ShouldBeEquivalentTo(entityCollection[0]);
+            entity.Should().BeEquivalentTo(entityCollection[0]);
         }
 
         public class Charge
