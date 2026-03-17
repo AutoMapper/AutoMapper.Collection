@@ -18,7 +18,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="xunit" Version="$(xUnitVersion)" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="$(xUnitVersion)" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(xUnitRunnerVersion)" />
     <PackageReference Include="Effort.EF6" Version="$(EffortVersion)" />
   </ItemGroup>
 
